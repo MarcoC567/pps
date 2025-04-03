@@ -1,0 +1,1097 @@
+{
+  "artikel": [
+    {
+      "artikelnummer": "1P",
+      "produktart": "P",
+      "bezeichnung": "Kinderfahrrad",
+      "verwendung": null,
+      "startmenge": 100,
+      "startpreis": 156.13,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 3,
+          "bearbeitungszeit": 6,
+          "ruestzeit": 30
+        }
+      ]
+    },
+    {
+      "artikelnummer": "2P",
+      "produktart": "P",
+      "bezeichnung": "Damenfahrrad",
+      "verwendung": null,
+      "startmenge": 100,
+      "startpreis": 163.33,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 3,
+          "bearbeitungszeit": 7,
+          "ruestzeit": 20
+        }
+      ]
+    },
+    {
+      "artikelnummer": "3P",
+      "produktart": "P",
+      "bezeichnung": "Herrenfahrrad",
+      "verwendung": null,
+      "startmenge": 100,
+      "startpreis": 165.08,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 3,
+          "bearbeitungszeit": 7,
+          "ruestzeit": 30
+        }
+      ]
+    },
+    {
+      "artikelnummer": "4E",
+      "produktart": "E",
+      "bezeichnung": "Hinterradgruppe",
+      "verwendung": "K",
+      "startmenge": 100,
+      "startpreis": 40.85,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 4,
+          "bearbeitungszeit": 4,
+          "ruestzeit": 20
+        },
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 10
+        }
+      ]
+    },
+    {
+      "artikelnummer": "5E",
+      "produktart": "E",
+      "bezeichnung": "Hinterradgruppe",
+      "verwendung": "D",
+      "startmenge": 100,
+      "startpreis": 39.85,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 4,
+          "bearbeitungszeit": 4,
+          "ruestzeit": 20
+        },
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 10
+        }
+      ]
+    },
+    {
+      "artikelnummer": "6E",
+      "produktart": "E",
+      "bezeichnung": "Hinterradgruppe",
+      "verwendung": "H",
+      "startmenge": 100,
+      "startpreis": 40.85,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 4,
+          "bearbeitungszeit": 4,
+          "ruestzeit": 20
+        },
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 20
+        }
+      ]
+    },
+    {
+      "artikelnummer": "7E",
+      "produktart": "E",
+      "bezeichnung": "Vorderradgruppe",
+      "verwendung": "K",
+      "startmenge": 100,
+      "startpreis": 35.85,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 4,
+          "bearbeitungszeit": 4,
+          "ruestzeit": 20
+        },
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 10
+        }
+      ]
+    },
+    {
+      "artikelnummer": "8E",
+      "produktart": "E",
+      "bezeichnung": "Vorderradgruppe",
+      "verwendung": "D",
+      "startmenge": 100,
+      "startpreis": 35.85,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 4,
+          "bearbeitungszeit": 4,
+          "ruestzeit": 20
+        },
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 10
+        }
+      ]
+    },
+    {
+      "artikelnummer": "9E",
+      "produktart": "E",
+      "bezeichnung": "Vorderradgruppe",
+      "verwendung": "H",
+      "startmenge": 100,
+      "startpreis": 35.85,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 4,
+          "bearbeitungszeit": 4,
+          "ruestzeit": 20
+        },
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 20
+        }
+      ]
+    },
+    {
+      "artikelnummer": "10E",
+      "produktart": "E",
+      "bezeichnung": "Schutzblech h.",
+      "verwendung": "K",
+      "startmenge": 100,
+      "startpreis": 12.4,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 20
+        },
+        {
+          "nummer": 7,
+          "bearbeitungszeit": 1,
+          "ruestzeit": 15
+        },
+        {
+          "nummer": 8,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 15
+        },
+        {
+          "nummer": 10,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 0
+        },
+        {
+          "nummer": 11,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 0
+        }
+      ]
+    },
+    {
+      "artikelnummer": "11E",
+      "produktart": "E",
+      "bezeichnung": "Schutzblech h.",
+      "verwendung": "D",
+      "startmenge": 100,
+      "startpreis": 14.65,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 20
+        },
+        {
+          "nummer": 7,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 15
+        },
+        {
+          "nummer": 8,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 15
+        },
+        {
+          "nummer": 10,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 0
+        },
+        {
+          "nummer": 11,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 0
+        }
+      ]
+    },
+    {
+      "artikelnummer": "12E",
+      "produktart": "E",
+      "bezeichnung": "Schutzblech h.",
+      "verwendung": "H",
+      "startmenge": 100,
+      "startpreis": 14.65,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 20
+        },
+        {
+          "nummer": 7,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 15
+        },
+        {
+          "nummer": 8,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 15
+        },
+        {
+          "nummer": 10,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 0
+        },
+        {
+          "nummer": 11,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 0
+        }
+      ]
+    },
+    {
+      "artikelnummer": "13E",
+      "produktart": "E",
+      "bezeichnung": "Schutzblech v.",
+      "verwendung": "K",
+      "startmenge": 100,
+      "startpreis": 12.4,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 20
+        },
+        {
+          "nummer": 7,
+          "bearbeitungszeit": 1,
+          "ruestzeit": 15
+        },
+        {
+          "nummer": 8,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 15
+        },
+        {
+          "nummer": 10,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 0
+        },
+        {
+          "nummer": 11,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 0
+        }
+      ]
+    },
+    {
+      "artikelnummer": "14E",
+      "produktart": "E",
+      "bezeichnung": "Schutzblech v.",
+      "verwendung": "D",
+      "startmenge": 100,
+      "startpreis": 14.65,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 20
+        },
+        {
+          "nummer": 7,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 15
+        },
+        {
+          "nummer": 8,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 15
+        },
+        {
+          "nummer": 10,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 0
+        },
+        {
+          "nummer": 11,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 0
+        }
+      ]
+    },
+    {
+      "artikelnummer": "15E",
+      "produktart": "E",
+      "bezeichnung": "Schutzblech v.",
+      "verwendung": "H",
+      "startmenge": 100,
+      "startpreis": 14.65,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 20
+        },
+        {
+          "nummer": 7,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 15
+        },
+        {
+          "nummer": 8,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 15
+        },
+        {
+          "nummer": 10,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 0
+        },
+        {
+          "nummer": 11,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 0
+        }
+      ]
+    },
+    {
+      "artikelnummer": "16E",
+      "produktart": "E",
+      "bezeichnung": "lenker cpl.",
+      "verwendung": "KDH",
+      "startmenge": 300,
+      "startpreis": 7.02,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 15
+        },
+        {
+          "nummer": 13,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 0
+        }
+      ]
+    },
+    {
+      "artikelnummer": "17E",
+      "produktart": "E",
+      "bezeichnung": "Sattel cpl.",
+      "verwendung": "KDH",
+      "startmenge": 300,
+      "startpreis": 1.16,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 15,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 15
+        }
+      ]
+    },
+    {
+      "artikelnummer": "18E",
+      "produktart": "E",
+      "bezeichnung": "Rahmen",
+      "verwendung": "K",
+      "startmenge": 100,
+      "startpreis": 13.15,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 4,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 15
+        },
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 20
+        },
+        {
+          "nummer": 7,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 20
+        },
+        {
+          "nummer": 8,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 15
+        }
+      ]
+    },
+    {
+      "artikelnummer": "19E",
+      "produktart": "E",
+      "bezeichnung": "Rahmen",
+      "verwendung": "D",
+      "startmenge": 100,
+      "startpreis": 14.35,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 4,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 15
+        },
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 20
+        },
+        {
+          "nummer": 7,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 25
+        },
+        {
+          "nummer": 8,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 20
+        }
+      ]
+    },
+    {
+      "artikelnummer": "20E",
+      "produktart": "E",
+      "bezeichnung": "Rahmen",
+      "verwendung": "H",
+      "startmenge": 100,
+      "startpreis": 15.55,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 4,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 15
+        },
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 20
+        },
+        {
+          "nummer": 7,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 20
+        },
+        {
+          "nummer": 8,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 15
+        }
+      ]
+    },
+    {
+      "artikelnummer": "21 K",
+      "produktart": "K",
+      "bezeichnung": "Kette",
+      "verwendung": "K",
+      "startmenge": 300,
+      "startpreis": 5,
+      "lieferkosten": 50,
+      "lieferzeit": 1.8,
+      "lieferzeitabweichung": 0.4,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "22 K",
+      "produktart": "K",
+      "bezeichnung": "Kette",
+      "verwendung": "D",
+      "startmenge": 300,
+      "startpreis": 6.5,
+      "lieferkosten": 50,
+      "lieferzeit": 1.7,
+      "lieferzeitabweichung": 0.4,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "23 K",
+      "produktart": "K",
+      "bezeichnung": "Kette",
+      "verwendung": "H",
+      "startmenge": 300,
+      "startpreis": 6.5,
+      "lieferkosten": 50,
+      "lieferzeit": 1.2,
+      "lieferzeitabweichung": 0.2,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "24 K",
+      "produktart": "K",
+      "bezeichnung": "Mutter 3/8“",
+      "verwendung": "KDH",
+      "startmenge": 6100,
+      "startpreis": 0.06,
+      "lieferkosten": 100,
+      "lieferzeit": 3.2,
+      "lieferzeitabweichung": 0.3,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "25 K",
+      "produktart": "K",
+      "bezeichnung": "Scheibe 3/8“",
+      "verwendung": "KDH",
+      "startmenge": 3600,
+      "startpreis": 0.06,
+      "lieferkosten": 50,
+      "lieferzeit": 0.9,
+      "lieferzeitabweichung": 0.2,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "26 E",
+      "produktart": "E",
+      "bezeichnung": "Pedal cpl.",
+      "verwendung": "KDH",
+      "startmenge": 300,
+      "startpreis": 10.5,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 2,
+          "ruestzeit": 30
+        },
+        {
+          "nummer": 15,
+          "bearbeitungszeit": 3,
+          "ruestzeit": 15
+        }
+      ]
+    },
+    {
+      "artikelnummer": "27 K",
+      "produktart": "K",
+      "bezeichnung": "Schraube 3/8“",
+      "verwendung": "KDH",
+      "startmenge": 1800,
+      "startpreis": 0.1,
+      "lieferkosten": 75,
+      "lieferzeit": 0.9,
+      "lieferzeitabweichung": 0.2,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "28 K",
+      "produktart": "K",
+      "bezeichnung": "Rohr ¾“",
+      "verwendung": "KDH",
+      "startmenge": 4500,
+      "startpreis": 1.2,
+      "lieferkosten": 50,
+      "lieferzeit": 1.7,
+      "lieferzeitabweichung": 0.4,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "29 E",
+      "produktart": "E",
+      "bezeichnung": "Vorderrad mont.",
+      "verwendung": "H",
+      "startmenge": 100,
+      "startpreis": 69.29,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 6,
+          "ruestzeit": 20
+        }
+      ]
+    },
+    {
+      "artikelnummer": "30 E",
+      "produktart": "E",
+      "bezeichnung": "Rahmen u. Räder",
+      "verwendung": "H",
+      "startmenge": 100,
+      "startpreis": 127.53,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 10,
+          "bearbeitungszeit": 5,
+          "ruestzeit": 20
+        }
+      ]
+    },
+    {
+      "artikelnummer": "31 E",
+      "produktart": "E",
+      "bezeichnung": "Fahrrad o. Ped.",
+      "verwendung": "H",
+      "startmenge": 100,
+      "startpreis": 144.42,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 6,
+          "ruestzeit": 20
+        }
+      ]
+    },
+    {
+      "artikelnummer": "32 K",
+      "produktart": "K",
+      "bezeichnung": "Farbe",
+      "verwendung": "KDH",
+      "startmenge": 2700,
+      "startpreis": 0.75,
+      "lieferkosten": 50,
+      "lieferzeit": 2.1,
+      "lieferzeitabweichung": 0.5,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "33 K",
+      "produktart": "K",
+      "bezeichnung": "Felge cpl.",
+      "verwendung": "H",
+      "startmenge": 900,
+      "startpreis": 22,
+      "lieferkosten": 75,
+      "lieferzeit": 1.9,
+      "lieferzeitabweichung": 0.5,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "34 K",
+      "produktart": "K",
+      "bezeichnung": "Speiche",
+      "verwendung": "H",
+      "startmenge": 22000,
+      "startpreis": 0.1,
+      "lieferkosten": 50,
+      "lieferzeit": 1.6,
+      "lieferzeitabweichung": 0.3,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "35 K",
+      "produktart": "K",
+      "bezeichnung": "Konus",
+      "verwendung": "KDH",
+      "startmenge": 3600,
+      "startpreis": 1,
+      "lieferkosten": 75,
+      "lieferzeit": 2.2,
+      "lieferzeitabweichung": 0.4,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "36 K",
+      "produktart": "K",
+      "bezeichnung": "Freilauf",
+      "verwendung": "KDH",
+      "startmenge": 900,
+      "startpreis": 8,
+      "lieferkosten": 100,
+      "lieferzeit": 1.2,
+      "lieferzeitabweichung": 0.1,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "37 K",
+      "produktart": "K",
+      "bezeichnung": "Gabel",
+      "verwendung": "KDH",
+      "startmenge": 900,
+      "startpreis": 1.5,
+      "lieferkosten": 50,
+      "lieferzeit": 1.5,
+      "lieferzeitabweichung": 0.3,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "38 K",
+      "produktart": "K",
+      "bezeichnung": "Welle",
+      "verwendung": "KDH",
+      "startmenge": 300,
+      "startpreis": 1.5,
+      "lieferkosten": 50,
+      "lieferzeit": 1.7,
+      "lieferzeitabweichung": 0.4,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "39 K",
+      "produktart": "K",
+      "bezeichnung": "Blech",
+      "verwendung": "KDH",
+      "startmenge": 900,
+      "startpreis": 1.5,
+      "lieferkosten": 75,
+      "lieferzeit": 1.5,
+      "lieferzeitabweichung": 0.3,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "40 K",
+      "produktart": "K",
+      "bezeichnung": "Lenker",
+      "verwendung": "KDH",
+      "startmenge": 900,
+      "startpreis": 2.5,
+      "lieferkosten": 50,
+      "lieferzeit": 1.7,
+      "lieferzeitabweichung": 0.2,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "41 K",
+      "produktart": "K",
+      "bezeichnung": "Mutter ¾“",
+      "verwendung": "KDH",
+      "startmenge": 900,
+      "startpreis": 0.06,
+      "lieferkosten": 50,
+      "lieferzeit": 0.9,
+      "lieferzeitabweichung": 0.2,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "42 K",
+      "produktart": "K",
+      "bezeichnung": "Griff",
+      "verwendung": "KDH",
+      "startmenge": 1800,
+      "startpreis": 0.1,
+      "lieferkosten": 50,
+      "lieferzeit": 1.2,
+      "lieferzeitabweichung": 0.3,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "43 K",
+      "produktart": "K",
+      "bezeichnung": "Sattel",
+      "verwendung": "KDH",
+      "startmenge": 1900,
+      "startpreis": 5,
+      "lieferkosten": 75,
+      "lieferzeit": 2,
+      "lieferzeitabweichung": 0.5,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "44 K",
+      "produktart": "K",
+      "bezeichnung": "Stange ½“",
+      "verwendung": "KDH",
+      "startmenge": 2700,
+      "startpreis": 0.5,
+      "lieferkosten": 50,
+      "lieferzeit": 1,
+      "lieferzeitabweichung": 0.2,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "45 K",
+      "produktart": "K",
+      "bezeichnung": "Mutter ¼“",
+      "verwendung": "KDH",
+      "startmenge": 900,
+      "startpreis": 0.06,
+      "lieferkosten": 50,
+      "lieferzeit": 1.7,
+      "lieferzeitabweichung": 0.3,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "46 K",
+      "produktart": "K",
+      "bezeichnung": "Schraube ¼“",
+      "verwendung": "KDH",
+      "startmenge": 900,
+      "startpreis": 0.1,
+      "lieferkosten": 50,
+      "lieferzeit": 0.9,
+      "lieferzeitabweichung": 0.3,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "47 K",
+      "produktart": "K",
+      "bezeichnung": "Zahnkranz",
+      "verwendung": "KDH",
+      "startmenge": 900,
+      "startpreis": 3.5,
+      "lieferkosten": 50,
+      "lieferzeit": 1.41,
+      "lieferzeitabweichung": 0.1,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "48 K",
+      "produktart": "K",
+      "bezeichnung": "Pedal",
+      "verwendung": "KDH",
+      "startmenge": 1800,
+      "startpreis": 1.5,
+      "lieferkosten": 75,
+      "lieferzeit": 1,
+      "lieferzeitabweichung": 0.2,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "49 E",
+      "produktart": "E",
+      "bezeichnung": "Vorderrad cpl.",
+      "verwendung": "K",
+      "startmenge": 100,
+      "startpreis": 64.64,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 6,
+          "ruestzeit": 20
+        }
+      ]
+    },
+    {
+      "artikelnummer": "50 E",
+      "produktart": "E",
+      "bezeichnung": "Rahmen u. Räder",
+      "verwendung": "K",
+      "startmenge": 100,
+      "startpreis": 120.63,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 10,
+          "bearbeitungszeit": 5,
+          "ruestzeit": 30
+        }
+      ]
+    },
+    {
+      "artikelnummer": "51 E",
+      "produktart": "E",
+      "bezeichnung": "Fahrrad o. Pedal",
+      "verwendung": "K",
+      "startmenge": 100,
+      "startpreis": 137.47,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 10,
+          "bearbeitungszeit": 5,
+          "ruestzeit": 20
+        }
+      ]
+    },
+    {
+      "artikelnummer": "52 K",
+      "produktart": "K",
+      "bezeichnung": "Felge cpl.",
+      "verwendung": "K",
+      "startmenge": 600,
+      "startpreis": 22,
+      "lieferkosten": 50,
+      "lieferzeit": 1.6,
+      "lieferzeitabweichung": 0.4,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "53 K",
+      "produktart": "K",
+      "bezeichnung": "Speiche",
+      "verwendung": "K",
+      "startmenge": 22000,
+      "startpreis": 0.1,
+      "lieferkosten": 50,
+      "lieferzeit": 1.6,
+      "lieferzeitabweichung": 0.2,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "54 E",
+      "produktart": "E",
+      "bezeichnung": "Vorderrad cpl.",
+      "verwendung": "D",
+      "startmenge": 100,
+      "startpreis": 68.09,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 6,
+          "ruestzeit": 20
+        }
+      ]
+    },
+    {
+      "artikelnummer": "55 E",
+      "produktart": "E",
+      "bezeichnung": "Rahmen u. Räder",
+      "verwendung": "D",
+      "startmenge": 100,
+      "startpreis": 125.33,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 10,
+          "bearbeitungszeit": 5,
+          "ruestzeit": 30
+        }
+      ]
+    },
+    {
+      "artikelnummer": "56 E",
+      "produktart": "E",
+      "bezeichnung": "Fahrrad o. Pedal",
+      "verwendung": "D",
+      "startmenge": 100,
+      "startpreis": 142.67,
+      "lieferkosten": null,
+      "lieferzeit": null,
+      "lieferzeitabweichung": null,
+      "arbeitsplaetze": [
+        {
+          "nummer": 6,
+          "bearbeitungszeit": 6,
+          "ruestzeit": 20
+        }
+      ]
+    },
+    {
+      "artikelnummer": "57 K",
+      "produktart": "K",
+      "bezeichnung": "Felge cpl.",
+      "verwendung": "D",
+      "startmenge": 600,
+      "startpreis": 22,
+      "lieferkosten": 50,
+      "lieferzeit": 1.7,
+      "lieferzeitabweichung": 0.3,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "58 K",
+      "produktart": "K",
+      "bezeichnung": "Speiche",
+      "verwendung": "D",
+      "startmenge": 22000,
+      "startpreis": 0.1,
+      "lieferkosten": 50,
+      "lieferzeit": 1.6,
+      "lieferzeitabweichung": 0.5,
+      "arbeitsplaetze": []
+    },
+    {
+      "artikelnummer": "59 K",
+      "produktart": "K",
+      "bezeichnung": "Schweißdraht",
+      "verwendung": "KDH",
+      "startmenge": 1800,
+      "startpreis": 0.15,
+      "lieferkosten": 50,
+      "lieferzeit": 0.7,
+      "lieferzeitabweichung": 0.2,
+      "arbeitsplaetze": []
+    }
+  ]
+}
