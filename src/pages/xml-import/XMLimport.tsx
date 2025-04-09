@@ -1,9 +1,8 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useNavigation } from "../Navigation/navigationContext";
+import { useNavigation } from "../../context/Navigation/navigationContext";
 import { DocumentArrowUpIcon } from "@heroicons/react/16/solid";
+
 export default function LandingPage() {
-  const navigate = useNavigate();
   const { setIsNavigateable } = useNavigation();
 
   useEffect(() => {
@@ -12,7 +11,6 @@ export default function LandingPage() {
 
   const handleClick = () => {
     setIsNavigateable(true);
-    navigate("/xmlImport");
   };
 
   return (

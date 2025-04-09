@@ -2,11 +2,11 @@ import { Disclosure } from "@headlessui/react";
 import { useState } from "react";
 
 const initialNavigation = [
-  { name: "XML Import", href: "/xmlimport", current: false },
-  { name: "Prognose/Produktionsplan", href: "#", current: false },
-  { name: "Eigenfertigungsdisposition", href: "#", current: false },
-  { name: "Kapazitätsplan", href: "#", current: false },
-  { name: "Kaufteildisposition", href: "#", current: false },
+  { name: "XML Import", href: "/xml-import", current: false },
+  { name: "Prognose/Produktionsplan", href: "/production-plan", current: false },
+  { name: "Eigenfertigungsdisposition", href: "/inhouse-disposition", current: false },
+  { name: "Kapazitätsplan", href: "/capacity-plan", current: false },
+  { name: "Kaufteildisposition", href: "/purchase-disposition", current: false },
 ];
 
 function classNames(...classes: string[]) {

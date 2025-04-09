@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useNavigation } from "../Navigation/navigationContext";
+import { useNavigation } from '../context/Navigation/navigationContext.tsx';
 
 export default function LandingPage() {
   const navigate = useNavigate();
