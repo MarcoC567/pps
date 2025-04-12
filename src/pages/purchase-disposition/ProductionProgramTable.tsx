@@ -21,7 +21,7 @@ export default function ProductionProgramTable(props: { productionData: Producti
     );
 
     return (
-        <div>
+        <div style={{ padding: "2rem" }}>
             <Typography variant="h4" gutterBottom>
                 Produktionsprogramm
             </Typography>
