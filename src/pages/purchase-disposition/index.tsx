@@ -1,40 +1,32 @@
+import Box from "@mui/material/Box";
 import { items } from "./const";
 import ProductionProgramTable from "./ProductionProgramTable";
 import PurchaseDispositionTable from "./PurchaseDispositionTable";
+import { useState, useEffect } from "react";
+import CircularProgress from "@mui/material/CircularProgress";
+
+type WareHouseStockData = {
+  itemNr: number;
+  amount: number;
+}[];
 
 export default function PurchaseDispositionPage() {
-  
-  const fakeAmounts: Record<number, number> = {
-    21: 10,
-    22: 20,
-    23: 30,
-    24: 40,
-    25: 50,
-    27: 60,
-    28: 70,
-    32: 80,
-    33: 90,
-    34: 100,
-    35: 110,
-    36: 120,
-    37: 130,
-    38: 140,
-    39: 150,
-    40: 160,
-    41: 170,
-    42: 180,
-    43: 190,
-    44: 200,
-    45: 210,
-    46: 220,
-    47: 230,
-    48: 240,
-    52: 250,
-    53: 260,
-    57: 270,
-    58: 280,
-    59: 290,
-  };
+  const [wareHouseStockData, setWareHouseStockData] = useState<WareHouseStockData>();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const importData: object = JSON.parse(localStorage.getItem('importData') || '{}');
+    console.log(importData)
+    setWareHouseStockData(items.map((itemNumber) => {
+      const amount: string = importData["results"]["warehousestock"]["article"][(itemNumber - 1).toString()]?.amount ?? "0";
+      return {
+        itemNr: itemNumber,
+        amount: Number(amount),
+      };
+    }));
+
+    setTimeout(() => setLoading(false), 1000);
+  }, []);
 
   const productionData = [
     {
@@ -51,20 +43,23 @@ export default function PurchaseDispositionPage() {
     },
   ];
 
-  const initialInventoryData = items.map((itemNumber) => {
-    return {
-      itemNr: itemNumber,
-      ammount: fakeAmounts[itemNumber],
-    };
-  });
-
   return (
     <div>
       <ProductionProgramTable productionData={productionData} />
-      <PurchaseDispositionTable
-        initialInventoryData={initialInventoryData}
-        productionData={productionData}
-      />
+      {loading ? (
+        <div>
+          <Box sx={{ display: 'flex' }}>
+            <CircularProgress />
+          </Box>
+        </div>
+      ) : (
+        wareHouseStockData && (
+          <PurchaseDispositionTable
+            initialInventoryData={wareHouseStockData}
+            productionData={productionData}
+          />
+        )
+      )}
     </div>
   );
 }

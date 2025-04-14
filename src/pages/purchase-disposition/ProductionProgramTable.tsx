@@ -50,17 +50,17 @@ export default function ProductionProgramTable(props: { productionData: Producti
                                 ))}
                             </TableRow>
                         ))}
-                    </TableBody>
-                    <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
-                        <TableCell>
-                            <strong>Summe</strong>
-                        </TableCell>
-                        {sumValues.map((val, i) => (
-                            <TableCell key={i} align="center">
-                                <strong>{val}</strong>
+                        <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
+                            <TableCell>
+                                <strong>Summe</strong>
                             </TableCell>
-                        ))}
-                    </TableRow>
+                            {sumValues.map((val, i) => (
+                                <TableCell key={i} align="center">
+                                    <strong>{val}</strong>
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableBody>
                 </Table>
             </TableContainer>
         </div>

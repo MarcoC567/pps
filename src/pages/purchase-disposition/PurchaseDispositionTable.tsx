@@ -14,7 +14,7 @@ import { basicData } from "./const";
 
 type InitialInventory = {
   itemNr: number;
-  ammount: number;
+  amount: number;
 }[];
 
 type ProductionData = {
@@ -75,8 +75,8 @@ export default function PurchaseDispositionTable(props: {
 
     return {
       itemNr: item.itemNr,
-      ammount: item.ammount,
-      discountAmmount: discountAmount,
+      amount: item.amount,
+      discountAmount: discountAmount,
       deliveryTime: deliveryTime,
       deviation: deviation,
       maxDeliveryTime: maxDeliveryTime,
@@ -138,8 +138,8 @@ export default function PurchaseDispositionTable(props: {
                 <TableCell>{row.usageRatioP1}</TableCell>
                 <TableCell>{row.usageRatioP2}</TableCell>
                 <TableCell>{row.usageRatioP3}</TableCell>
-                <TableCell>{row.discountAmmount}</TableCell>
-                <TableCell>{row.ammount}</TableCell>
+                <TableCell>{row.discountAmount}</TableCell>
+                <TableCell>{row.amount}</TableCell>
                 <TableCell>{row.grossRequirementN}</TableCell>
                 <TableCell>{row.grossRequirementN1}</TableCell>
                 <TableCell>{row.grossRequirementN2}</TableCell>
