@@ -1,11 +1,15 @@
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
-import { Paper } from '@mui/material';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+  Paper,
+  TextField,
+} from "@mui/material";
+import { useEffect, useState } from "react";
 
 export type StockData = {
   product: string;
@@ -15,8 +19,22 @@ export type StockData = {
   inProduction: number;
 };
 
-export default function StockAndQueueTable(props : { stockData : StockData[]}) {
-  const stockData = props.stockData;
+export default function StockAndQueueTable(props: { stockData: StockData[] }) {
+  const [stockData, setStockData] = useState<StockData[]>([]);
+
+  useEffect(() => {
+    setStockData(props.stockData);
+  }, [props.stockData]);
+
+  const handleChange = (
+    index: number,
+    key: keyof Omit<StockData, "product">,
+    value: string
+  ) => {
+    const updated = [...stockData];
+    updated[index][key] = Number(value) || 0;
+    setStockData(updated);
+  };
 
   return (
     <div style={{ marginTop: "3rem" }}>
@@ -39,10 +57,27 @@ export default function StockAndQueueTable(props : { stockData : StockData[]}) {
             {stockData.map((row, i) => (
               <TableRow key={i}>
                 <TableCell>{row.product}</TableCell>
-                <TableCell align="center">{row.stock}</TableCell>
-                <TableCell align="center">{row.endStock}</TableCell>
-                <TableCell align="center">{row.waitingList}</TableCell>
-                <TableCell align="center">{row.inProduction}</TableCell>
+                {["stock", "endStock", "waitingList", "inProduction"].map(
+                  (field) => (
+                    <TableCell key={field} align="center">
+                      <TextField
+                        type="number"
+                        value={row[field as keyof Omit<StockData, "product">]}
+                        onChange={(e) =>
+                          handleChange(
+                            i,
+                            field as keyof Omit<StockData, "product">,
+                            e.target.value
+                          )
+                        }
+                        variant="standard"
+                        inputProps={{
+                          style: { textAlign: "center", width: "3rem" },
+                        }}
+                      />
+                    </TableCell>
+                  )
+                )}
               </TableRow>
             ))}
           </TableBody>

@@ -7,7 +7,9 @@ import {
   TableRow,
   Paper,
   Typography,
+  TextField,
 } from "@mui/material";
+import { useEffect, useState } from "react";
 
 type SalesForecastData = {
   product: string;
@@ -15,8 +17,26 @@ type SalesForecastData = {
   next: number;
 }[];
 
-export default function SalesForecastTable(props: { salesForecastData: SalesForecastData }) {
-  const salesForecastData = props.salesForecastData;
+export default function SalesForecastTable(props: {
+  salesForecastData: SalesForecastData;
+}) {
+  const [salesForecastData, setSalesForecastData] = useState<SalesForecastData>(
+    []
+  );
+
+  useEffect(() => {
+    setSalesForecastData(props.salesForecastData);
+  }, [props.salesForecastData]);
+
+  const handleChange = (
+    index: number,
+    key: "current" | "next",
+    value: string
+  ) => {
+    const updated = [...salesForecastData];
+    updated[index][key] = Number(value) || 0;
+    setSalesForecastData(updated);
+  };
 
   const salesSum = salesForecastData.reduce(
     (acc, row) => ({
@@ -36,24 +56,59 @@ export default function SalesForecastTable(props: { salesForecastData: SalesFore
         <Table size="small">
           <TableHead>
             <TableRow>
+              <TableCell>Produkt</TableCell>
               <TableCell>Periode (Aktuell)</TableCell>
               <TableCell>Periode (n+1)</TableCell>
+              <TableCell>Periode (n+2)</TableCell>
+              <TableCell>Periode (n+3)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {salesForecastData.map((row, idx) => (
               <TableRow key={idx}>
-                <TableCell>{`${row.product}: ${row.current}`}</TableCell>
-                <TableCell>{`${row.product}: ${row.next}`}</TableCell>
+                <TableCell>{`${row.product}: `}</TableCell>
+                <TableCell>
+                  <TextField
+                    type="number"
+                    value={row.current}
+                    onChange={(e) =>
+                      handleChange(idx, "current", e.target.value)
+                    }
+                    variant="standard"
+                    inputProps={{
+                      style: { textAlign: "center", width: "3rem" },
+                    }}
+                  />
+                </TableCell>
+                {[...Array(3)].map((_, i) => (
+                  <TableCell key={i}>
+                    <TextField
+                      type="number"
+                      value={row.next}
+                      onChange={(e) =>
+                        handleChange(idx, "next", e.target.value)
+                      }
+                      variant="standard"
+                      inputProps={{
+                        style: { textAlign: "center", width: "3rem" },
+                      }}
+                    />
+                  </TableCell>
+                ))}
               </TableRow>
             ))}
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell>
-                <strong>Summe: {salesSum.current}</strong>
+                <strong>Summe: </strong>
               </TableCell>
               <TableCell>
-                <strong>Summe: {salesSum.next}</strong>
+                <strong>{salesSum.current}</strong>
               </TableCell>
+              {[...Array(3)].map((_, i) => (
+                <TableCell key={i}>
+                  <strong>{salesSum.next}</strong>
+                </TableCell>
+              ))}
             </TableRow>
           </TableBody>
         </Table>
