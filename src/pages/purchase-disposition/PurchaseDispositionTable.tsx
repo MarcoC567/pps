@@ -8,9 +8,12 @@ import {
   TextField,
   Paper,
   Typography,
+  Select, MenuItem
 } from "@mui/material";
 
-import { basicData } from "./const";
+import { basicData, dynamicHeaders, fixedHeaders, modusDictionary, modusOptions } from "./const";
+import { useState } from "react"
+
 
 type InitialInventory = {
   itemNr: number;
@@ -28,23 +31,24 @@ export default function PurchaseDispositionTable(props: {
 }) {
   const initialInventoryData = props.initialInventoryData;
   const productionData = props.productionData;
+  const [modusSelections, setModusSelections] = useState<string[]>(
+    Array(initialInventoryData.length).fill("")
+  );
+  const [orderQuantities, setOrderQuantities] = useState<number[]>(
+    Array(initialInventoryData.length).fill(0)
+  );
 
-  const fixedHeaders = [
-    "ArtikelNr.",
-    "Lieferzeit",
-    "Abweichung",
-    "Max Lieferzeit in Tagen",
-    "P1",
-    "P2",
-    "P3",
-    "Diskontmenge",
-    "Anfangsbestand in Periode n",
-    "n",
-    "n+1",
-    "n+2",
-    "n+3",
-  ];
-  const dynamicHeaders = ["Menge", "Modus"];
+  const handleQuantityChange = (index: number, value: number) => {
+    const updated = [...orderQuantities];
+    updated[index] = value;
+    setOrderQuantities(updated);
+  };
+
+  const handleModusChange = (rowIndex: number, value: string) => {
+    const updatedSelections = [...modusSelections];
+    updatedSelections[rowIndex] = value;
+    setModusSelections(updatedSelections);
+  };
 
   const rows = initialInventoryData.map((item, index) => {
     const discountAmount: number = basicData[index].discountQuantity;
@@ -54,6 +58,10 @@ export default function PurchaseDispositionTable(props: {
       basicData[index].deliveryTimeDeviation;
     const maxDeliveryTime: number | undefined | null =
       (deliveryTime! + deviation!) * 5;
+    const deliveryCost: number | undefined | null =
+      basicData[index].deliveryCost;
+    const startPrice: number | undefined | null =
+      basicData[index].startPrice;
 
     const usageRatioP1 = basicData[index].usageRatioP1;
     const usageRatioP2 = basicData[index].usageRatioP2;
@@ -83,6 +91,8 @@ export default function PurchaseDispositionTable(props: {
       usageRatioP1: usageRatioP1,
       usageRatioP2: usageRatioP2,
       usageRatioP3: usageRatioP3,
+      deliveryCost: deliveryCost,
+      startPrice: startPrice,
       grossRequirementN: calculateGrossRequirement(
         usageRatioP1,
         usageRatioP2,
@@ -145,13 +155,85 @@ export default function PurchaseDispositionTable(props: {
                 <TableCell>{row.grossRequirementN2}</TableCell>
                 <TableCell>{row.grossRequirementN3}</TableCell>
 
-                {dynamicHeaders.map((_, index) => (
-                  <TableCell key={index}>
-                    <TextField variant="standard" size="small" />
-                  </TableCell>
-                ))}
+                <TableCell>
+                  <TextField
+                    size="small"
+                    type="number"
+                    defaultValue={0}
+                    onChange={(e) => handleQuantityChange(rowIndex, parseFloat(e.target.value) || 0)}
+                  />
+                </TableCell>
+                <TableCell>
+                  <Select
+                    variant="standard"
+                    size="small"
+                    value={modusSelections[rowIndex] || ""}
+                    onChange={(e) => handleModusChange(rowIndex, e.target.value)}
+                    displayEmpty
+                    fullWidth
+                  >
+                    <MenuItem value="" disabled>
+                      Modus wählen
+                    </MenuItem>
+                    {modusOptions.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </TableCell>
               </TableRow>
             ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <Typography variant="h4" gutterBottom sx={{ marginTop: 8 }}>
+        Lagerzugang
+      </Typography>
+
+      <TableContainer component={Paper} sx={{ marginTop: 4 }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Item No</TableCell>
+              <TableCell>Material Cost (€)</TableCell>
+              <TableCell>Order Cost (€)</TableCell>
+              <TableCell>Total Cost (€)</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((row, i) => {
+              const selectedModus = modusSelections[i];
+              const factors = modusDictionary[selectedModus];
+              const orderQuantity = orderQuantities[i] || 0;
+              let unitCost: number
+              if (orderQuantity >= row.discountAmount && selectedModus == "Normal") {
+                unitCost = 0.9 * row.startPrice!
+              }
+              else {
+                unitCost = row.startPrice!
+              }
+
+              const materialCost = factors
+                ? (factors.priceFactor * unitCost * orderQuantity)
+                : 0;
+
+              const orderCost = factors
+                ? (row.deliveryCost! * factors.orderCostFactor)
+                : 0;
+
+              const totalCost = materialCost + orderCost;
+
+              return (
+                <TableRow key={i}>
+                  <TableCell>{row.itemNr}</TableCell>
+                  <TableCell>{materialCost.toFixed(2)}</TableCell>
+                  <TableCell>{orderCost.toFixed(2)}</TableCell>
+                  <TableCell>{totalCost.toFixed(2)}</TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
