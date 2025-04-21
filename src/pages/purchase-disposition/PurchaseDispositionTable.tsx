@@ -8,11 +8,13 @@ import {
   TextField,
   Paper,
   Typography,
-  Select, MenuItem
+  Select, MenuItem,
+  Tooltip
 } from "@mui/material";
 
 import { basicData, dynamicHeaders, fixedHeaders, modusDictionary, modusOptions } from "./const";
 import { useState } from "react"
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 
 type InitialInventory = {
@@ -56,8 +58,6 @@ export default function PurchaseDispositionTable(props: {
       basicData[index].deliveryTime;
     const deviation: number | undefined | null =
       basicData[index].deliveryTimeDeviation;
-    const maxDeliveryTime: number | undefined | null =
-      (deliveryTime! + deviation!) * 5;
     const deliveryCost: number | undefined | null =
       basicData[index].deliveryCost;
     const startPrice: number | undefined | null =
@@ -87,7 +87,6 @@ export default function PurchaseDispositionTable(props: {
       discountAmount: discountAmount,
       deliveryTime: deliveryTime,
       deviation: deviation,
-      maxDeliveryTime: maxDeliveryTime,
       usageRatioP1: usageRatioP1,
       usageRatioP2: usageRatioP2,
       usageRatioP3: usageRatioP3,
@@ -136,99 +135,93 @@ export default function PurchaseDispositionTable(props: {
               {dynamicHeaders.map((header) => (
                 <TableCell key={header}>{header}</TableCell>
               ))}
+              <TableCell>ETA (Tagen)
+                <Tooltip title="ETA = (Lieferzeit + Abweichung) * 5. Mit einer Wahrscheinlichkeit von 93 % entspricht dieser Wert der zu erwartenden maximalen Lieferzeit. Mit einer Wahrscheinlichkeit von 7 % ist eine um 1 bis 3 Tage längere Lieferzeit als der ETA zu erwarten." placement="top" arrow>
+                  <InfoOutlinedIcon sx={{ fontSize: 16, verticalAlign: "middle", color: "gray", cursor: "pointer" }} />
+                </Tooltip>
+              </TableCell>
+              <TableCell>Bestellkosten (€)</TableCell>
+              <TableCell>
+                Gesamtkosten (€)&nbsp;
+                <Tooltip title="Gesamtkosten = Materialkosten + Bestellkosten" placement="top" arrow>
+                  <InfoOutlinedIcon sx={{ fontSize: 16, verticalAlign: "middle", color: "gray", cursor: "pointer" }} />
+                </Tooltip>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row, rowIndex) => (
-              <TableRow key={rowIndex}>
-                <TableCell>{row.itemNr}</TableCell>
-                <TableCell>{row.deliveryTime}</TableCell>
-                <TableCell>{row.deviation}</TableCell>
-                <TableCell>{row.maxDeliveryTime}</TableCell>
-                <TableCell>{row.usageRatioP1}</TableCell>
-                <TableCell>{row.usageRatioP2}</TableCell>
-                <TableCell>{row.usageRatioP3}</TableCell>
-                <TableCell>{row.discountAmount}</TableCell>
-                <TableCell>{row.amount}</TableCell>
-                <TableCell>{row.grossRequirementN}</TableCell>
-                <TableCell>{row.grossRequirementN1}</TableCell>
-                <TableCell>{row.grossRequirementN2}</TableCell>
-                <TableCell>{row.grossRequirementN3}</TableCell>
-
-                <TableCell>
-                  <TextField
-                    size="small"
-                    type="number"
-                    defaultValue={0}
-                    onChange={(e) => handleQuantityChange(rowIndex, parseFloat(e.target.value) || 0)}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Select
-                    variant="standard"
-                    size="small"
-                    value={modusSelections[rowIndex] || ""}
-                    onChange={(e) => handleModusChange(rowIndex, e.target.value)}
-                    displayEmpty
-                    fullWidth
-                  >
-                    <MenuItem value="" disabled>
-                      Modus wählen
-                    </MenuItem>
-                    {modusOptions.map((option) => (
-                      <MenuItem key={option} value={option}>
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <Typography variant="h4" gutterBottom sx={{ marginTop: 8 }}>
-        Lagerzugang
-      </Typography>
-
-      <TableContainer component={Paper} sx={{ marginTop: 4 }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Item No</TableCell>
-              <TableCell>Material Cost (€)</TableCell>
-              <TableCell>Order Cost (€)</TableCell>
-              <TableCell>Total Cost (€)</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row, i) => {
-              const selectedModus = modusSelections[i];
+            {rows.map((row, rowIndex) => {
+              const selectedModus = modusSelections[rowIndex];
               const factors = modusDictionary[selectedModus];
-              const orderQuantity = orderQuantities[i] || 0;
-              let unitCost: number
-              if (orderQuantity >= row.discountAmount && selectedModus == "Normal") {
-                unitCost = 0.9 * row.startPrice!
-              }
-              else {
-                unitCost = row.startPrice!
+              const orderQuantity = orderQuantities[rowIndex] || 0;
+              let unitCost: number = row.startPrice!;
+              let orderCost: number = 0;
+              const eta: number = factors ? (row.deliveryTime! * factors.deliveryDeadlineFactor + row.deviation! * factors.deliveryDeviationExtra) * 5 : 0;
+
+              if (orderQuantity >= row.discountAmount && selectedModus === "Normal") {
+                unitCost = 0.9 * row.startPrice!;
               }
 
               const materialCost = factors
-                ? (factors.priceFactor * unitCost * orderQuantity)
+                ? factors.priceFactor * unitCost * orderQuantity
                 : 0;
 
-              const orderCost = factors
-                ? (row.deliveryCost! * factors.orderCostFactor)
-                : 0;
+              if (orderQuantity > 0) {
+                orderCost = factors
+                  ? row.deliveryCost! * factors.orderCostFactor
+                  : 0;
+              }
+
 
               const totalCost = materialCost + orderCost;
 
               return (
-                <TableRow key={i}>
+                <TableRow key={rowIndex}>
                   <TableCell>{row.itemNr}</TableCell>
-                  <TableCell>{materialCost.toFixed(2)}</TableCell>
+                  <TableCell>{row.deliveryTime}</TableCell>
+                  <TableCell>{row.deviation}</TableCell>
+                  <TableCell>{row.usageRatioP1}</TableCell>
+                  <TableCell>{row.usageRatioP2}</TableCell>
+                  <TableCell>{row.usageRatioP3}</TableCell>
+                  <TableCell>{row.discountAmount}</TableCell>
+                  <TableCell>{row.amount}</TableCell>
+                  <TableCell>{row.grossRequirementN}</TableCell>
+                  <TableCell>{row.grossRequirementN1}</TableCell>
+                  <TableCell>{row.grossRequirementN2}</TableCell>
+                  <TableCell>{row.grossRequirementN3}</TableCell>
+                  <TableCell>
+                    <TextField
+                      sx={{ width: 100 }}
+                      size="small"
+                      type="number"
+                      defaultValue={0}
+                      onChange={(e) =>
+                        handleQuantityChange(rowIndex, parseFloat(e.target.value) || 0)
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Select
+                      variant="standard"
+                      size="small"
+                      value={modusSelections[rowIndex] || ""}
+                      onChange={(e) => handleModusChange(rowIndex, e.target.value)}
+                      displayEmpty
+                      fullWidth
+                    >
+                      <MenuItem value="" disabled>
+                        Modus wählen
+                      </MenuItem>
+                      {modusOptions.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </TableCell>
+                  <TableCell>
+                    {eta.toFixed(2)}
+                  </TableCell>
                   <TableCell>{orderCost.toFixed(2)}</TableCell>
                   <TableCell>{totalCost.toFixed(2)}</TableCell>
                 </TableRow>

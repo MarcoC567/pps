@@ -68,7 +68,6 @@ export const fixedHeaders = [
   "ArtikelNr.",
   "Lieferzeit",
   "Abweichung",
-  "Max Lieferzeit in Tagen",
   "P1",
   "P2",
   "P3",

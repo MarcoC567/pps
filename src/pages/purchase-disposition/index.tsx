@@ -48,7 +48,7 @@ export default function PurchaseDispositionPage() {
       <ProductionProgramTable productionData={productionData} />
       {loading ? (
         <div>
-          <Box sx={{ display: 'flex' }}>
+          <Box sx={{ display: 'flex', marginLeft: 40 }}>
             <CircularProgress />
           </Box>
         </div>
