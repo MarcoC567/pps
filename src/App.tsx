@@ -4,21 +4,22 @@ import Navbar from "./components/Navbar/navbar.tsx";
 import XmlImport from "./pages/xml-import/XMLimport.tsx";
 import LandingPage from "./pages/landing-page/landingpage.tsx";
 import { NavigationProvider } from "./context/Navigation/navigationContext";
-import ProductionPlanPage from "./pages/production-plan/productionPlanPage.tsx";
+import Forecast from "./pages/production-plan/productionPlanPage.tsx";
 import InhouseDispositionPage from "./pages/inhouse-disposition";
 import CapacityPlanPage from "./pages/capacity-plan";
 import PurchaseDispositionPage from "./pages/purchase-disposition";
 
 function App() {
   return (
-    <>
-      <Navbar></Navbar>
+    <BrowserRouter>
       <NavigationProvider>
-        <BrowserRouter>
+        <Navbar />
+        <main style={{ paddingTop: "5rem" }}>
+          {/* sorgt dafür, dass der Inhalt nicht hinter der Navbar liegt */}
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/xmlImport" element={<XmlImport />} />
-            <Route path="/production-plan" element={<ProductionPlanPage />} />
+            <Route path="/forecast" element={<Forecast />} />
             <Route
               path="/inhouse-disposition"
               element={<InhouseDispositionPage />}
@@ -29,9 +30,9 @@ function App() {
               element={<PurchaseDispositionPage />}
             />
           </Routes>
-        </BrowserRouter>
+        </main>
       </NavigationProvider>
-    </>
+    </BrowserRouter>
   );
 }
 

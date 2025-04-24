@@ -70,7 +70,7 @@ export default function XMLimport() {
         localStorage.setItem("importData", JSON.stringify(parsedData));
         console.log("XML erfolgreich importiert und geparst:", parsedData);
         setFileError(null);
-        navigate("/production-plan");
+        navigate("/forecast");
       } catch (error) {
         console.error("Fehler beim Parsen der XML-Datei:", error);
         setFileError(

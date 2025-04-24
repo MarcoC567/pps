@@ -28,11 +28,7 @@ export default function SalesForecastTable(props: {
     setSalesForecastData(props.salesForecastData);
   }, [props.salesForecastData]);
 
-  const handleChange = (
-    index: number,
-    key: "current" | "next",
-    value: string
-  ) => {
+  const handleChange = (index: number, key: "current", value: string) => {
     const updated = [...salesForecastData];
     updated[index][key] = Number(value) || 0;
     setSalesForecastData(updated);
@@ -41,74 +37,79 @@ export default function SalesForecastTable(props: {
   const salesSum = salesForecastData.reduce(
     (acc, row) => ({
       current: acc.current + row.current,
-      next: acc.next + row.next,
+      next: 0, // nicht mehr verwendet
     }),
     { current: 0, next: 0 }
   );
 
   return (
-    <div style={{ marginTop: "3rem" }}>
-      <Typography variant="h5" gutterBottom>
-        Verkaufswunsch
+    <div style={{ marginTop: "3rem", padding: "1rem" }}>
+      <Typography
+        variant="h5"
+        align="center"
+        sx={{ fontWeight: "bold", marginBottom: "1rem" }}
+      >
+        Vertriebswunsch
       </Typography>
 
-      <TableContainer component={Paper} sx={{ maxWidth: 600 }}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          maxWidth: 400,
+          margin: "0 auto", // zentriert die Tabelle
+          borderRadius: 3,
+          boxShadow: 3,
+          overflow: "hidden",
+        }}
+      >
         <Table size="small">
           <TableHead>
-            <TableRow>
-              <TableCell>Produkt</TableCell>
-              <TableCell>Periode (Aktuell)</TableCell>
-              <TableCell>Periode (n+1)</TableCell>
-              <TableCell>Periode (n+2)</TableCell>
-              <TableCell>Periode (n+3)</TableCell>
+            <TableRow sx={{ backgroundColor: "#f0f0f0" }}>
+              <TableCell sx={{ fontWeight: "bold" }}>Produkt</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                Vertriebswunsch
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {salesForecastData.map((row, idx) => (
-              <TableRow key={idx}>
-                <TableCell>{`${row.product}: `}</TableCell>
-                <TableCell>
+              <TableRow
+                key={idx}
+                hover
+                sx={{ "&:hover": { backgroundColor: "#f9f9f9" } }}
+              >
+                <TableCell>{row.product}</TableCell>
+                <TableCell align="center">
                   <TextField
                     type="number"
                     value={row.current}
                     onChange={(e) =>
                       handleChange(idx, "current", e.target.value)
                     }
-                    variant="standard"
-                    inputProps={{
-                      style: { textAlign: "center", width: "3rem" },
+                    variant="outlined"
+                    size="small"
+                    sx={{
+                      width: "4rem",
+                      input: {
+                        textAlign: "center",
+                        padding: "6px",
+                        borderRadius: "8px",
+                        backgroundColor: "#fdfdfd",
+                        border: "1px solid #ccc",
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": { border: "none" },
                     }}
                   />
                 </TableCell>
-                {[...Array(3)].map((_, i) => (
-                  <TableCell key={i}>
-                    <TextField
-                      type="number"
-                      value={row.next}
-                      onChange={(e) =>
-                        handleChange(idx, "next", e.target.value)
-                      }
-                      variant="standard"
-                      inputProps={{
-                        style: { textAlign: "center", width: "3rem" },
-                      }}
-                    />
-                  </TableCell>
-                ))}
               </TableRow>
             ))}
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell>
-                <strong>Summe: </strong>
+                <strong>Summe:</strong>
               </TableCell>
-              <TableCell>
+              <TableCell align="center">
                 <strong>{salesSum.current}</strong>
               </TableCell>
-              {[...Array(3)].map((_, i) => (
-                <TableCell key={i}>
-                  <strong>{salesSum.next}</strong>
-                </TableCell>
-              ))}
             </TableRow>
           </TableBody>
         </Table>

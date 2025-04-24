@@ -1,13 +1,14 @@
 import { Disclosure } from "@headlessui/react";
-import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const initialNavigation = [
   { name: "XML Import", href: "/xmlImport", current: false },
-  {
-    name: "Prognose/Produktionsplan",
-    href: "/production-plan",
-    current: false,
-  },
+  { name: "Prognose", href: "/forecast", current: false },
+  // {
+  //   name: "Prognose/Produktionsplan",
+  //   href: "/production-plan",
+  //   current: false,
+  // },
   {
     name: "Eigenfertigungsdisposition",
     href: "/inhouse-disposition",
@@ -26,16 +27,13 @@ function classNames(...classes: string[]) {
 }
 
 export default function Navbar() {
-  const [navigation, setNavigation] = useState(initialNavigation);
+  const location = useLocation();
+  const currentPath = location.pathname;
 
-  const handleNavClick = (clickedItemName: string) => {
-    setNavigation((prev) =>
-      prev.map((item) => ({
-        ...item,
-        current: item.name === clickedItemName,
-      }))
-    );
-  };
+  const navigation = initialNavigation.map((item) => ({
+    ...item,
+    current: item.href === currentPath,
+  }));
 
   return (
     <Disclosure
@@ -44,14 +42,11 @@ export default function Navbar() {
     >
       <div className="w-full min-h-[5vh] mx-auto max-w-full px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-center">
-          {" "}
           <div className="flex space-x-4 items-center">
-            {" "}
             {navigation.map((item) => (
               <a
                 key={item.name}
                 href={item.href}
-                onClick={() => handleNavClick(item.name)}
                 className={classNames(
                   item.current
                     ? "bg-gray-900 text-white"

@@ -25,6 +25,7 @@ export default function ForecastTable() {
 
   const [forecastData, setForecastData] =
     useState<ForecastData>(defaultForecast);
+
   const handleChange = (
     rowIndex: number,
     valueIndex: number,
@@ -45,13 +46,21 @@ export default function ForecastTable() {
         Prognosen
       </Typography>
 
-      <TableContainer component={Paper} sx={{ maxWidth: 1000 }}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          maxWidth: 1000,
+          borderRadius: 3,
+          boxShadow: 3,
+          overflow: "hidden",
+        }}
+      >
         <Table size="small">
           <TableHead>
-            <TableRow>
+            <TableRow sx={{ backgroundColor: "#f0f0f0" }}>
               <TableCell />
               {Array.from({ length: 4 }, (_, i) => (
-                <TableCell key={i} align="center">
+                <TableCell key={i} align="center" sx={{ fontWeight: "bold" }}>
                   Periode {`n+${i}`}
                 </TableCell>
               ))}
@@ -59,7 +68,11 @@ export default function ForecastTable() {
           </TableHead>
           <TableBody>
             {forecastData.map((row, rowIndex) => (
-              <TableRow key={rowIndex}>
+              <TableRow
+                key={rowIndex}
+                hover
+                sx={{ "&:hover": { backgroundColor: "#f9f9f9" } }}
+              >
                 <TableCell component="th" scope="row">
                   {row.product}
                 </TableCell>
@@ -71,10 +84,20 @@ export default function ForecastTable() {
                       onChange={(e) =>
                         handleChange(rowIndex, colIndex, e.target.value)
                       }
-                      variant="standard"
-                      inputProps={{
-                        min: 0,
-                        style: { textAlign: "center", width: "3rem" },
+                      variant="outlined"
+                      size="small"
+                      sx={{
+                        width: "4rem",
+                        input: {
+                          textAlign: "center",
+                          padding: "6px",
+                          borderRadius: "8px",
+                          backgroundColor: "#fdfdfd",
+                          border: "1px solid #ccc",
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          border: "none",
+                        },
                       }}
                     />
                   </TableCell>

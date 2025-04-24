@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import ForecastTable from "./ForecastTable.tsx";
 import SalesForecastTable from "./SalesForecastTable.tsx";
+import DirectSalesTable from "./DirectSalesTable.tsx";
 import StockAndQueueTable, { StockData } from "./StockAndQueueTable.tsx";
 import parts from "../../data/base-data/parts.json";
+import { Paper, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 // Typdefinitionen
 type SalesForecastRow = {
@@ -17,11 +20,27 @@ type ArtikelXML = {
   startamount: string;
 };
 
-export default function ProductionPlanPage() {
+type DirectSalesRow = {
+  product: string;
+  quantity: number;
+  price: number;
+  penalty: number;
+};
+
+export default function Forecast() {
   const [salesForecastData, setSalesForecastData] = useState<
     SalesForecastRow[]
   >([]);
   const [stockData, setStockData] = useState<StockData[]>([]);
+  const [directSalesData /*,setDirectSalesData*/] = useState<DirectSalesRow[]>([
+    { product: "P1 Children Bike", quantity: 0, price: 0.0, penalty: 0.0 },
+    { product: "P2 Women Bike", quantity: 0, price: 0.0, penalty: 0.0 },
+    { product: "P3 Men Bike", quantity: 0, price: 0.0, penalty: 0.0 },
+  ]);
+  const navigate = useNavigate();
+  const handleNextClick = () => {
+    navigate("/inhouse-disposition");
+  };
 
   useEffect(() => {
     const raw = localStorage.getItem("importData");
@@ -40,7 +59,7 @@ export default function ProductionPlanPage() {
       console.log("parsed WaitingList:", waitingList);
       const ordersInWork = parsed.results.ordersinwork?.workplace || [];
       console.log("parsed ordersInWork:", ordersInWork);
-      // === SALES FORECAST TABLE ===
+      // SALES FORECAST TABLE
       const sales: SalesForecastRow[] = [
         { product: "P1 Children Bike", current: 0, next: 0 },
         { product: "P2 Women Bike", current: 0, next: 0 },
@@ -48,7 +67,7 @@ export default function ProductionPlanPage() {
       ];
       setSalesForecastData(sales);
 
-      // === STOCK TABLE ===
+      // STOCK TABLE
       const waitingListMap: Record<number, number> = {};
       const inProductionMap: Record<number, number> = {};
 
@@ -70,22 +89,31 @@ export default function ProductionPlanPage() {
         const id = Number(order.item);
         inProductionMap[id] = (inProductionMap[id] || 0) + Number(order.amount);
       }
-
-      const warehouseStockData: StockData[] = articleList.map(
-        (a: ArtikelXML) => {
+      // Funktion um nur die Eigenerzeugnisse im Prognose Tab anzuzeigen KEINE Kaufteile
+      const warehouseStockData: StockData[] = articleList
+        .filter((a: ArtikelXML) => {
           const id = a.id;
-          const part = parts.artikel.find((p) =>
-            p.artikelnummer.startsWith(id)
-          );
+          const part = parts.artikel.find((p) => {
+            const partNum = parseInt(p.artikelnummer);
+            return partNum === Number(id);
+          });
+          return part?.produktart === "E"; // nur Eigenfertigung
+        })
+        .map((a: ArtikelXML) => {
+          const id = a.id;
+          const part = parts.artikel.find((p) => {
+            const partNum = parseInt(p.artikelnummer);
+            return partNum === Number(id);
+          });
+
           return {
             product: part ? `${id} ${part.bezeichnung}` : `Artikel ${id}`,
             stock: Number(a.amount),
-            endStock: Number(a.startamount),
+            endStock: 0,
             waitingList: waitingListMap[Number(id)] || 0,
             inProduction: inProductionMap[Number(id)] || 0,
           };
-        }
-      );
+        });
 
       console.log("Generiertes Stock-Data:", warehouseStockData);
       setStockData(warehouseStockData);
@@ -95,10 +123,52 @@ export default function ProductionPlanPage() {
   }, []);
 
   return (
-    <div>
-      <ForecastTable />
-      <SalesForecastTable salesForecastData={salesForecastData} />
-      <StockAndQueueTable stockData={stockData} />
+    <div style={{ padding: "1rem", display: "flex", justifyContent: "center" }}>
+      <Paper
+        elevation={4}
+        sx={{
+          padding: "2rem",
+          borderRadius: "16px",
+          width: "100%",
+          maxWidth: "95vw",
+          backgroundColor: "#fafafa",
+          boxSizing: "border-box",
+        }}
+      >
+        <Typography
+          variant="h4"
+          align="center"
+          gutterBottom
+          sx={{ fontWeight: "bold", mb: 4 }}
+        >
+          Prognose & Planung
+        </Typography>
+
+        <ForecastTable />
+
+        <div
+          style={{
+            display: "flex",
+            gap: "2rem",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            marginTop: "3rem",
+          }}
+        >
+          <SalesForecastTable salesForecastData={salesForecastData} />
+          <DirectSalesTable directSalesData={directSalesData} />
+        </div>
+
+        <div style={{ marginTop: "3rem" }}>
+          <StockAndQueueTable stockData={stockData} />
+        </div>
+        <button
+          onClick={handleNextClick}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200 flex items-center gap-2 mx-auto "
+        >
+          Weiter
+        </button>
+      </Paper>
     </div>
   );
 }
