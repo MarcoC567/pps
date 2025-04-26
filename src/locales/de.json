@@ -1,11 +1,5 @@
 {
 
-  "Tabs" :{
-
-    "Tab1XMLImport":{},
-
-    "Tab2Forecast": {
-
     "forecast": " Prognose & Planung",
     "forecastonly": "Prognose",
     "salesForecast": "Vertriebswunsch",
@@ -27,15 +21,46 @@
   "plannedStockAtTheEndOfThePeriod": "Geplanter Lagerbestand am ende der Periode",
   "queue": "Warteschlange",
   "contractInWork": "Aufträge in Bearbeitung",
-  "stockAndQueue": "Lagerbestand & Warteschlange"
-   },
+  "stockAndQueue": "Lagerbestand & Warteschlange",
 
-"Tab3InhousDisposition": {},
+  "article_4": "4 Hinterradgruppe",
+  "article_5": "5 Hinterradgruppe",
+  "article_6": "6 Hinterradgruppe",
+  "article_7": "7 Vorderradgruppe",
+  "article_8": "8 Vorderradgruppe",
+  "article_9": "9 Vorderradgruppe",
+  "article_10": "10 Schutzblech hinten",
+  "article_11": "11 Schutzblech hinten",
+  "article_12": "12 Schutzblech hinten",
+  "article_13": "13 Schutzblech vorne",
+  "article_14": "14 Schutzblech vorne",
+  "article_15": "15 Schutzblech vorne",
+  "article_16": "16 Lenker komplett",
+  "article_17": "17 Sattel komplett",
+  "article_18": "18 Rahmen",
+  "article_19": "19 Rahmen",
+  "article_20": "20 Rahmen",
+  "article_26": "26 Pedal komplett",
+  "article_29": "29 Vorderrad montiert",
+  "article_30": "30 Rahmen und Räder",
+  "article_31": "31 Fahrrad ohne Pedale",
+  "article_49": "49 Vorderrad komplett",
+  "article_50": "50 Rahmen und Räder",
+  "article_51": "51 Fahrrad ohne Pedale",
+  "article_54": "54 Vorderrad komplett",
+  "article_55": "55 Rahmen und Räder",
+  "article_56": "56 Fahrrad ohne Pedale",
 
-"Tab4KapacityPlan": {},
+  
+    "tooltip_article": "Hier stehen die Bezeichnungen der jeweiligen Eigenerzeugnisse.",
+    "tooltip_stock": "Der aktuelle Lagerbestand der aus der XML Datei gelesen wurde.",
+    "tooltip_plannedStock": "Bitte trage hier den Lagerbestand ein, den du gerne am Ende dieser Periode haben möchtest.",
+    "tooltip_queue": "Hier siehst du die Menge der Materialien, die aus der vorangegangenen Periode noch in der Warteschlange stehen und auf die Bearbeitung warten.",
+    "tooltip_contractInWork": "Hier siehst du die Menge der Materialien, die aus der vorangegangenen Periode noch in Bearbeitung sind."
+  
+  
+}
 
-"Tab5purchaseDisposition":{}
+  
 
-  }
-} 
   

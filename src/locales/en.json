@@ -1,7 +1,5 @@
 {
-  "Tabs" :{
-
-    "Tab2Forecast": {
+ 
 
     "forecast": "Forecast & Planning",
     "forecastonly": "Forecast",
@@ -24,14 +22,44 @@
   "plannedStockAtTheEndOfThePeriod": "Planned Stock at the end of the Period",
   "queue": "Queue",
   "contractInWork": "Contracts in Work",
-  "stockAndQueue": "Stock & Queue"
-    },
+  "stockAndQueue": "Stock & Queue",
+  
+ "article_4": "4 Rear Wheel Assembly",
+  "article_5": "5 Rear Wheel Assembly",
+  "article_6": "6 Rear Wheel Assembly",
+  "article_7": "7 Front Wheel Assembly",
+  "article_8": "8 Front Wheel Assembly",
+  "article_9": "9 Front Wheel Assembly",
+  "article_10": "10 Rear Mudguard",
+  "article_11": "11 Rear Mudguard",
+  "article_12": "12 Rear Mudguard",
+  "article_13": "13 Front Mudguard",
+  "article_14": "14 Front Mudguard",
+  "article_15": "15 Front Mudguard",
+  "article_16": "16 Handlebar Assembly",
+  "article_17": "17 Saddle Assembly",
+  "article_18": "18 Frame",
+  "article_19": "19 Frame",
+  "article_20": "20 Frame",
+  "article_26": "26 Pedal Assembly",
+  "article_29": "29 Mounted Front Wheel",
+  "article_30": "30 Frame and Wheels",
+  "article_31": "31 Bicycle without Pedals",
+  "article_49": "49 Complete Front Wheel",
+  "article_50": "50 Frame and Wheels",
+  "article_51": "51 Bicycle without Pedals",
+  "article_54": "54 Complete Front Wheel",
+  "article_55": "55 Frame and Wheels",
+  "article_56": "56 Bicycle without Pedals",
 
-  "Tab3InhousDisposition": {},
+  
+    "tooltip_article": "Here are the designations of the respective in-house produced items.",
+    "tooltip_stock": "The current stock level as read from the XML file.",
+    "tooltip_plannedStock": "Please enter the desired stock level you want to have at the end of this period.",
+    "tooltip_queue": "Here you can see the quantity of materials that are still in the queue from the previous period waiting for processing.",
+    "tooltip_contractInWork": "Here you can see the quantity of materials that are still in processing from the previous period."
 
-"Tab4KapacityPlan": {},
-
-"Tab5purchaseDisposition":{}
-
-  }
+  
 }
+
+  

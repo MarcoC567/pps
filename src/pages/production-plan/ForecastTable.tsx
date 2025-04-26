@@ -44,8 +44,12 @@ export default function ForecastTable() {
   );
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <Typography variant="h4" gutterBottom>
+    <div style={{ marginTop: "3rem", padding: "1rem" }}>
+      <Typography
+        variant="h5"
+        align="center"
+        sx={{ fontWeight: "bold", marginBottom: "1rem" }}
+      >
         {t("forecastonly")}
       </Typography>
 

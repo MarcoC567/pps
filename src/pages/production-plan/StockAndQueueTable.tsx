@@ -1,5 +1,3 @@
-//TODO Infoboxes und Lagerteile übersetzbar machen
-
 import {
   Table,
   TableBody,
@@ -44,7 +42,11 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
 
   return (
     <div style={{ marginTop: "3rem", padding: "1rem" }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography
+        variant="h5"
+        align="center"
+        sx={{ fontWeight: "bold", marginBottom: "1rem" }}
+      >
         {t("stockAndQueue")}
       </Typography>
 
@@ -62,11 +64,7 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
             <TableRow sx={{ backgroundColor: "#f0f0f0" }}>
               <TableCell sx={{ fontWeight: "bold" }}>
                 {t("article")}
-                <Tooltip
-                  title="Hier stehen die Bezeichnungen der jeweiligen Eigenerzeugnisse."
-                  placement="top"
-                  arrow
-                >
+                <Tooltip title={t("tooltip_article")} placement="top" arrow>
                   <InfoOutlinedIcon
                     sx={{
                       fontSize: 16,
@@ -79,11 +77,7 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
                 {t("stock")}
-                <Tooltip
-                  title="Der aktuelle Lagerbestand der aus der XML Datei gelesen wurde"
-                  placement="top"
-                  arrow
-                >
+                <Tooltip title={t("tooltip_stock")} placement="top" arrow>
                   <InfoOutlinedIcon
                     sx={{
                       fontSize: 16,
@@ -96,11 +90,7 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
                 {t("plannedStockAtTheEndOfThePeriod")}
-                <Tooltip
-                  title="Bitte trage hier den Lagerbestand ein den du gerne am Ende dieser Periode haben möchtest"
-                  placement="top"
-                  arrow
-                >
+                <Tooltip title={t("tooltip_planneStock")} placement="top" arrow>
                   <InfoOutlinedIcon
                     sx={{
                       fontSize: 16,
@@ -113,11 +103,7 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
                 {t("queue")}
-                <Tooltip
-                  title="Hier siehst du die Menge der Materialien die aus der vorangegangenen Periode noch in der Warteschlange stehen und auf die Bearbeitung warten."
-                  placement="top"
-                  arrow
-                >
+                <Tooltip title={t("tooltip_queue")} placement="top" arrow>
                   <InfoOutlinedIcon
                     sx={{
                       fontSize: 16,
@@ -131,7 +117,7 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
                 {t("contractInWork")}
                 <Tooltip
-                  title="Hier siehst du die Menge der Materialien die aus der vorangegangenen Periode noch in Bearbeitung sind."
+                  title={t("tooltip_contractInWork")}
                   placement="top"
                   arrow
                 >
@@ -158,7 +144,9 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
                   },
                 }}
               >
-                <TableCell>{row.product}</TableCell>
+                <TableCell>
+                  {t(`article_${row.product.split(" ")[0]}`)}
+                </TableCell>
                 {["stock", "endStock", "waitingList", "inProduction"].map(
                   (field) => {
                     const value =
