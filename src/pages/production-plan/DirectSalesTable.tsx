@@ -10,8 +10,8 @@ import {
   TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useLanguage } from "../../context/LanguageContext.tsx";
 
-// Typisierung für Direktverkauf
 type DirectSalesData = {
   product: string;
   quantity: number;
@@ -20,9 +20,9 @@ type DirectSalesData = {
 }[];
 
 const productToArticleId: Record<string, number> = {
-  "P1 Children Bike": 1,
-  "P2 Women Bike": 2,
-  "P3 Men Bike": 3,
+  p1ChildrenBike: 1,
+  p2WomenBike: 2,
+  p3MenBike: 3,
 };
 
 export default function DirectSalesTable(props: {
@@ -64,6 +64,8 @@ export default function DirectSalesTable(props: {
     { quantity: 0, price: 0, penalty: 0 }
   );
 
+  const { t } = useLanguage();
+
   return (
     <div style={{ marginTop: "3rem", padding: "1rem" }}>
       <Typography
@@ -71,7 +73,7 @@ export default function DirectSalesTable(props: {
         align="center"
         sx={{ fontWeight: "bold", marginBottom: "1rem" }}
       >
-        Direktverkauf
+        {t("directSales")}
       </Typography>
 
       <TableContainer
@@ -87,15 +89,15 @@ export default function DirectSalesTable(props: {
         <Table size="small">
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f0f0f0" }}>
-              <TableCell sx={{ fontWeight: "bold" }}>Produkt</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>{t("product")}</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Menge
+                {t("quantity")}
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Preis
+                {t("price")}
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Strafe
+                {t("penalty")}
               </TableCell>
             </TableRow>
           </TableHead>
@@ -106,7 +108,7 @@ export default function DirectSalesTable(props: {
                 hover
                 sx={{ "&:hover": { backgroundColor: "#f9f9f9" } }}
               >
-                <TableCell>{row.product}</TableCell>
+                <TableCell>{t(row.product)}</TableCell>
                 {["quantity", "price", "penalty"].map((key) => (
                   <TableCell key={key} align="center">
                     <TextField
@@ -141,7 +143,7 @@ export default function DirectSalesTable(props: {
             ))}
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell>
-                <strong>Summe:</strong>
+                <strong>{t("sum")}:</strong>
               </TableCell>
               <TableCell align="center">
                 <strong>{total.quantity}</strong>

@@ -6,8 +6,8 @@ import StockAndQueueTable, { StockData } from "./StockAndQueueTable.tsx";
 import parts from "../../data/base-data/parts.json";
 import { Paper, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../../context/LanguageContext.tsx";
 
-// Typdefinitionen
 type SalesForecastRow = {
   product: string;
   current: number;
@@ -33,9 +33,9 @@ export default function Forecast() {
   >([]);
   const [stockData, setStockData] = useState<StockData[]>([]);
   const [directSalesData /*,setDirectSalesData*/] = useState<DirectSalesRow[]>([
-    { product: "P1 Children Bike", quantity: 0, price: 0.0, penalty: 0.0 },
-    { product: "P2 Women Bike", quantity: 0, price: 0.0, penalty: 0.0 },
-    { product: "P3 Men Bike", quantity: 0, price: 0.0, penalty: 0.0 },
+    { product: "p1ChildrenBike", quantity: 0, price: 0.0, penalty: 0.0 },
+    { product: "p2WomenBike", quantity: 0, price: 0.0, penalty: 0.0 },
+    { product: "p3MenBike", quantity: 0, price: 0.0, penalty: 0.0 },
   ]);
   const navigate = useNavigate();
   const handleNextClick = () => {
@@ -61,9 +61,9 @@ export default function Forecast() {
       console.log("parsed ordersInWork:", ordersInWork);
       // SALES FORECAST TABLE
       const sales: SalesForecastRow[] = [
-        { product: "P1 Children Bike", current: 0, next: 0 },
-        { product: "P2 Women Bike", current: 0, next: 0 },
-        { product: "P3 Men Bike", current: 0, next: 0 },
+        { product: "p1ChildrenBike", current: 0, next: 0 },
+        { product: "p2WomenBike", current: 0, next: 0 },
+        { product: "p3MenBike", current: 0, next: 0 },
       ];
       setSalesForecastData(sales);
 
@@ -122,6 +122,8 @@ export default function Forecast() {
     }
   }, []);
 
+  const { t } = useLanguage();
+
   return (
     <div style={{ padding: "1rem", display: "flex", justifyContent: "center" }}>
       <Paper
@@ -141,7 +143,7 @@ export default function Forecast() {
           gutterBottom
           sx={{ fontWeight: "bold", mb: 4 }}
         >
-          Prognose & Planung
+          {t("forecast")}
         </Typography>
 
         <ForecastTable />
@@ -166,7 +168,7 @@ export default function Forecast() {
           onClick={handleNextClick}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200 flex items-center gap-2 mx-auto "
         >
-          Weiter
+          {t("next")}
         </button>
       </Paper>
     </div>

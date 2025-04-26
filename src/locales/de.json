@@ -1,0 +1,41 @@
+{
+
+  "Tabs" :{
+
+    "Tab1XMLImport":{},
+
+    "Tab2Forecast": {
+
+    "forecast": " Prognose & Planung",
+    "forecastonly": "Prognose",
+    "salesForecast": "Vertriebswunsch",
+    "directSales": "Direktverkauf",
+    "stockQueue": "Lagerbestand & Warteschlange",
+    "next": "Weiter",
+    "errorFillFields": "Bitte alle Pflichtfelder korrekt ausfüllen!",
+    "product": "Produkt",
+    "quantity": "Menge",
+    "price": "Preis",
+    "penalty": "Strafe",
+    "sum": "Summe",
+    "period": "Periode",
+  "p1ChildrenBike": "P1 Kinderfahrrad",
+  "p2WomenBike": "P2 Damenfahrrad",
+  "p3MenBike": "P3 Herrenfahrrad",
+  "article": "Artikel",
+  "stock": "Lagerbestand",
+  "plannedStockAtTheEndOfThePeriod": "Geplanter Lagerbestand am ende der Periode",
+  "queue": "Warteschlange",
+  "contractInWork": "Aufträge in Bearbeitung",
+  "stockAndQueue": "Lagerbestand & Warteschlange"
+   },
+
+"Tab3InhousDisposition": {},
+
+"Tab4KapacityPlan": {},
+
+"Tab5purchaseDisposition":{}
+
+  }
+} 
+  

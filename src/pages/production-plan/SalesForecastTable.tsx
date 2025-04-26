@@ -10,6 +10,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useLanguage } from "../../context/LanguageContext.tsx";
 
 type SalesForecastData = {
   product: string;
@@ -41,6 +42,7 @@ export default function SalesForecastTable(props: {
     }),
     { current: 0, next: 0 }
   );
+  const { t } = useLanguage();
 
   return (
     <div style={{ marginTop: "3rem", padding: "1rem" }}>
@@ -49,7 +51,7 @@ export default function SalesForecastTable(props: {
         align="center"
         sx={{ fontWeight: "bold", marginBottom: "1rem" }}
       >
-        Vertriebswunsch
+        {t("salesForecast")}
       </Typography>
 
       <TableContainer
@@ -78,7 +80,7 @@ export default function SalesForecastTable(props: {
                 hover
                 sx={{ "&:hover": { backgroundColor: "#f9f9f9" } }}
               >
-                <TableCell>{row.product}</TableCell>
+                <TableCell>{t(row.product)}</TableCell>
                 <TableCell align="center">
                   <TextField
                     type="number"
@@ -95,7 +97,9 @@ export default function SalesForecastTable(props: {
                         padding: "6px",
                         borderRadius: "8px",
                         backgroundColor: "#fdfdfd",
-                        border: "1px solid #ccc",
+                        border: `1px solid ${
+                          row.current === 0 ? "red" : "#ccc"
+                        }`,
                       },
                       "& .MuiOutlinedInput-notchedOutline": { border: "none" },
                     }}
@@ -105,7 +109,7 @@ export default function SalesForecastTable(props: {
             ))}
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell>
-                <strong>Summe:</strong>
+                <strong>{t("sum")}:</strong>
               </TableCell>
               <TableCell align="center">
                 <strong>{salesSum.current}</strong>

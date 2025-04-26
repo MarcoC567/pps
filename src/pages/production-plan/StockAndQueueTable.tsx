@@ -1,3 +1,5 @@
+//TODO Infoboxes und Lagerteile übersetzbar machen
+
 import {
   Table,
   TableBody,
@@ -12,6 +14,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { useLanguage } from "../../context/LanguageContext.tsx";
 
 export type StockData = {
   product: string;
@@ -23,6 +26,7 @@ export type StockData = {
 
 export default function StockAndQueueTable(props: { stockData: StockData[] }) {
   const [stockData, setStockData] = useState<StockData[]>([]);
+  const { t } = useLanguage();
 
   useEffect(() => {
     setStockData(props.stockData);
@@ -41,7 +45,7 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
   return (
     <div style={{ marginTop: "3rem", padding: "1rem" }}>
       <Typography variant="h5" gutterBottom>
-        Lagerbestand &amp; Warteschlange
+        {t("stockAndQueue")}
       </Typography>
 
       <TableContainer
@@ -57,7 +61,7 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f0f0f0" }}>
               <TableCell sx={{ fontWeight: "bold" }}>
-                Artikel
+                {t("article")}
                 <Tooltip
                   title="Hier stehen die Bezeichnungen der jeweiligen Eigenerzeugnisse."
                   placement="top"
@@ -74,7 +78,7 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
                 </Tooltip>
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Lagerbestand
+                {t("stock")}
                 <Tooltip
                   title="Der aktuelle Lagerbestand der aus der XML Datei gelesen wurde"
                   placement="top"
@@ -91,7 +95,7 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
                 </Tooltip>
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Gepl. Lagerbestand am Ende
+                {t("plannedStockAtTheEndOfThePeriod")}
                 <Tooltip
                   title="Bitte trage hier den Lagerbestand ein den du gerne am Ende dieser Periode haben möchtest"
                   placement="top"
@@ -108,7 +112,7 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
                 </Tooltip>
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Warteschlange
+                {t("queue")}
                 <Tooltip
                   title="Hier siehst du die Menge der Materialien die aus der vorangegangenen Periode noch in der Warteschlange stehen und auf die Bearbeitung warten."
                   placement="top"
@@ -125,7 +129,7 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
                 </Tooltip>
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Aufträge in Bearbeitung
+                {t("contractInWork")}
                 <Tooltip
                   title="Hier siehst du die Menge der Materialien die aus der vorangegangenen Periode noch in Bearbeitung sind."
                   placement="top"
@@ -160,11 +164,6 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
                     const value =
                       row[field as keyof Omit<StockData, "product">];
                     const isEndStock = field === "endStock";
-                    const borderColor = isEndStock
-                      ? value === 0
-                        ? "red"
-                        : "green"
-                      : "#ccc";
 
                     return (
                       <TableCell key={field} align="center">

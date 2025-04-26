@@ -1,0 +1,37 @@
+{
+  "Tabs" :{
+
+    "Tab2Forecast": {
+
+    "forecast": "Forecast & Planning",
+    "forecastonly": "Forecast",
+    "salesForecast": "Sales Wish",
+    "directSales": "Direct Sales",
+    "stockQueue": "Stock & Queue",
+    "next": "Next",
+    "errorFillFields": "Please fill out all required fields correctly!",
+      "product": "Product",
+      "quantity": "Quantity",
+      "price": "Price",
+      "penalty": "Penalty",
+      "sum": "Total",
+      "period": "Period",
+      "p1ChildrenBike": "P1 Children's Bike",
+  "p2WomenBike": "P2 Women's Bike",
+  "p3MenBike": " P3Men's Bike",
+  "article": "Article",
+  "stock": "Stock",
+  "plannedStockAtTheEndOfThePeriod": "Planned Stock at the end of the Period",
+  "queue": "Queue",
+  "contractInWork": "Contracts in Work",
+  "stockAndQueue": "Stock & Queue"
+    },
+
+  "Tab3InhousDisposition": {},
+
+"Tab4KapacityPlan": {},
+
+"Tab5purchaseDisposition":{}
+
+  }
+}

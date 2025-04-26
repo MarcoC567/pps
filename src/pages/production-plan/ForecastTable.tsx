@@ -10,6 +10,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useState } from "react";
+import { useLanguage } from "../../context/LanguageContext.tsx";
 
 type ForecastData = {
   product: string;
@@ -17,10 +18,12 @@ type ForecastData = {
 }[];
 
 export default function ForecastTable() {
+  const { t } = useLanguage();
+
   const defaultForecast: ForecastData = [
-    { product: "P1 Children Bike", values: [0, 0, 0, 0] },
-    { product: "P2 Women Bike", values: [0, 0, 0, 0] },
-    { product: "P3 Men Bike", values: [0, 0, 0, 0] },
+    { product: "p1ChildrenBike", values: [0, 0, 0, 0] },
+    { product: "p2WomenBike", values: [0, 0, 0, 0] },
+    { product: "p3MenBike", values: [0, 0, 0, 0] },
   ];
 
   const [forecastData, setForecastData] =
@@ -43,7 +46,7 @@ export default function ForecastTable() {
   return (
     <div style={{ padding: "2rem" }}>
       <Typography variant="h4" gutterBottom>
-        Prognosen
+        {t("forecastonly")}
       </Typography>
 
       <TableContainer
@@ -61,7 +64,7 @@ export default function ForecastTable() {
               <TableCell />
               {Array.from({ length: 4 }, (_, i) => (
                 <TableCell key={i} align="center" sx={{ fontWeight: "bold" }}>
-                  Periode {`n+${i}`}
+                  {t("period")} {`n+${i}`}
                 </TableCell>
               ))}
             </TableRow>
@@ -74,7 +77,7 @@ export default function ForecastTable() {
                 sx={{ "&:hover": { backgroundColor: "#f9f9f9" } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.product}
+                  {t(row.product)}
                 </TableCell>
                 {row.values.map((value, colIndex) => (
                   <TableCell key={colIndex} align="center">
@@ -93,7 +96,7 @@ export default function ForecastTable() {
                           padding: "6px",
                           borderRadius: "8px",
                           backgroundColor: "#fdfdfd",
-                          border: "1px solid #ccc",
+                          border: `1px solid ${value === 0 ? "red" : "#ccc"}`,
                         },
                         "& .MuiOutlinedInput-notchedOutline": {
                           border: "none",
@@ -106,7 +109,7 @@ export default function ForecastTable() {
             ))}
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell>
-                <strong>Summe</strong>
+                <strong>{t("sum")}</strong>
               </TableCell>
               {sumValues.map((val, i) => (
                 <TableCell key={i} align="center">
