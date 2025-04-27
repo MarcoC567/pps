@@ -11,7 +11,6 @@ import { useLanguage } from "../../context/LanguageContext.tsx";
 type SalesForecastRow = {
   product: string;
   current: number;
-  next: number;
 };
 
 type ArtikelXML = {
@@ -61,9 +60,9 @@ export default function Forecast() {
       console.log("parsed ordersInWork:", ordersInWork);
       // SALES FORECAST TABLE
       const sales: SalesForecastRow[] = [
-        { product: "p1ChildrenBike", current: 0, next: 0 },
-        { product: "p2WomenBike", current: 0, next: 0 },
-        { product: "p3MenBike", current: 0, next: 0 },
+        { product: "p1ChildrenBike", current: 0 },
+        { product: "p2WomenBike", current: 0 },
+        { product: "p3MenBike", current: 0 },
       ];
       setSalesForecastData(sales);
 

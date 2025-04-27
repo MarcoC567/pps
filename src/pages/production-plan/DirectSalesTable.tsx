@@ -19,6 +19,7 @@ type DirectSalesData = {
   penalty: number;
 }[];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const productToArticleId: Record<string, number> = {
   p1ChildrenBike: 1,
   p2WomenBike: 2,
@@ -29,6 +30,11 @@ export default function DirectSalesTable(props: {
   directSalesData: DirectSalesData;
 }) {
   const [directSalesData, setDirectSalesData] = useState<DirectSalesData>([]);
+
+  useEffect(() => {
+    const directsale = localStorage.getItem("selldirect");
+    if (directsale) setDirectSalesData(JSON.parse(directsale));
+  }, []);
 
   useEffect(() => {
     setDirectSalesData(props.directSalesData);
@@ -42,17 +48,7 @@ export default function DirectSalesTable(props: {
     const updated = [...directSalesData];
     updated[index][key] = Number(value) || 0;
     setDirectSalesData(updated);
-    saveToLocalStorage(updated);
-  };
-
-  const saveToLocalStorage = (data: DirectSalesData) => {
-    const xmlData = `<selldirect>\n${data
-      .map((row) => {
-        const articleId = productToArticleId[row.product];
-        return `  <item article="${articleId}" quantity="${row.quantity}" price="${row.price}" penalty="${row.penalty}"/>`;
-      })
-      .join("\n")}\n</selldirect>`;
-    localStorage.setItem("selldirect", xmlData);
+    localStorage.setItem("selldirect", JSON.stringify(updated));
   };
 
   const total = directSalesData.reduce(

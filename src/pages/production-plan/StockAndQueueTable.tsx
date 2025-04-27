@@ -27,6 +27,14 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
   const { t } = useLanguage();
 
   useEffect(() => {
+    const plannedStockAtTheEndOfThePeriod = localStorage.getItem(
+      "plannedStockAtTheEndOfThePeriod"
+    );
+    if (plannedStockAtTheEndOfThePeriod)
+      setStockData(JSON.parse(plannedStockAtTheEndOfThePeriod));
+  }, []);
+
+  useEffect(() => {
     setStockData(props.stockData);
   }, [props.stockData]);
 
@@ -38,6 +46,10 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
     const updated = [...stockData];
     updated[index][key] = Number(value) || 0;
     setStockData(updated);
+    localStorage.setItem(
+      "plannedStockAtTheEndOfThePeriod",
+      JSON.stringify(updated)
+    );
   };
 
   return (

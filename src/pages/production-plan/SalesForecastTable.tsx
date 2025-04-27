@@ -15,7 +15,6 @@ import { useLanguage } from "../../context/LanguageContext.tsx";
 type SalesForecastData = {
   product: string;
   current: number;
-  next: number;
 }[];
 
 export default function SalesForecastTable(props: {
@@ -26,6 +25,13 @@ export default function SalesForecastTable(props: {
   );
 
   useEffect(() => {
+    const savedSellWish = localStorage.getItem("sellwish");
+    if (savedSellWish) {
+      setSalesForecastData(JSON.parse(savedSellWish));
+    }
+  }, []);
+
+  useEffect(() => {
     setSalesForecastData(props.salesForecastData);
   }, [props.salesForecastData]);
 
@@ -33,14 +39,15 @@ export default function SalesForecastTable(props: {
     const updated = [...salesForecastData];
     updated[index][key] = Number(value) || 0;
     setSalesForecastData(updated);
+
+    localStorage.setItem("sellwish", JSON.stringify(updated));
   };
 
   const salesSum = salesForecastData.reduce(
     (acc, row) => ({
       current: acc.current + row.current,
-      next: 0, // nicht mehr verwendet
     }),
-    { current: 0, next: 0 }
+    { current: 0 }
   );
   const { t } = useLanguage();
 
@@ -58,7 +65,7 @@ export default function SalesForecastTable(props: {
         component={Paper}
         sx={{
           maxWidth: 400,
-          margin: "0 auto", // zentriert die Tabelle
+          margin: "0 auto",
           borderRadius: 3,
           boxShadow: 3,
           overflow: "hidden",
@@ -67,9 +74,9 @@ export default function SalesForecastTable(props: {
         <Table size="small">
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f0f0f0" }}>
-              <TableCell sx={{ fontWeight: "bold" }}>Produkt</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>{t("product")}</TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Vertriebswunsch
+                {t("salesForecast")}
               </TableCell>
             </TableRow>
           </TableHead>
@@ -98,7 +105,7 @@ export default function SalesForecastTable(props: {
                         borderRadius: "8px",
                         backgroundColor: "#fdfdfd",
                         border: `1px solid ${
-                          row.current === 0 ? "red" : "#ccc"
+                          row.current === 0 ? "red" : "green"
                         }`,
                       },
                       "& .MuiOutlinedInput-notchedOutline": { border: "none" },

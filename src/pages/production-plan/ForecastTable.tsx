@@ -9,7 +9,7 @@ import {
   Typography,
   TextField,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLanguage } from "../../context/LanguageContext.tsx";
 
 type ForecastData = {
@@ -29,6 +29,19 @@ export default function ForecastTable() {
   const [forecastData, setForecastData] =
     useState<ForecastData>(defaultForecast);
 
+  // Forecast beim ersten Laden aus localStorage holen
+  useEffect(() => {
+    const savedForecast = localStorage.getItem("forecastdata");
+    if (savedForecast) {
+      try {
+        setForecastData(JSON.parse(savedForecast));
+      } catch (error) {
+        console.error("Fehler beim Parsen der Forecast-Daten:", error);
+        setForecastData(defaultForecast);
+      }
+    }
+  }, []);
+
   const handleChange = (
     rowIndex: number,
     valueIndex: number,
@@ -37,11 +50,9 @@ export default function ForecastTable() {
     const updatedData = [...forecastData];
     updatedData[rowIndex].values[valueIndex] = Number(newValue) || 0;
     setForecastData(updatedData);
-  };
 
-  const sumValues = forecastData[0].values.map((_, i) =>
-    forecastData.reduce((sum, row) => sum + row.values[i], 0)
-  );
+    localStorage.setItem("forecastdata", JSON.stringify(updatedData));
+  };
 
   return (
     <div style={{ marginTop: "3rem", padding: "1rem" }}>
@@ -100,7 +111,7 @@ export default function ForecastTable() {
                           padding: "6px",
                           borderRadius: "8px",
                           backgroundColor: "#fdfdfd",
-                          border: `1px solid ${value === 0 ? "red" : "#ccc"}`,
+                          border: `1px solid ${value === 0 ? "red" : "green"}`,
                         },
                         "& .MuiOutlinedInput-notchedOutline": {
                           border: "none",
@@ -111,16 +122,23 @@ export default function ForecastTable() {
                 ))}
               </TableRow>
             ))}
-            <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
-              <TableCell>
-                <strong>{t("sum")}</strong>
-              </TableCell>
-              {sumValues.map((val, i) => (
-                <TableCell key={i} align="center">
-                  <strong>{val}</strong>
+            {forecastData.length > 0 && forecastData[0]?.values && (
+              <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
+                <TableCell>
+                  <strong>{t("sum")}</strong>
                 </TableCell>
-              ))}
-            </TableRow>
+                {forecastData[0].values.map((_, colIndex) => (
+                  <TableCell key={colIndex} align="center">
+                    <strong>
+                      {forecastData.reduce(
+                        (sum, row) => sum + (row.values?.[colIndex] || 0),
+                        0
+                      )}
+                    </strong>
+                  </TableCell>
+                ))}
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
