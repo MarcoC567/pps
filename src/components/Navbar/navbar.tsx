@@ -16,6 +16,7 @@ const initialNavigation = [
     href: "/purchase-disposition",
     current: false,
   },
+  { name: "XML Export", href: "/xmlExport", current: false },
 ];
 
 function classNames(...classes: string[]) {

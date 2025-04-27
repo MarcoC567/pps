@@ -5,6 +5,8 @@ import PurchaseDispositionTable from "./PurchaseDispositionTable";
 import { useState, useEffect } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Paper } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../../context/LanguageContext";
 
 type WareHouseStockData = {
   itemNr: number;
@@ -14,6 +16,11 @@ type WareHouseStockData = {
 export default function PurchaseDispositionPage() {
   const [wareHouseStockData, setWareHouseStockData] = useState<WareHouseStockData>();
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const handleNextClick = () => {
+    navigate("/xmlExport");
+  };
+  const { t } = useLanguage();
 
   useEffect(() => {
     const importData = JSON.parse(localStorage.getItem('importData') || '{}') as {
@@ -83,6 +90,13 @@ export default function PurchaseDispositionPage() {
             />
           )
         )}
+
+        <button
+          onClick={handleNextClick}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200 flex items-center gap-2 mx-auto "
+        >
+          {t("next")}
+        </button>
       </Paper>
     </div>
   );

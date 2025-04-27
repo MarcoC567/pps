@@ -3,8 +3,9 @@ import {
   TextField, Paper, Typography, Select, MenuItem, Tooltip
 } from "@mui/material";
 import { basicData, dynamicHeaders, fixedHeaders, modusDictionary, modusOptions } from "./const";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { OrderItem, useDataContext } from "../../context/DataContext";
 
 type InitialInventory = { itemNr: number; amount: number; }[];
 type ProductionData = { product: string; values: number[]; }[];
@@ -17,6 +18,7 @@ export default function PurchaseDispositionTable(props: {
   const productionData = props.productionData;
   const [modusSelections, setModusSelections] = useState<string[]>(Array(initialInventoryData.length).fill(""));
   const [orderQuantities, setOrderQuantities] = useState<number[]>(Array(initialInventoryData.length).fill(0));
+  const { setOrderList } = useDataContext();
 
   const handleQuantityChange = (index: number, value: number) => {
     const updated = [...orderQuantities];
@@ -54,6 +56,27 @@ export default function PurchaseDispositionTable(props: {
       grossRequirementN3: calculateGrossRequirement(data.usageRatioP1, data.usageRatioP2, data.usageRatioP3, 3),
     };
   });
+
+  useEffect(() => {
+    const currentOrderList: OrderItem[] = [];
+
+    rows.forEach((row, index) => {
+      try {
+        const order = {
+          article: row.itemNr,
+          quantity: orderQuantities[index] || 0,
+          modus: modusDictionary[modusSelections[index]].modus || 0,
+        };
+        currentOrderList.push(order);
+      } catch {
+        //console.error("This row doesnt have order data yet");
+      }
+    });
+
+    setOrderList(currentOrderList);
+    console.log(currentOrderList);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orderQuantities, modusSelections]);
 
   return (
     <div style={{ marginTop: "3rem", padding: "1rem" }}>

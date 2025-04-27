@@ -91,6 +91,7 @@ export const modusDictionary: Record<string, {
   priceFactor: number;
   discountFactor: number;
   orderCostFactor: number;
+  modus: number
 }> = {
   "Sonderbestellung": {
     deliveryTimeFactor: 1.0,
@@ -102,6 +103,7 @@ export const modusDictionary: Record<string, {
     priceFactor: 2.5,
     discountFactor: 1.0,
     orderCostFactor: 2.0,
+    modus: 1
   },
   "Billiganbieter": {
     deliveryTimeFactor: 3.0,
@@ -113,6 +115,7 @@ export const modusDictionary: Record<string, {
     priceFactor: 0.8,
     discountFactor: 0.8,
     orderCostFactor: 0.8,
+    modus: 2
   },
   "JIT": {
     deliveryTimeFactor: 0.0,
@@ -124,6 +127,7 @@ export const modusDictionary: Record<string, {
     priceFactor: 3.0,
     discountFactor: 1.0,
     orderCostFactor: 3.0,
+    modus: 3
   },
   "Eil": {
     deliveryTimeFactor: 0.0,
@@ -135,6 +139,7 @@ export const modusDictionary: Record<string, {
     priceFactor: 1.0,
     discountFactor: 1.0,
     orderCostFactor: 10.0,
+    modus: 4
   },
   "Normal": {
     deliveryTimeFactor: 0.0,
@@ -146,5 +151,6 @@ export const modusDictionary: Record<string, {
     priceFactor: 1.0,
     discountFactor: 0.9,
     orderCostFactor: 1.0,
+    modus: 5
   },
 };
