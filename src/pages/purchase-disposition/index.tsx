@@ -4,6 +4,7 @@ import ProductionProgramTable from "./ProductionProgramTable";
 import PurchaseDispositionTable from "./PurchaseDispositionTable";
 import { useState, useEffect } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
+import { Paper } from "@mui/material";
 
 type WareHouseStockData = {
   itemNr: number;
@@ -15,15 +16,25 @@ export default function PurchaseDispositionPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const importData: object = JSON.parse(localStorage.getItem('importData') || '{}');
-    console.log(importData)
-    setWareHouseStockData(items.map((itemNumber) => {
-      const amount: string = importData["results"]["warehousestock"]["article"][(itemNumber - 1).toString()]?.amount ?? "0";
-      return {
-        itemNr: itemNumber,
-        amount: Number(amount),
+    const importData = JSON.parse(localStorage.getItem('importData') || '{}') as {
+      results?: {
+        warehousestock?: {
+          article?: Record<string, { amount?: string }>;
+        };
       };
-    }));
+    };
+
+    console.log(importData);
+
+    setWareHouseStockData(
+      items.map((itemNumber) => {
+        const amount: string = importData.results?.warehousestock?.article?.[`${itemNumber - 1}`]?.amount ?? "0";
+        return {
+          itemNr: itemNumber,
+          amount: Number(amount),
+        };
+      })
+    );
 
     setTimeout(() => setLoading(false), 1000);
   }, []);
@@ -44,22 +55,35 @@ export default function PurchaseDispositionPage() {
   ];
 
   return (
-    <div>
-      <ProductionProgramTable productionData={productionData} />
-      {loading ? (
-        <div>
-          <Box sx={{ display: 'flex', marginLeft: 40 }}>
-            <CircularProgress />
-          </Box>
-        </div>
-      ) : (
-        wareHouseStockData && (
-          <PurchaseDispositionTable
-            initialInventoryData={wareHouseStockData}
-            productionData={productionData}
-          />
-        )
-      )}
+    <div style={{ padding: "1rem", display: "flex", justifyContent: "center" }}>
+      <Paper
+        elevation={4}
+        sx={{
+          padding: "2rem",
+          borderRadius: "16px",
+          width: "100%",
+          maxWidth: "95vw",
+          backgroundColor: "#fafafa",
+          boxSizing: "border-box",
+        }}
+      >
+        <ProductionProgramTable productionData={productionData} />
+        {loading ? (
+          <div>
+            <Box sx={{ display: 'flex', marginLeft: 40 }}>
+              <CircularProgress />
+            </Box>
+          </div>
+        ) : (
+          wareHouseStockData && (
+
+            <PurchaseDispositionTable
+              initialInventoryData={wareHouseStockData}
+              productionData={productionData}
+            />
+          )
+        )}
+      </Paper>
     </div>
   );
 }
