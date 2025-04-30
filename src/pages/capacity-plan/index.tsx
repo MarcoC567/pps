@@ -1,3 +1,5 @@
+import CapacityTable from "./capacityTable";
+
 export default function CapacityPlanPage() {
-  return <div>Capacity Plan Page</div>;
+  return <CapacityTable></CapacityTable>;
 }

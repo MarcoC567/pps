@@ -2,28 +2,29 @@ import { Disclosure } from "@headlessui/react";
 import { useLocation } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageContext"; // <-- import Language-Context
 
-const initialNavigation = [
-  { name: "XML Import", href: "/xmlImport", current: false },
-  { name: "Prognose", href: "/forecast", current: false },
-  {
-    name: "Eigenfertigungsdisposition",
-    href: "/inhouse-disposition",
-    current: false,
-  },
-  { name: "Kapazitätsplan", href: "/capacity-plan", current: false },
-  {
-    name: "Kaufteildisposition",
-    href: "/purchase-disposition",
-    current: false,
-  },
-  { name: "XML Export", href: "/xmlExport", current: false },
-];
-
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Navbar() {
+  const { t } = useLanguage();
+
+  const initialNavigation = [
+    { name: t("XMLimport"), href: "/xmlImport", current: false },
+    { name: t("forecastonly"), href: "/forecast", current: false },
+    {
+      name: t("inhouse-disposition"),
+      href: "/inhouse-disposition",
+      current: false,
+    },
+    { name: t("capacityPlan"), href: "/capacity-plan", current: false },
+    {
+      name: t("purchasePartsDisposition"),
+      href: "/purchase-disposition",
+      current: false,
+    },
+    { name: t("XML Export"), href: "/xmlExport", current: false },
+  ];
   const location = useLocation();
   const currentPath = location.pathname;
 

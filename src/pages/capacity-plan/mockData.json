@@ -1,0 +1,373 @@
+{
+
+    "workstation1": {
+        "E49":{
+            "multiplicator": 6,
+            "amount": 100
+        },
+        "E54":{
+            "multiplicator": 6,
+            "amount": 100
+        },
+        "E29":{
+            "multiplicator": 6,
+            "amount": 100
+        },
+        "setup_time": 20,
+        "total_capacity_need_last_period": 200,
+        "total_setup_time_last_period": 150
+        
+    },
+    "workstation2": {
+        "E50":{
+            "multiplicator": 5,
+            "amount": 200
+        },
+        "E55":{
+            "multiplicator": 5,
+            "amount": 200
+        },
+        "E30":{
+            "multiplicator": 5,
+            "amount": 200
+        },
+        "setup_time": 30,
+        "total_capacity_need_last_period": 200,
+        "total_setup_time_last_period": 250
+        
+    },
+    "workstation3": {
+        "E51":{
+            "multiplicator": 5,
+            "amount": 300
+        },
+        "E56":{
+            "multiplicator": 6,
+            "amount": 300
+        },
+        "E31":{
+            "multiplicator": 6,
+            "amount": 300
+        },
+        "setup_time": 20,
+        "total_capacity_need_last_period": 300,
+        "total_setup_time_last_period": 350
+        
+    },
+    "workstation4": {
+        "P1":{
+            "multiplicator": 6,
+            "amount": 400
+        },
+        "P2":{
+            "multiplicator": 7,
+            "amount": 400
+        },
+        "P3":{
+            "multiplicator": 7,
+            "amount": 400
+        },
+        "setup_time": 30,
+        "total_capacity_need_last_period": 400,
+        "total_setup_time_last_period": 450
+        
+    },
+    "workstation6": {
+        "E16":{
+            "multiplicator": 2,
+            "amount": 600
+        },
+        "E18":{
+            "multiplicator": 3,
+            "amount": 600
+        },
+        "E19":{
+            "multiplicator": 3,
+            "amount": 600
+        },
+        "E20":{
+            "multiplicator": 3,
+            "amount": 600
+        },
+        "setup_time": 15,
+        "total_capacity_need_last_period": 500,
+        "total_setup_time_last_period": 550
+        
+    },
+    "workstation7": {
+        "E10":{
+            "multiplicator": 2,
+            "amount": 700
+        },
+        "E11":{
+            "multiplicator": 2,
+            "amount": 700
+        },
+        "E12":{
+            "multiplicator": 2,
+            "amount": 700
+        },
+        "E13":{
+            "multiplicator": 2,
+            "amount": 700
+        },
+        "E14":{
+            "multiplicator": 2,
+            "amount": 700
+        },
+        "E15":{
+            "multiplicator": 2,
+            "amount": 700
+        },
+        "E18":{
+            "multiplicator": 2,
+            "amount": 700
+        },
+        "E19":{
+            "multiplicator": 2,
+            "amount": 700
+        },
+        "E20":{
+            "multiplicator": 2,
+            "amount": 700
+        },
+        "E26":{
+            "multiplicator": 2,
+            "amount": 700
+        },
+        "setup_time": 20,
+        "total_capacity_need_last_period": 600,
+        "total_setup_time_last_period": 650
+        
+    },
+    "workstation8": {
+        "E10":{
+            "multiplicator": 1,
+            "amount": 800
+        },
+        "E11":{
+            "multiplicator": 2,
+            "amount": 800
+        },
+        "E12":{
+            "multiplicator": 2,
+            "amount": 800
+        },
+        "E13":{
+            "multiplicator": 1,
+            "amount": 800
+        },
+        "E14":{
+            "multiplicator": 2,
+            "amount": 800
+        },
+        "E15":{
+            "multiplicator": 2,
+            "amount": 800
+        },
+        "E18":{
+            "multiplicator": 3,
+            "amount": 800
+        },
+        "E19":{
+            "multiplicator": 3,
+            "amount": 800
+        },
+        "E20":{
+            "multiplicator": 3,
+            "amount": 800
+        },
+        "setup_time": 15,
+        "total_capacity_need_last_period": 700,
+        "total_setup_time_last_period": 750
+        
+    },
+    "workstation9": {
+        "E10":{
+            "multiplicator": 3,
+            "amount": 900
+        },
+        "E11":{
+            "multiplicator": 3,
+            "amount": 900
+        },
+        "E12":{
+            "multiplicator": 3,
+            "amount": 900
+        },
+        "E13":{
+            "multiplicator": 3,
+            "amount": 900
+        },
+        "E14":{
+            "multiplicator": 3,
+            "amount": 900
+        },
+        "E15":{
+            "multiplicator": 3,
+            "amount": 900
+        },
+        "E18":{
+            "multiplicator": 3,
+            "amount": 900
+        },
+        "E19":{
+            "multiplicator": 3,
+            "amount": 900
+        },
+        "E20":{
+            "multiplicator": 3,
+            "amount": 900
+        },
+        "setup_time": 15,
+        "total_capacity_need_last_period": 900,
+        "total_setup_time_last_period": 950
+        
+    },
+    "workstation10": {
+        "E4":{
+            "multiplicator": 4,
+            "amount": 1000
+        },
+        "E5":{
+            "multiplicator": 4,
+            "amount": 1000
+        },
+        "E6":{
+            "multiplicator": 4,
+            "amount": 1000
+        },
+        "E7":{
+            "multiplicator": 4,
+            "amount": 1000
+        },
+        "E8":{
+            "multiplicator": 4,
+            "amount": 1000
+        },
+        "E9":{
+            "multiplicator": 4,
+            "amount": 1000
+        },
+
+        "setup_time": 20,
+        "total_capacity_need_last_period": 900,
+        "total_setup_time_last_period": 950
+        
+    },
+    "workstation11": {
+        "E4":{
+            "multiplicator": 3,
+            "amount": 1100
+        },
+        "E5":{
+            "multiplicator": 3,
+            "amount": 1100
+        },
+        "E6":{
+            "multiplicator": 3,
+            "amount": 1100
+        },
+        "E7":{
+            "multiplicator": 3,
+            "amount": 1100
+        },
+        "E8":{
+            "multiplicator": 3,
+            "amount": 1100
+        },
+        "E9":{
+            "multiplicator": 3,
+            "amount": 1100
+        },
+        "setup_time": [10,20],
+        "total_capacity_need_last_period": 1000,
+        "total_setup_time_last_period": 1050
+        
+    },
+    "workstation12": {
+        "E10":{
+            "multiplicator": 3,
+            "amount": 1200
+        },
+        "E11":{
+            "multiplicator": 3,
+            "amount": 1200
+        },
+        "E12":{
+            "multiplicator": 3,
+            "amount": 1200
+        },
+        "E13":{
+            "multiplicator": 3,
+            "amount": 1200
+        },
+        "E14":{
+            "multiplicator": 3,
+            "amount": 1200
+        },
+        "E15":{
+            "multiplicator": 3,
+            "amount": 1200
+        },
+        "setup_time": 0,
+        "total_capacity_need_last_period": 1100,
+        "total_setup_time_last_period": 1150
+        
+    },
+    "workstation13": {
+        "E10":{
+            "multiplicator": 2,
+            "amount": 1300
+        },
+        "E11":{
+            "multiplicator": 2,
+            "amount": 1300
+        },
+        "E12":{
+            "multiplicator": 2,
+            "amount": 1300
+        },
+        "E13":{
+            "multiplicator": 2,
+            "amount": 1300
+        },
+        "E14":{
+            "multiplicator": 2,
+            "amount": 1300
+        },
+        "E15":{
+            "multiplicator": 2,
+            "amount": 1300
+        },
+        "setup_time": 0,
+        "total_capacity_need_last_period": 122,
+        "total_setup_time_last_period": 250
+        
+    },
+    "workstation14": {
+        "E16":{
+            "multiplicator": 3,
+            "amount": 1400
+        },
+        "setup_time": 0,
+        "total_capacity_need_last_period": 200,
+        "total_setup_time_last_period": 250
+        
+    },
+    "workstation15": {
+        "E17":{
+            "multiplicator": 3,
+            "amount": 1500
+        },
+        "E26":{
+            "multiplicator": 3,
+            "amount": 1500
+        },
+       
+        "setup_time": 15,
+        "total_capacity_need_last_period": 200,
+        "total_setup_time_last_period": 250
+        
+    }
+}

@@ -22,6 +22,20 @@
   "queue": "Warteschlange",
   "contractInWork": "Aufträge in Bearbeitung",
   "stockAndQueue": "Lagerbestand & Warteschlange",
+  "inhouse-disposition": "Eigenfertigungsdisposition",
+  "XMLimport": "XML Import",
+  "capacityPlan": "Kapazitätsplan",
+  "purchasePartsDisposition": "Kaufteildisposition",
+  "XMLexport": "XML Export",
+  "orderAmount":"Herstellmenge",
+  "capacity_last_period": "Kapazitätsanforderung vorherige Period",
+  "capacity_new":"Kapazitätsanforderung neu",
+  "capacity_setup_time_old_period":"Umrüstzeit vorherige Periode",
+  "capacity_setup_time_new": "Umrüstzeit neu",
+  "total_capacity": "Gesamtkapazität",
+  "shifts":"Schichten",
+  "overtime": "Überstunden",
+
 
   "article_4": "4 Hinterradgruppe",
   "article_5": "5 Hinterradgruppe",
@@ -56,10 +70,18 @@
     "tooltip_stock": "Der aktuelle Lagerbestand der aus der XML Datei gelesen wurde.",
     "tooltip_plannedStock": "Bitte trage hier den Lagerbestand ein, den du gerne am Ende dieser Periode haben möchtest.",
     "tooltip_queue": "Hier siehst du die Menge der Materialien, die aus der vorangegangenen Periode noch in der Warteschlange stehen und auf die Bearbeitung warten.",
-    "tooltip_contractInWork": "Hier siehst du die Menge der Materialien, die aus der vorangegangenen Periode noch in Bearbeitung sind."
-  
-  
-}
+    "tooltip_contractInWork": "Hier siehst du die Menge der Materialien, die aus der vorangegangenen Periode noch in Bearbeitung sind.",
+    "tooltip_capacity_last_period": "Hier siehst du die Kapazitätsanforderung der letzten Periode, die nicht erfüllt werden konnte und daher noch in der Warteschlange oder in der Bearbeitung liegt in Minuten",
+    "tooltip_capacity_new": "Hier siehst du die Kapazitätsanforderung der aktuellen Periode. Sie wird errechnet durch den Multiplikator mal der Anzahl des Produktionsteils",
+    "tooltip_capacity_setup_time_last_period": "Hier siehst du die Rüstzeit die von der vorherrigen Periode übrig geblieben ist.",
+    "tooltip_capacity_setup_time_new": "Hier siehst du die gesamte Rüstzeit für die aktuelle Periode. Sie wird errechnet durch das Multiplizieren ihres Richtwerts mal der Anzahl an Spalteneinträge.",
+    "tooltip_total_Capacity": "Hier siehst du die gesamte Kapazität der Periode unter berücksichtigung der altlasten aus der Vorperiode.",
+    "tooltip_Shifts": "Hier siehst du die Anzahl der Schichten die in dieser Periode gefahren werden. Du kannst dies anpassen, wobei mindestens eine und maximal drei angegeben werden können.",
+    "tooltip_overtime": "Hier siehst du die Gesamtanzahl der Überstunden in Minuten, die in dieser Periode gefahren werden."
+
+
+
+  }
 
   
 
