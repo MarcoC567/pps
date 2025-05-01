@@ -66,7 +66,13 @@ export default function CapacityTable() {
 
   const handleNextClick = () => {
     const list = workstationKeys.map((wsKey) => {
-      const entry = shiftData[wsKey] || getShiftData(wsKey, 0);
+      const calculatedMinutes =
+        calculatedCapacities[wsKey] +
+        (Array.isArray(workstations[wsKey]?.setup_time)
+          ? workstations[wsKey]?.setup_time[0] || 0
+          : workstations[wsKey]?.setup_time || 0);
+
+      const entry = shiftData[wsKey] || getShiftData(wsKey, calculatedMinutes);
       const stationNumber = wsKey.replace("workstation", "");
       return {
         station: stationNumber,
@@ -84,7 +90,8 @@ export default function CapacityTable() {
     key: "shifts" | "overtime",
     value: string
   ) => {
-    const numValue = Math.max(0, Number(value) || 0);
+    let numValue = Math.max(0, Number(value) || 0);
+    if (key === "shifts") numValue = Math.min(numValue, 3);
 
     setShiftData((prev) => {
       const updated = {
@@ -428,7 +435,10 @@ export default function CapacityTable() {
                     <TableCell key={ws} align="center">
                       <TextField
                         type="number"
-                        value={getShiftData(ws, totalMinutes).shifts}
+                        value={
+                          shiftData[ws]?.shifts ??
+                          getShiftData(ws, totalMinutes).shifts
+                        }
                         onChange={(e) =>
                           handleShiftChange(ws, "shifts", e.target.value)
                         }
@@ -474,10 +484,33 @@ export default function CapacityTable() {
                     (Array.isArray(workstations[ws]?.setup_time)
                       ? workstations[ws]?.setup_time[0]
                       : workstations[ws]?.setup_time || 0);
-                  const overtime = calculateOvertime(totalMinutes);
+                  const overtime =
+                    shiftData[ws]?.overtime ?? calculateOvertime(totalMinutes);
+
                   return (
                     <TableCell key={ws} align="center">
-                      {overtime}
+                      <TextField
+                        type="number"
+                        value={shiftData[ws]?.overtime ?? overtime}
+                        onChange={(e) =>
+                          handleShiftChange(ws, "overtime", e.target.value)
+                        }
+                        variant="outlined"
+                        size="small"
+                        sx={{
+                          width: "4rem",
+                          input: {
+                            textAlign: "center",
+                            padding: "6px",
+                            borderRadius: "8px",
+                            backgroundColor: "#fdfdfd",
+                            border: "1px solid #ccc",
+                          },
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            border: "none",
+                          },
+                        }}
+                      />
                     </TableCell>
                   );
                 })}
