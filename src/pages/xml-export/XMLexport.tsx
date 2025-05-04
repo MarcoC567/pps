@@ -1,30 +1,42 @@
 import { Paper, Typography } from "@mui/material";
-import { useDataContext } from "../../context/DataContext";
-
+import { OrderEntry } from "../purchase-disposition/PurchaseDispositionTable";
+import { SalesForecastData } from "../production-plan/SalesForecastTable";
+import { modusDictionary } from "../purchase-disposition/const";
 
 export default function ExportPage() {
-    const { sellWish, sellDirect, orderList, productionList, workingTimeList } = useDataContext();
+    // Load and parse saved data from localStorage
+    const sellWish: SalesForecastData = JSON.parse(localStorage.getItem("sellwish") || "[]");
+    //const sellDirect = JSON.parse(localStorage.getItem("sellDirect") || "[]");
+    const orderList: OrderEntry[] = JSON.parse(localStorage.getItem("orderList") || "[]");
+    // const productionList = JSON.parse(localStorage.getItem("productionList") || "[]");
+    // const workingTimeList = JSON.parse(localStorage.getItem("workingTimeList") || "[]");
+
+    console.log("sellWish", sellWish);
+    console.log("orderList", orderList);
 
     const exportXML = async () => {
         const xmlContent = `
-  <input>
-    <qualitycontrol type="no" losequantity="0" delay="0"/>
-    <sellwish>
-      ${sellWish.map(item => `<item article="${item.article}" quantity="${item.quantity}"/>`).join("\n    ")}
-    </sellwish>
-    <selldirect>
-      ${sellDirect.map(item => `<item article="${item.article}" quantity="${item.quantity}" price="${item.price}" penalty="${item.penalty}"/>`).join("\n    ")}
-    </selldirect>
-    <orderlist>
-      ${orderList.map(order => `<order article="${order.article}" quantity="${order.quantity}" modus="${order.modus}"/>`).join("\n    ")}
-    </orderlist>
-    <productionlist>
-      ${productionList.map(prod => `<production article="${prod.article}" quantity="${prod.quantity}"/>`).join("\n    ")}
-    </productionlist>
-    <workingtimelist>
-      ${workingTimeList.map(wt => `<workingtime station="${wt.station}" shift="${wt.shift}" overtime="${wt.overtime}"/>`).join("\n    ")}
-    </workingtimelist>
-  </input>`.trim();
+<input>
+  <qualitycontrol type="no" losequantity="0" delay="0"/>
+  <sellwish>
+    ${sellWish.map((item, index) => `<item article="${index + 1}" quantity="${item.current}"/>`).join("\n    ")}
+  </sellwish>
+  <selldirect>
+    
+  </selldirect>
+  <orderlist>
+    ${orderList
+                .filter(order => order.quantity !== 0 && order.modus != "")
+                .map(order => `<order article="${order.article}" quantity="${order.quantity}" modus="${modusDictionary[order.modus].modus}"/>`)
+                .join("\n    ")}
+  </orderlist>
+  <productionlist>
+    
+  </productionlist>
+  <workingtimelist>
+    
+  </workingtimelist>
+</input>`.trim();
 
         try {
             const handle = await window.showSaveFilePicker({
@@ -41,7 +53,6 @@ export default function ExportPage() {
         } catch (error) {
             console.error("File save cancelled or failed:", error);
         }
-
     };
 
     return (
@@ -62,12 +73,14 @@ export default function ExportPage() {
                     align="center"
                     sx={{ fontWeight: "bold", marginBottom: "1rem" }}
                 >
-                    Export XML File for Simulation
+                    Export XML Inputfile für Simulation
                 </Typography>
                 <button
                     onClick={exportXML}
                     className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200 flex items-center gap-2 mx-auto "
-                >Generate XML</button>
+                >
+                    XML herunterladen
+                </button>
             </Paper>
         </div>
     );

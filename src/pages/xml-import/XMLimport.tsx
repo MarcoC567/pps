@@ -67,6 +67,8 @@ export default function XMLimport() {
       try {
         const parsedData = parser.parse(event.target?.result as string);
         setJsonData(parsedData);
+        // Clear local storage by import new XML Data
+        localStorage.clear();
         localStorage.setItem("importData", JSON.stringify(parsedData));
         console.log("XML erfolgreich importiert und geparst:", parsedData);
         setFileError(null);

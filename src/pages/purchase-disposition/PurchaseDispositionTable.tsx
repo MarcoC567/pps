@@ -3,12 +3,12 @@ import {
   TextField, Paper, Typography, Select, MenuItem, Tooltip
 } from "@mui/material";
 import { basicData, dynamicHeaders, fixedHeaders, modusDictionary, modusOptions } from "./const";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { OrderItem, useDataContext } from "../../context/DataContext";
 
 type InitialInventory = { itemNr: number; amount: number; }[];
 type ProductionData = { product: string; values: number[]; }[];
+export type OrderEntry = { article: number, quantity: number; modus: string };
 
 export default function PurchaseDispositionTable(props: {
   initialInventoryData: InitialInventory;
@@ -16,67 +16,60 @@ export default function PurchaseDispositionTable(props: {
 }) {
   const initialInventoryData = props.initialInventoryData;
   const productionData = props.productionData;
-  const [modusSelections, setModusSelections] = useState<string[]>(Array(initialInventoryData.length).fill(""));
-  const [orderQuantities, setOrderQuantities] = useState<number[]>(Array(initialInventoryData.length).fill(0));
-  const { setOrderList } = useDataContext();
 
-  const handleQuantityChange = (index: number, value: number) => {
-    const updated = [...orderQuantities];
-    updated[index] = value;
-    setOrderQuantities(updated);
-  };
-
-  const handleModusChange = (rowIndex: number, value: string) => {
-    const updatedSelections = [...modusSelections];
-    updatedSelections[rowIndex] = value;
-    setModusSelections(updatedSelections);
-  };
-
-  const rows = initialInventoryData.map((item, index) => {
-    const data = basicData[index];
-    const calculateGrossRequirement = (u1: number, u2: number, u3: number, idx: number) =>
-      u1 * productionData[0].values[idx] +
-      u2 * productionData[1].values[idx] +
-      u3 * productionData[2].values[idx];
-
-    return {
-      itemNr: item.itemNr,
-      amount: item.amount,
-      discountAmount: data.discountQuantity,
-      deliveryTime: data.deliveryTime,
-      deviation: data.deliveryTimeDeviation,
-      usageRatioP1: data.usageRatioP1,
-      usageRatioP2: data.usageRatioP2,
-      usageRatioP3: data.usageRatioP3,
-      deliveryCost: data.deliveryCost,
-      startPrice: data.startPrice,
-      grossRequirementN: calculateGrossRequirement(data.usageRatioP1, data.usageRatioP2, data.usageRatioP3, 0),
-      grossRequirementN1: calculateGrossRequirement(data.usageRatioP1, data.usageRatioP2, data.usageRatioP3, 1),
-      grossRequirementN2: calculateGrossRequirement(data.usageRatioP1, data.usageRatioP2, data.usageRatioP3, 2),
-      grossRequirementN3: calculateGrossRequirement(data.usageRatioP1, data.usageRatioP2, data.usageRatioP3, 3),
-    };
+  const [orderList, setOrderList] = useState<OrderEntry[]>(() => {
+    const saved = localStorage.getItem("orderList");
+    return saved ? JSON.parse(saved) : initialInventoryData.map((item) => {
+      return {
+        article: item.itemNr,
+        quantity: 0,
+        modus: "",
+      }
+    });
   });
 
   useEffect(() => {
-    const currentOrderList: OrderItem[] = [];
+    localStorage.setItem("orderList", JSON.stringify(orderList));
+  }, [orderList]);
 
-    rows.forEach((row, index) => {
-      try {
-        const order = {
-          article: row.itemNr,
-          quantity: orderQuantities[index] || 0,
-          modus: modusDictionary[modusSelections[index]].modus || 0,
-        };
-        currentOrderList.push(order);
-      } catch {
-        //console.error("This row doesnt have order data yet");
-      }
+  const handleQuantityChange = (index: number, value: number) => {
+    const updated = [...orderList];
+    updated[index].quantity = value;
+    setOrderList(updated);
+  };
+
+  const handleModusChange = (index: number, value: string) => {
+    const updated = [...orderList];
+    updated[index].modus = value;
+    setOrderList(updated);
+  };
+
+  const rows = useMemo(() => {
+    return initialInventoryData.map((item, index) => {
+      const data = basicData[index];
+      const calculateGrossRequirement = (u1: number, u2: number, u3: number, idx: number) =>
+        u1 * productionData[0].values[idx] +
+        u2 * productionData[1].values[idx] +
+        u3 * productionData[2].values[idx];
+
+      return {
+        itemNr: item.itemNr,
+        amount: item.amount,
+        discountAmount: data.discountQuantity,
+        deliveryTime: data.deliveryTime,
+        deviation: data.deliveryTimeDeviation,
+        usageRatioP1: data.usageRatioP1,
+        usageRatioP2: data.usageRatioP2,
+        usageRatioP3: data.usageRatioP3,
+        deliveryCost: data.deliveryCost,
+        startPrice: data.startPrice,
+        grossRequirementN: calculateGrossRequirement(data.usageRatioP1, data.usageRatioP2, data.usageRatioP3, 0),
+        grossRequirementN1: calculateGrossRequirement(data.usageRatioP1, data.usageRatioP2, data.usageRatioP3, 1),
+        grossRequirementN2: calculateGrossRequirement(data.usageRatioP1, data.usageRatioP2, data.usageRatioP3, 2),
+        grossRequirementN3: calculateGrossRequirement(data.usageRatioP1, data.usageRatioP2, data.usageRatioP3, 3),
+      };
     });
-
-    setOrderList(currentOrderList);
-    console.log(currentOrderList);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orderQuantities, modusSelections]);
+  }, [initialInventoryData, productionData]);
 
   return (
     <div style={{ marginTop: "3rem", padding: "1rem" }}>
@@ -118,9 +111,10 @@ export default function PurchaseDispositionTable(props: {
           </TableHead>
           <TableBody>
             {rows.map((row, rowIndex) => {
-              const selectedModus = modusSelections[rowIndex];
+              const entry = orderList[rowIndex];
+              const selectedModus = entry.modus;
+              const orderQuantity = entry.quantity;
               const factors = modusDictionary[selectedModus];
-              const orderQuantity = orderQuantities[rowIndex] || 0;
               const eta = factors ? (row.deliveryTime! * factors.deliveryDeadlineFactor + row.deviation! * factors.deliveryDeviationExtra) * 5 : 0;
               const unitCost = (orderQuantity >= row.discountAmount && selectedModus === "Normal")
                 ? 0.9 * row.startPrice!
@@ -150,7 +144,7 @@ export default function PurchaseDispositionTable(props: {
                   <TableCell>
                     <TextField
                       type="number"
-                      value={orderQuantities[rowIndex]}
+                      value={entry.quantity}
                       onChange={(e) => handleQuantityChange(rowIndex, parseFloat(e.target.value) || 0)}
                       variant="outlined"
                       size="small"
@@ -171,7 +165,7 @@ export default function PurchaseDispositionTable(props: {
                     <Select
                       variant="outlined"
                       size="small"
-                      value={modusSelections[rowIndex] || ""}
+                      value={entry.modus || ""}
                       onChange={(e) => handleModusChange(rowIndex, e.target.value)}
                       displayEmpty
                       sx={{
@@ -193,25 +187,18 @@ export default function PurchaseDispositionTable(props: {
             })}
             <TableRow sx={{ backgroundColor: "#f0f0f0", fontWeight: "bold" }}>
               <TableCell sx={{ fontWeight: "bold" }}>Summe der Gesamtkosten</TableCell>
-              {/* Empty cells to align correctly */}
-              {Array(15).fill(null).map((_, i) => (
-                <TableCell key={i} />
-              ))}
-
-              {/* Total Sum */}
+              {Array(15).fill(null).map((_, i) => <TableCell key={i} />)}
               <TableCell align="center">
                 <strong>
                   {rows.reduce((sum, _, rowIndex) => {
-                    const selectedModus = modusSelections[rowIndex];
-                    const factors = modusDictionary[selectedModus];
-                    const orderQuantity = orderQuantities[rowIndex] || 0;
-                    const unitCost = (orderQuantity >= rows[rowIndex].discountAmount && selectedModus === "Normal")
+                    const { modus, quantity } = orderList[rowIndex];
+                    const factors = modusDictionary[modus];
+                    const unitCost = (quantity >= rows[rowIndex].discountAmount && modus === "Normal")
                       ? 0.9 * rows[rowIndex].startPrice!
                       : rows[rowIndex].startPrice!;
-                    const materialCost = factors ? factors.priceFactor * unitCost * orderQuantity : 0;
-                    const orderCost = orderQuantity > 0 ? (factors ? rows[rowIndex].deliveryCost! * factors.orderCostFactor : 0) : 0;
-                    const totalCost = materialCost + orderCost;
-                    return sum + totalCost;
+                    const materialCost = factors ? factors.priceFactor * unitCost * quantity : 0;
+                    const orderCost = quantity > 0 ? (factors ? rows[rowIndex].deliveryCost! * factors.orderCostFactor : 0) : 0;
+                    return sum + materialCost + orderCost;
                   }, 0).toFixed(2)}
                 </strong>
               </TableCell>
