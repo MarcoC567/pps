@@ -69,7 +69,7 @@ export default function PurchaseDispositionPage() {
           padding: "2rem",
           borderRadius: "16px",
           width: "100%",
-          maxWidth: "95vw",
+          maxWidth: 1400,
           backgroundColor: "#fafafa",
           boxSizing: "border-box",
         }}

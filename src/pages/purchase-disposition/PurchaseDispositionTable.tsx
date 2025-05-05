@@ -83,9 +83,9 @@ export default function PurchaseDispositionTable(props: {
 
       <TableContainer
         component={Paper}
-        sx={{ maxWidth: 1000, borderRadius: 3, boxShadow: 3, overflow: "contain" }}
+        sx={{ maxWidth: 1400, width: "100%", margin: "0 auto", borderRadius: 3, boxShadow: 3, overflow: "contain" }}
       >
-        <Table size="small">
+        <Table size="medium">
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f0f0f0" }}>
               {[...fixedHeaders, ...dynamicHeaders, "ETA (Tagen)", "Bestellkosten (€)", "Gesamtkosten (€)"].map((header, i) => (

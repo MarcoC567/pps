@@ -40,8 +40,8 @@ export default function ProductionProgramTable(props: { productionData: Producti
             </Typography>
 
             <TableContainer component={Paper} sx={{
-                maxWidth: 1000,
-                borderRadius: 3,
+                maxWidth: 1400, width: "50%",
+                borderRadius: 3, margin: "0 auto",
                 boxShadow: 3, overflowX: 'auto'
             }}>
                 <Table sx={{ minWidth: 650 }} size="small" aria-label="production table">
