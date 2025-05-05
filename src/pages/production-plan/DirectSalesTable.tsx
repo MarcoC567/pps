@@ -12,7 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { useLanguage } from "../../context/LanguageContext.tsx";
 
-type DirectSalesData = {
+export type DirectSalesData = {
   product: string;
   quantity: number;
   price: number;

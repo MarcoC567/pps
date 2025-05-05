@@ -1,3 +1,4 @@
+//TODO evtl die zugehörigkeit zum endprodukt darstellen durch mapping bzw. eig ist die Liste immer gleich könnte man evtl. auch hard codieren.
 import {
   Table,
   TableBody,
@@ -32,10 +33,9 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
     );
     if (plannedStockAtTheEndOfThePeriod)
       setStockData(JSON.parse(plannedStockAtTheEndOfThePeriod));
-  }, []);
-
-  useEffect(() => {
-    setStockData(props.stockData);
+    else {
+      setStockData(props.stockData);
+    }
   }, [props.stockData]);
 
   const handleChange = (

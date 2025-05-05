@@ -28,6 +28,7 @@
   "capacityPlan": "Capacity plan",
   "purchasePartsDisposition": "Purchase disposition",
   "XMLexport": "XML Export",
+  "ProductionPlan": "Production Plan",
 
   "orderAmount":"Production Quantity",
   "capacity_last_period": "Capacity Demand Previous Period",
