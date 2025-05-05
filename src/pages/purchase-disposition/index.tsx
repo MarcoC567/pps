@@ -43,7 +43,7 @@ export default function PurchaseDispositionPage() {
       })
     );
 
-    setTimeout(() => setLoading(false), 1000);
+    setTimeout(() => setLoading(false), 100);
   }, []);
 
   const productionData = [

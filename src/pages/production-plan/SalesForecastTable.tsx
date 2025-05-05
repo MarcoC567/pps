@@ -12,7 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { useLanguage } from "../../context/LanguageContext.tsx";
 
-type SalesForecastData = {
+export type SalesForecastData = {
   product: string;
   current: number;
 }[];
@@ -104,9 +104,8 @@ export default function SalesForecastTable(props: {
                         padding: "6px",
                         borderRadius: "8px",
                         backgroundColor: "#fdfdfd",
-                        border: `1px solid ${
-                          row.current === 0 ? "red" : "green"
-                        }`,
+                        border: `1px solid ${row.current === 0 ? "red" : "green"
+                          }`,
                       },
                       "& .MuiOutlinedInput-notchedOutline": { border: "none" },
                     }}
