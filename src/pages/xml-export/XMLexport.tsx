@@ -1,6 +1,7 @@
 import { Paper, Typography } from "@mui/material";
 import { OrderEntry } from "../purchase-disposition/PurchaseDispositionTable";
 import { SalesForecastData } from "../production-plan/SalesForecastTable";
+import { DirectSalesData } from "../production-plan/DirectSalesTable";
 import { modusOptions } from "../purchase-disposition/const";
 import { useLanguage } from "../../context/LanguageContext";
 
@@ -9,6 +10,10 @@ export default function ExportPage() {
   // Load and parse saved data from localStorage
   const sellWish: SalesForecastData = JSON.parse(
     localStorage.getItem("sellwish") || "[]"
+  );
+
+  const sellDirect: DirectSalesData = JSON.parse(
+    localStorage.getItem("selldirect") || "[]"
   );
   //const sellDirect = JSON.parse(localStorage.getItem("sellDirect") || "[]");
   const orderList: OrderEntry[] = JSON.parse(
@@ -36,7 +41,13 @@ export default function ExportPage() {
       .join("\n    ")}
   </sellwish>
   <selldirect>
-    
+  ${sellDirect
+    .map((entry, index) => {
+      return `<item article="${index + 1}" quantity="${
+        entry.quantity
+      }" price="${entry.price}" penalty="${entry.penalty}"/>`;
+    })
+    .join("\n    ")}
   </selldirect>
   <orderlist>
     ${orderList

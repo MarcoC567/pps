@@ -36,6 +36,7 @@
   "total_capacity": "Gesamtkapazität",
   "shifts":"Schichten",
   "overtime": "Überstunden",
+  "ProductionPlan": "Produktionsplan",
   "delieveryTime": "Lieferzeit",
   "deviation": "Abweichung",
   "discountedAmount": "Diskontmenge",

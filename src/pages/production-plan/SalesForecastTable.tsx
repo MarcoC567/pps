@@ -28,11 +28,9 @@ export default function SalesForecastTable(props: {
     const savedSellWish = localStorage.getItem("sellwish");
     if (savedSellWish) {
       setSalesForecastData(JSON.parse(savedSellWish));
+    } else {
+      setSalesForecastData(props.salesForecastData);
     }
-  }, []);
-
-  useEffect(() => {
-    setSalesForecastData(props.salesForecastData);
   }, [props.salesForecastData]);
 
   const handleChange = (index: number, key: "current", value: string) => {
@@ -104,8 +102,9 @@ export default function SalesForecastTable(props: {
                         padding: "6px",
                         borderRadius: "8px",
                         backgroundColor: "#fdfdfd",
-                        border: `1px solid ${row.current === 0 ? "red" : "green"
-                          }`,
+                        border: `1px solid ${
+                          row.current === 0 ? "red" : "green"
+                        }`,
                       },
                       "& .MuiOutlinedInput-notchedOutline": { border: "none" },
                     }}
