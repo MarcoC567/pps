@@ -2,9 +2,10 @@ import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   TextField, Paper, Typography, Select, MenuItem, Tooltip
 } from "@mui/material";
-import { basicData, dynamicHeaders, fixedHeaders, modusDictionary, modusOptions } from "./const";
+import { basicData, modusOptions } from "./const";
 import { useEffect, useMemo, useState } from "react";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { useLanguage } from "../../context/LanguageContext";
 
 type InitialInventory = { itemNr: number; amount: number; }[];
 type ProductionData = { product: string; values: number[]; }[];
@@ -14,6 +15,22 @@ export default function PurchaseDispositionTable(props: {
   initialInventoryData: InitialInventory;
   productionData: ProductionData;
 }) {
+  const { t } = useLanguage()
+  const fixedHeaders = [
+    t("article"),
+    t("delieveryTime"),
+    t("deviation"),
+    "P1",
+    "P2",
+    "P3",
+    t("discountedAmount"),
+    t("initial_stock_in_period_n"),
+    "n",
+    "n+1",
+    "n+2",
+    "n+3",
+  ];
+  const dynamicHeaders = [t("quantity"), t("mode")];
   const initialInventoryData = props.initialInventoryData;
   const productionData = props.productionData;
 
@@ -78,7 +95,7 @@ export default function PurchaseDispositionTable(props: {
         align="center"
         sx={{ fontWeight: "bold", marginBottom: "1rem" }}
       >
-        Kaufteildisposition
+        {t("purchasePartsDisposition")}
       </Typography>
 
       <TableContainer
@@ -88,19 +105,19 @@ export default function PurchaseDispositionTable(props: {
         <Table size="medium">
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f0f0f0" }}>
-              {[...fixedHeaders, ...dynamicHeaders, "ETA (Tagen)", "Bestellkosten (€)", "Gesamtkosten (€)"].map((header, i) => (
+              {[...fixedHeaders, ...dynamicHeaders, t("eta"), t("orderCost"), t("totalCost")].map((header, i) => (
                 <TableCell key={i} sx={{ fontWeight: "bold" }}>
-                  {header.includes("ETA") ? (
+                  {header.includes(t("eta")) ? (
                     <>
                       {header}
-                      <Tooltip title="ETA = (Lieferzeit + Abweichung) * 5. Mit einer Wahrscheinlichkeit von 93 % entspricht dieser Wert der zu erwartenden maximalen Lieferzeit. Mit einer Wahrscheinlichkeit von 7 % ist eine um 1 bis 3 Tage längere Lieferzeit als der ETA zu erwarten" placement="top" arrow>
+                      <Tooltip title={t("tooltip_eta")} placement="top" arrow>
                         <InfoOutlinedIcon sx={{ fontSize: 16, verticalAlign: "middle", color: "gray", cursor: "pointer" }} />
                       </Tooltip>
                     </>
-                  ) : header.includes("Gesamtkosten") ? (
+                  ) : header.includes(t("totalCost")) ? (
                     <>
                       {header}
-                      <Tooltip title="Gesamtkosten = Materialkosten + Bestellkosten" placement="top" arrow>
+                      <Tooltip title={t("tooltip_totalCost")} placement="top" arrow>
                         <InfoOutlinedIcon sx={{ fontSize: 16, verticalAlign: "middle", color: "gray", cursor: "pointer" }} />
                       </Tooltip>
                     </>
@@ -114,9 +131,9 @@ export default function PurchaseDispositionTable(props: {
               const entry = orderList[rowIndex];
               const selectedModus = entry.modus;
               const orderQuantity = entry.quantity;
-              const factors = modusDictionary[selectedModus];
+              const factors = modusOptions.find(option => option.key == selectedModus);
               const eta = factors ? (row.deliveryTime! * factors.deliveryDeadlineFactor + row.deviation! * factors.deliveryDeviationExtra) * 5 : 0;
-              const unitCost = (orderQuantity >= row.discountAmount && selectedModus === "Normal")
+              const unitCost = (orderQuantity >= row.discountAmount && selectedModus === "normal")
                 ? 0.9 * row.startPrice!
                 : row.startPrice!;
               const materialCost = factors ? factors.priceFactor * unitCost * orderQuantity : 0;
@@ -173,9 +190,9 @@ export default function PurchaseDispositionTable(props: {
                         "& .MuiOutlinedInput-notchedOutline": { borderRadius: "8px" }
                       }}
                     >
-                      <MenuItem value="" disabled>Modus wählen</MenuItem>
+                      <MenuItem value="" disabled>{t("selectMode")}</MenuItem>
                       {modusOptions.map((option) => (
-                        <MenuItem key={option} value={option}>{option}</MenuItem>
+                        <MenuItem key={option.key} value={option.key}>{t(option.key)}</MenuItem>
                       ))}
                     </Select>
                   </TableCell>
@@ -186,14 +203,14 @@ export default function PurchaseDispositionTable(props: {
               );
             })}
             <TableRow sx={{ backgroundColor: "#f0f0f0", fontWeight: "bold" }}>
-              <TableCell sx={{ fontWeight: "bold" }}>Summe der Gesamtkosten</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>{t("sum_of_the_total_costs")}</TableCell>
               {Array(15).fill(null).map((_, i) => <TableCell key={i} />)}
               <TableCell align="center">
                 <strong>
                   {rows.reduce((sum, _, rowIndex) => {
                     const { modus, quantity } = orderList[rowIndex];
-                    const factors = modusDictionary[modus];
-                    const unitCost = (quantity >= rows[rowIndex].discountAmount && modus === "Normal")
+                    const factors = modusOptions.find(option => option.key == modus);
+                    const unitCost = (quantity >= rows[rowIndex].discountAmount && modus === "normal")
                       ? 0.9 * rows[rowIndex].startPrice!
                       : rows[rowIndex].startPrice!;
                     const materialCost = factors ? factors.priceFactor * unitCost * quantity : 0;

@@ -1,9 +1,11 @@
 import { Paper, Typography } from "@mui/material";
 import { OrderEntry } from "../purchase-disposition/PurchaseDispositionTable";
 import { SalesForecastData } from "../production-plan/SalesForecastTable";
-import { modusDictionary } from "../purchase-disposition/const";
+import { modusOptions } from "../purchase-disposition/const";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function ExportPage() {
+  const { t } = useLanguage()
   // Load and parse saved data from localStorage
   const sellWish: SalesForecastData = JSON.parse(
     localStorage.getItem("sellwish") || "[]"
@@ -43,7 +45,7 @@ export default function ExportPage() {
         (order) =>
           `<order article="${order.article}" quantity="${
             order.quantity
-          }" modus="${modusDictionary[order.modus].modus}"/>`
+          }" modus="${modusOptions.find(option => option.key == order.modus)?.modus}"/>`
       )
       .join("\n    ")}
   </orderlist>
@@ -63,7 +65,7 @@ export default function ExportPage() {
 
     try {
       const handle = await window.showSaveFilePicker({
-        suggestedName: "simulation.xml",
+        suggestedName: "Input_Data_For_Simulation.xml",
         types: [
           {
             description: "XML Files",
@@ -98,13 +100,13 @@ export default function ExportPage() {
           align="center"
           sx={{ fontWeight: "bold", marginBottom: "1rem" }}
         >
-          Export XML Inputfile für Simulation
+          {t("export_xml_title")}
         </Typography>
         <button
           onClick={exportXML}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200 flex items-center gap-2 mx-auto "
         >
-          XML herunterladen
+          {t("xml_download")}
         </button>
       </Paper>
     </div>

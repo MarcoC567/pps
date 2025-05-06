@@ -63,25 +63,8 @@ export const basicData = itemAdditionalData.map(
   }
 );
 
-
-export const fixedHeaders = [
-  "ArtikelNr.",
-  "Lieferzeit",
-  "Abweichung",
-  "P1",
-  "P2",
-  "P3",
-  "Diskontmenge",
-  "Anfangsbestand in Periode n",
-  "n",
-  "n+1",
-  "n+2",
-  "n+3",
-];
-export const dynamicHeaders = ["Menge", "Modus"];
-export const modusOptions = ["Sonderbestellung", "Billiganbieter", "JIT", "Eil", "Normal"];
-
-export const modusDictionary: Record<string, {
+type OrderModeData = {
+  key: string;
   deliveryTimeFactor: number;
   deliveryTimeDeviation: number;
   deliveryDeadlineFactor: number;
@@ -92,65 +75,72 @@ export const modusDictionary: Record<string, {
   discountFactor: number;
   orderCostFactor: number;
   modus: number
-}> = {
-  "Sonderbestellung": {
-    deliveryTimeFactor: 1.0,
-    deliveryTimeDeviation: 0.1,
-    deliveryDeadlineFactor: 0.4,
-    deliveryDeviationExtra: 0.0,
-    quantityFactor: 1.0,
-    quantityDeviation: 0.0,
-    priceFactor: 2.5,
-    discountFactor: 1.0,
-    orderCostFactor: 2.0,
-    modus: 1
-  },
-  "Billiganbieter": {
-    deliveryTimeFactor: 3.0,
-    deliveryTimeDeviation: 0.5,
-    deliveryDeadlineFactor: 1.3,
-    deliveryDeviationExtra: 2.0,
-    quantityFactor: 0.9,
-    quantityDeviation: 10.0,
-    priceFactor: 0.8,
-    discountFactor: 0.8,
-    orderCostFactor: 0.8,
-    modus: 2
-  },
-  "JIT": {
-    deliveryTimeFactor: 0.0,
-    deliveryTimeDeviation: 0.0,
-    deliveryDeadlineFactor: 0.2,
-    deliveryDeviationExtra: 0.0,
-    quantityFactor: 1.0,
-    quantityDeviation: 0.0,
-    priceFactor: 3.0,
-    discountFactor: 1.0,
-    orderCostFactor: 3.0,
-    modus: 3
-  },
-  "Eil": {
-    deliveryTimeFactor: 0.0,
-    deliveryTimeDeviation: 0.0,
-    deliveryDeadlineFactor: 0.5,
-    deliveryDeviationExtra: 0.0,
-    quantityFactor: 1.0,
-    quantityDeviation: 0.0,
-    priceFactor: 1.0,
-    discountFactor: 1.0,
-    orderCostFactor: 10.0,
-    modus: 4
-  },
-  "Normal": {
-    deliveryTimeFactor: 0.0,
-    deliveryTimeDeviation: 0.0,
-    deliveryDeadlineFactor: 1.0,
-    deliveryDeviationExtra: 1.0,
-    quantityFactor: 1.0,
-    quantityDeviation: 0.0,
-    priceFactor: 1.0,
-    discountFactor: 0.9,
-    orderCostFactor: 1.0,
-    modus: 5
-  },
-};
+}
+
+export const modusOptions: Array<OrderModeData> = [
+    {
+      key: "special_order",
+      deliveryTimeFactor: 1.0,
+      deliveryTimeDeviation: 0.1,
+      deliveryDeadlineFactor: 0.4,
+      deliveryDeviationExtra: 0.0,
+      quantityFactor: 1.0,
+      quantityDeviation: 0.0,
+      priceFactor: 2.5,
+      discountFactor: 1.0,
+      orderCostFactor: 2.0,
+      modus: 1
+    },
+    {
+      key: "cheap_vendor",
+      deliveryTimeFactor: 3.0,
+      deliveryTimeDeviation: 0.5,
+      deliveryDeadlineFactor: 1.3,
+      deliveryDeviationExtra: 2.0,
+      quantityFactor: 0.9,
+      quantityDeviation: 10.0,
+      priceFactor: 0.8,
+      discountFactor: 0.8,
+      orderCostFactor: 0.8,
+      modus: 2
+    },
+    {
+      key: "jit",
+      deliveryTimeFactor: 0.0,
+      deliveryTimeDeviation: 0.0,
+      deliveryDeadlineFactor: 0.2,
+      deliveryDeviationExtra: 0.0,
+      quantityFactor: 1.0,
+      quantityDeviation: 0.0,
+      priceFactor: 3.0,
+      discountFactor: 1.0,
+      orderCostFactor: 3.0,
+      modus: 3
+    },
+    {
+      key: "fast",
+      deliveryTimeFactor: 0.0,
+      deliveryTimeDeviation: 0.0,
+      deliveryDeadlineFactor: 0.5,
+      deliveryDeviationExtra: 0.0,
+      quantityFactor: 1.0,
+      quantityDeviation: 0.0,
+      priceFactor: 1.0,
+      discountFactor: 1.0,
+      orderCostFactor: 10.0,
+      modus: 4
+    },
+    {
+      key: "normal",
+      deliveryTimeFactor: 0.0,
+      deliveryTimeDeviation: 0.0,
+      deliveryDeadlineFactor: 1.0,
+      deliveryDeviationExtra: 1.0,
+      quantityFactor: 1.0,
+      quantityDeviation: 0.0,
+      priceFactor: 1.0,
+      discountFactor: 0.9,
+      orderCostFactor: 1.0,
+      modus: 5
+    },
+  ];
