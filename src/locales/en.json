@@ -56,6 +56,9 @@
   "normal": "Normal",
   "export_xml_title": "Export XML input file for Simulation",
   "xml_download": "Download XML",
+  "futureInwardStockMovement": "Future inward stock movement",
+  "orderPeriod": "Order period",
+  "inward_stock_movement": "Inward stock movement (Period-Day)",
   
  "article_4": "4 Rear Wheel Assembly",
   "article_5": "5 Rear Wheel Assembly",

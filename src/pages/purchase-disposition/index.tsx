@@ -7,6 +7,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageContext";
+import FutureInwardStockTable from "./FutureInwardStockTable";
 
 type WareHouseStockData = {
   itemNr: number;
@@ -75,6 +76,7 @@ export default function PurchaseDispositionPage() {
         }}
       >
         <ProductionProgramTable productionData={productionData} />
+        <FutureInwardStockTable/>
         {loading ? (
           <div>
             <Box sx={{ display: 'flex', marginLeft: 40 }}>

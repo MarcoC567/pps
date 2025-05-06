@@ -54,6 +54,9 @@
   "normal": "Normal",
   "export_xml_title": "Export XML Eingabedatei für Simulation",
   "xml_download": "XML herunterladen",
+  "futureInwardStockMovement": "Zukünftige Lagerzugang",
+  "orderPeriod": "Bestellperiode",
+  "inward_stock_movement": "Lagerzugang (Periode-Tag)",
 
   "article_4": "4 Hinterradgruppe",
   "article_5": "5 Hinterradgruppe",
