@@ -7,37 +7,31 @@ import { PartId } from "./parts.type.ts";
 
 export class DispositionService {
   productBOMs: PartBOM[];
-  // output: Map<PartId, number>;
+  private output!: Map<PartId, number>;
   
   constructor(productBOMs: PartBOM[]) {
     this.productBOMs = productBOMs;
   }
   
-  public calculateDispositionValues(input: DispositionInput): DispositionInput {
-    // this.output = new Map<PartId, number>();
+  public calculateDispositionValues(input: DispositionInput): Map<PartId, number> {
+    this.output = new Map<PartId, number>();
     
     this.productBOMs.forEach(partBOM => {
       this.traverseAndCalculate(partBOM, input);
     })
     
-    return input;
+    return new Map<PartId, number>(this.output);
   }
   
   private traverseAndCalculate(partBOM: PartBOM, input: DispositionInput, carryOver?: number): void {
     const partId = partBOM.partId;
     const productionOrder = this.calculateProductionOrder(partBOM, input, carryOver);
     
-    //
-    const oldValues = input.get(partId);
-    if (oldValues && oldValues.productionOrder) {
-      oldValues.productionOrder += productionOrder;
-    } else if (oldValues) {
-      oldValues.productionOrder = productionOrder;
+    const oldValue = this.output.get(partId);
+    if (oldValue) {
+      this.output.set(partId, oldValue + productionOrder);
     } else {
-      input.set(partId, {
-        ...this.emptyDispositionValues(),
-        productionOrder,
-      });
+      this.output.set(partId, productionOrder);
     }
     
     partBOM.parts?.forEach(partBOM => {
@@ -54,28 +48,6 @@ export class DispositionService {
     }
   }
   
-  private emptyDispositionValues(): DispositionValues {
-    return {
-      demand: 0,
-      plannedSafetyStock: 0,
-      currentStock: 0,
-      waitingQueue: 0,
-      workInProgress: 0,
-      productionOrder: 0,
-    }
-  }
-  //
-  // private addDispositionValues(v1: DispositionValues, v2: DispositionValues): DispositionValues {
-  //   return {
-  //     demand: v1.demand + v2.demand,
-  //     plannedSafetyStock: v1.plannedSafetyStock + v2.plannedSafetyStock,
-  //     currentStock: v1.currentStock + v2.currentStock,
-  //     waitingQueue: v1.waitingQueue + v2.waitingQueue,
-  //     workInProgress: v1.workInProgress + v2.workInProgress,
-  //     productionOrder: (v1.productionOrder ?? 0) + (v2.productionOrder ?? 0),
-  //   }
-  // }
-  
   private calculateProductionOrder(partBOM: PartBOM, dpInput: DispositionInput, carryOver?: number): number {
     const inputValues: DispositionValues | undefined = dpInput.get(partBOM.partId);
     if (!inputValues) {
@@ -84,12 +56,10 @@ export class DispositionService {
     const productionOrderRaw: number =
                                     inputValues.demand
                                   + (carryOver || 0)
-                                  + inputValues.plannedSafetyStock
-                                  - inputValues.currentStock
-                                  - inputValues.waitingQueue
-                                  - inputValues.workInProgress;
-    const productionOrder = Math.max(0, productionOrderRaw);
-
-    return productionOrder;
+                                  + (partBOM.isUsedInAll ? inputValues.plannedSafetyStock / 3 : inputValues.plannedSafetyStock)
+                                  - (partBOM.isUsedInAll ? inputValues.currentStock / 3 : inputValues.currentStock)
+                                  - (partBOM.isUsedInAll ? inputValues.waitingQueue / 3 : inputValues.waitingQueue)
+                                  - (partBOM.isUsedInAll ? inputValues.workInProgress / 3 : inputValues.workInProgress);
+    return Math.max(0, productionOrderRaw);
   }
 }

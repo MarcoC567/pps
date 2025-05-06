@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { PartBOM } from "./bom.ts";
+import { PartBOM, products } from "./bom.ts";
 import { PartId } from "./parts.type.ts";
 import { DispositionService } from "./1.service.ts";
 
@@ -35,18 +35,18 @@ function getProduct1BOMTree(): PartBOM {
     parts: [
       {
         partId: "E26",
-        isUsedInAll: true,
+        isUsedInAll: false,
       },
       {
         partId: "E51",
         parts: [
           {
             partId: "E16",
-            isUsedInAll: true,
+            isUsedInAll: false,
           },
           {
             partId: "E17",
-            isUsedInAll: true,
+            isUsedInAll: false,
           },
           {
             partId: "E50",
@@ -343,6 +343,49 @@ const mockInputAllProductsWithWIPandWaiting = (): Map<PartId, DispositionValues>
       },
     ],
   ]);
+
+export const mockAll = (): Map<PartId, DispositionValues> =>
+  new Map<PartId, DispositionValues>([
+    // finished products
+    ['P1',{ demand:15, plannedSafetyStock:15, currentStock:15, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['P2',{ demand:15, plannedSafetyStock:15, currentStock:15, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['P3',{ demand:9,  plannedSafetyStock:3,  currentStock:3,  waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    
+    // E‑parts for P1
+    ['E51',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E50',{ demand:0, plannedSafetyStock:9, currentStock:0, waitingQueue:10, workInProgress:3, productionOrder:0 }],
+    ['E4', { demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E10',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E49',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E7', { demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E13',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E18',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    
+    // E‑parts for P2
+    ['E56',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E55',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E5', { demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E11',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E54',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E8', { demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E14',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E19',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    
+    // E‑parts for P3
+    ['E31',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E30',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E6', { demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E12',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E29',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E9', { demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E15',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E20',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    
+    // shared E‑parts
+    ['E26',{ demand:0, plannedSafetyStock:15, currentStock:15, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E16',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['E17',{ demand:0, plannedSafetyStock:9, currentStock:6, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+  ]);
 /* ─────────────────────────────────────────────────────── */
 const mockProducts: PartBOM[] = [getProduct1BOMTree()];
 
@@ -358,7 +401,7 @@ describe('DispositionService', () => {
     const result = service.calculateDispositionValues(mockInput());
 
     // Helper to make assertions terser
-    const prodOrder = (id: PartId) => result.get(id)?.productionOrder;
+    const prodOrder = (id: PartId) => result.get(id);
 
     expect(prodOrder('P1')).toBe(50);
     expect(prodOrder('E26')).toBe(170);
@@ -381,7 +424,7 @@ describe('DispositionService', () => {
     const result = service.calculateDispositionValues(mockInputAllProducts());
     
     // Helper to make assertions terser
-    const prodOrder = (id: PartId) => result.get(id)?.productionOrder;
+    const prodOrder = (id: PartId) => result.get(id);
     
     expect(prodOrder('P1')).toBe(9);
     expect(prodOrder('P2')).toBe(9);
@@ -395,11 +438,55 @@ describe('DispositionService', () => {
     const result = service.calculateDispositionValues(mockInputAllProductsWithWIPandWaiting());
     
     // Helper to make assertions terser
-    const prodOrder = (id: PartId) => result.get(id)?.productionOrder;
+    const prodOrder = (id: PartId) => result.get(id);
     
     expect(prodOrder('P1')).toBe(9);
     expect(prodOrder('P2')).toBe(9);
     expect(prodOrder('P3')).toBe(3);
+    expect(prodOrder('E26')).toBe(24);
+  });
+  
+  it('full test of the whole thing', () => {
+    (service as any).productBOMs = products;
+    
+    const result = service.calculateDispositionValues(mockAll());
+    
+    // Helper to make assertions terser
+    const prodOrder = (id: PartId) => result.get(id);
+    
+    expect(prodOrder('P1')).toBe(9);
+    expect(prodOrder('E51')).toBe(9);
+    expect(prodOrder('E50')).toBe(8);
+    expect(prodOrder('E4')).toBe(15);
+    expect(prodOrder('E10')).toBe(15);
+    expect(prodOrder('E49')).toBe(15);
+    expect(prodOrder('E7')).toBe(15);
+    expect(prodOrder('E13')).toBe(15);
+    expect(prodOrder('E18')).toBe(15);
+    
+    expect(prodOrder('P2')).toBe(9);
+    expect(prodOrder('E56')).toBe(9);
+    expect(prodOrder('E55')).toBe(9);
+    expect(prodOrder('E5')).toBe(9);
+    expect(prodOrder('E11')).toBe(9);
+    expect(prodOrder('E54')).toBe(9);
+    expect(prodOrder('E8')).toBe(9);
+    expect(prodOrder('E14')).toBe(9);
+    expect(prodOrder('E19')).toBe(9);
+    
+    expect(prodOrder('P3')).toBe(3);
+    expect(prodOrder('E31')).toBe(3);
+    expect(prodOrder('E30')).toBe(3);
+    expect(prodOrder('E6')).toBe(3);
+    expect(prodOrder('E12')).toBe(3);
+    expect(prodOrder('E29')).toBe(3);
+    expect(prodOrder('E9')).toBe(3);
+    expect(prodOrder('E15')).toBe(3);
+    expect(prodOrder('E20')).toBe(3);
+    
+    // shared parts
+    expect(prodOrder('E16')).toBe(27);
+    expect(prodOrder('E17')).toBe(27);
     expect(prodOrder('E26')).toBe(24);
   });
   
@@ -421,6 +508,6 @@ describe('DispositionService', () => {
     
     const result = service.calculateDispositionValues(negativeInput);
     
-    expect(result.get('P1')?.productionOrder).toBe(0);
+    expect(result.get('P1')).toBe(0);
   });
 });
