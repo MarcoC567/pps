@@ -3,15 +3,19 @@ import {
   DispositionValues,
   PartBOM,
 } from "./bom.ts";
+import { PartId } from "./parts.type.ts";
 
 export class DispositionService {
   productBOMs: PartBOM[];
+  // output: Map<PartId, number>;
   
   constructor(productBOMs: PartBOM[]) {
     this.productBOMs = productBOMs;
   }
   
   public calculateDispositionValues(input: DispositionInput): DispositionInput {
+    // this.output = new Map<PartId, number>();
+    
     this.productBOMs.forEach(partBOM => {
       this.traverseAndCalculate(partBOM, input);
     })
@@ -22,20 +26,27 @@ export class DispositionService {
   private traverseAndCalculate(partBOM: PartBOM, input: DispositionInput, carryOver?: number): void {
     const partId = partBOM.partId;
     const productionOrder = this.calculateProductionOrder(partBOM, input, carryOver);
-    if (productionOrder) {
-      const oldValues = input.get(partId) || this.emptyDispositionValues();
-      if (oldValues && oldValues.productionOrder) {
-        oldValues.productionOrder += productionOrder.productionOrder ?? 0;
-      } else if (oldValues) {
-        oldValues.productionOrder = productionOrder.productionOrder;
-      }
-      partBOM.parts?.forEach(partBOM => {
-        const childPart = input.get(partBOM.partId);
-        if (childPart) {
-          childPart.demand = productionOrder.productionOrder ?? 0;
-        }
-      })
+    
+    //
+    const oldValues = input.get(partId);
+    if (oldValues && oldValues.productionOrder) {
+      oldValues.productionOrder += productionOrder;
+    } else if (oldValues) {
+      oldValues.productionOrder = productionOrder;
+    } else {
+      input.set(partId, {
+        ...this.emptyDispositionValues(),
+        productionOrder,
+      });
     }
+    
+    partBOM.parts?.forEach(partBOM => {
+      const childPart = input.get(partBOM.partId);
+      if (childPart) {
+        childPart.demand = productionOrder;
+      }
+    })
+    
     if (partBOM.parts) {
       partBOM.parts.forEach(partBOM => {
         this.traverseAndCalculate(partBOM, input, input.get(partId)?.waitingQueue ?? 0);
@@ -65,10 +76,10 @@ export class DispositionService {
   //   }
   // }
   
-  private calculateProductionOrder(partBOM: PartBOM, dpInput: DispositionInput, carryOver?: number): DispositionValues | null {
+  private calculateProductionOrder(partBOM: PartBOM, dpInput: DispositionInput, carryOver?: number): number {
     const inputValues: DispositionValues | undefined = dpInput.get(partBOM.partId);
     if (!inputValues) {
-      return null;
+      return 0;
     }
     const productionOrderRaw: number =
                                     inputValues.demand
@@ -79,7 +90,6 @@ export class DispositionService {
                                   - inputValues.workInProgress;
     const productionOrder = Math.max(0, productionOrderRaw);
 
-    return { ...inputValues, productionOrder }
+    return productionOrder;
   }
 }
-

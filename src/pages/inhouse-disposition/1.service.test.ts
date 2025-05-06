@@ -29,53 +29,55 @@ interface DispositionValues {
 //   },
 // ];
 
-const mockProducts: PartBOM[] = [{
-  partId: "P1",
-  parts: [
-    {
-      partId: "E26",
-      isUsedInAll: true,
-    },
-    {
-      partId: "E51",
-      parts: [
-        {
-          partId: "E16",
-          isUsedInAll: true,
-        },
-        {
-          partId: "E17",
-          isUsedInAll: true,
-        },
-        {
-          partId: "E50",
-          parts: [
-            {
-              partId: "E4",
-            },
-            {
-              partId: "E10",
-            },
-            {
-              partId: "E49",
-              parts: [
-                {
-                  partId: "E7",
-                },
-                {
-                  partId: "E13",
-                },
-                {
-                  partId: "E18",
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-  ],
-}];
+function getProduct1BOMTree(): PartBOM {
+  return {
+    partId: "P1",
+    parts: [
+      {
+        partId: "E26",
+        isUsedInAll: true,
+      },
+      {
+        partId: "E51",
+        parts: [
+          {
+            partId: "E16",
+            isUsedInAll: true,
+          },
+          {
+            partId: "E17",
+            isUsedInAll: true,
+          },
+          {
+            partId: "E50",
+            parts: [
+              {
+                partId: "E4",
+              },
+              {
+                partId: "E10",
+              },
+              {
+                partId: "E49",
+                parts: [
+                  {
+                    partId: "E7",
+                  },
+                  {
+                    partId: "E13",
+                  },
+                  {
+                    partId: "E18",
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  }
+}
 
 /**
  * Disposition input values fed into the service.
@@ -215,7 +217,135 @@ const mockInput = (): Map<PartId, DispositionValues> =>
     ],
   ]);
 
+
+const mockInputAllProducts = (): Map<PartId, DispositionValues> =>
+  new Map<PartId, DispositionValues>([
+    [
+      'P1',
+      {
+        demand: 15,
+        plannedSafetyStock: 15,
+        currentStock: 15,
+        waitingQueue: 3,
+        workInProgress: 3,
+        productionOrder: 0,
+      },
+    ],
+    [
+      'P2',
+      {
+        demand: 15,
+        plannedSafetyStock: 15,
+        currentStock: 15,
+        waitingQueue: 3,
+        workInProgress: 3,
+        productionOrder: 0,
+      },
+    ],
+    [
+      'P3',
+      {
+        demand: 9,
+        plannedSafetyStock: 3,
+        currentStock: 3,
+        waitingQueue: 3,
+        workInProgress: 3,
+        productionOrder: 0,
+      },
+    ],
+    [
+      'E26',
+      {
+        demand: 0,
+        plannedSafetyStock: 15,
+        currentStock: 15,
+        waitingQueue: 0,
+        workInProgress: 0,
+        productionOrder: 0,
+      },
+    ],
+  ]);
+
+const productBomAllProducts: PartBOM[] = [
+  {
+    partId: "P1",
+    parts: [
+      {
+        partId: "E26",
+        isUsedInAll: true,
+      },
+    ],
+  },
+  {
+    partId: "P2",
+    parts: [
+      {
+        partId: "E26",
+        isUsedInAll: true,
+      },
+    ],
+  },
+  {
+    partId: "P3",
+    parts: [
+      {
+        partId: "E26",
+        isUsedInAll: true,
+      },
+    ],
+  },
+]
+
+const mockInputAllProductsWithWIPandWaiting = (): Map<PartId, DispositionValues> =>
+  new Map<PartId, DispositionValues>([
+    [
+      'P1',
+      {
+        demand: 15,
+        plannedSafetyStock: 15,
+        currentStock: 15,
+        waitingQueue: 3,
+        workInProgress: 3,
+        productionOrder: 0,
+      },
+    ],
+    [
+      'P2',
+      {
+        demand: 15,
+        plannedSafetyStock: 15,
+        currentStock: 15,
+        waitingQueue: 3,
+        workInProgress: 3,
+        productionOrder: 0,
+      },
+    ],
+    [
+      'P3',
+      {
+        demand: 9,
+        plannedSafetyStock: 3,
+        currentStock: 3,
+        waitingQueue: 3,
+        workInProgress: 3,
+        productionOrder: 0,
+      },
+    ],
+    [
+      'E26',
+      {
+        demand: 0,
+        plannedSafetyStock: 15,
+        currentStock: 15,
+        waitingQueue: 3,
+        workInProgress: 3,
+        productionOrder: 0,
+      },
+    ],
+  ]);
 /* ─────────────────────────────────────────────────────── */
+const mockProducts: PartBOM[] = [getProduct1BOMTree()];
+
 
 describe('DispositionService', () => {
   let service: DispositionService;
@@ -226,23 +356,51 @@ describe('DispositionService', () => {
   
   it('calculates production orders for every part in the BOM tree', () => {
     const result = service.calculateDispositionValues(mockInput());
+
+    // Helper to make assertions terser
+    const prodOrder = (id: PartId) => result.get(id)?.productionOrder;
+
+    expect(prodOrder('P1')).toBe(50);
+    expect(prodOrder('E26')).toBe(170);
+    expect(prodOrder('E51')).toBe(160);
+
+    expect(prodOrder('E16')).toBe(155);
+    expect(prodOrder('E17')).toBe(170);
+    expect(prodOrder('E50')).toBe(160);
+    expect(prodOrder('E4')).toBe(160);
+    expect(prodOrder('E10')).toBe(160);
+    expect(prodOrder('E49')).toBe(160);
+    expect(prodOrder('E7')).toBe(160);
+    expect(prodOrder('E13')).toBe(160);
+    expect(prodOrder('E18')).toBe(160);
+  });
+  
+  it('calculates production orders for all 3 products and its children', () => {
+    (service as any).productBOMs = productBomAllProducts;
+    
+    const result = service.calculateDispositionValues(mockInputAllProducts());
     
     // Helper to make assertions terser
     const prodOrder = (id: PartId) => result.get(id)?.productionOrder;
     
-    expect(prodOrder('P1')).toBe(50); // 10 + 2 - 5 - 1 - 2 = 4
-    expect(prodOrder('E26')).toBe(170);  // 4 + 1(carry) + 1 - 1 - 0 - 0
-    expect(prodOrder('E51')).toBe(160);  // 6 + 1(carry) + 1 - (3/3) - 2 - 1
+    expect(prodOrder('P1')).toBe(9);
+    expect(prodOrder('P2')).toBe(9);
+    expect(prodOrder('P3')).toBe(3);
+    expect(prodOrder('E26')).toBe(30);
+  });
+  
+  it('calculates production orders for all 3 products and its children, that have WIP and Waiting parts', () => {
+    (service as any).productBOMs = productBomAllProducts;
     
-    expect(prodOrder('E16')).toBe(155); // 10 + 2 - 5 - 1 - 2 = 4
-    expect(prodOrder('E17')).toBe(170);  // 4 + 1(carry) + 1 - 1 - 0 - 0
-    expect(prodOrder('E50')).toBe(160);  // 6 + 1(carry) + 1 - (3/3) - 2 - 1
-    expect(prodOrder('E4')).toBe(160); // 10 + 2 - 5 - 1 - 2 = 4
-    expect(prodOrder('E10')).toBe(160);  // 4 + 1(carry) + 1 - 1 - 0 - 0
-    expect(prodOrder('E49')).toBe(160);  // 6 + 1(carry) + 1 - (3/3) - 2 - 1
-    expect(prodOrder('E7')).toBe(160); // 10 + 2 - 5 - 1 - 2 = 4
-    expect(prodOrder('E13')).toBe(160);  // 4 + 1(carry) + 1 - 1 - 0 - 0
-    expect(prodOrder('E18')).toBe(160);  // 6 + 1(carry) + 1 - (3/3) - 2 - 1
+    const result = service.calculateDispositionValues(mockInputAllProductsWithWIPandWaiting());
+    
+    // Helper to make assertions terser
+    const prodOrder = (id: PartId) => result.get(id)?.productionOrder;
+    
+    expect(prodOrder('P1')).toBe(9);
+    expect(prodOrder('P2')).toBe(9);
+    expect(prodOrder('P3')).toBe(3);
+    expect(prodOrder('E26')).toBe(24);
   });
   
   it('never returns negative production orders (floor at 0)', () => {
@@ -259,7 +417,7 @@ describe('DispositionService', () => {
         },
       ],
     ]);
-    (service as any).productBOMs = [{ partId: 'X' }];
+    (service as any).productBOMs = [{ partId: 'P1' }];
     
     const result = service.calculateDispositionValues(negativeInput);
     
