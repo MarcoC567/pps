@@ -13,16 +13,20 @@ type FutureStockEntry = {
 export default function FutureInwardStockTable() {
     const { t } = useLanguage()
     const [futureInwardStockData, setFutureInwardStockData] = useState<FutureStockEntry[] | undefined>([])
+    const [currentPeriod, setCurrentPeriod] = useState<number>()
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const importData = JSON.parse(localStorage.getItem('importData') || '{}') as {
             results?: {
+                period: string
                 futureinwardstockmovement?: {
                     order?: Array<{ orderperiod: string, article: string, mode: string, amount: string }>;
                 };
             };
         };
+
+        setCurrentPeriod(Number(importData.results?.period))
 
         console.log(importData.results?.futureinwardstockmovement?.order);
 
@@ -79,8 +83,8 @@ export default function FutureInwardStockTable() {
                                         (row, rowIndex) => {
                                             const factors = modusOptions.find(option => option.modus == row.mode);
                                             const articleBasicData = basicData.find(item => item.itemNr == row.article)
-                                            const eta = factors && articleBasicData ? (articleBasicData.deliveryTime! * factors.deliveryDeadlineFactor + articleBasicData.deliveryTimeDeviation! * factors.deliveryDeviationExtra) * 5 - (7 - row.orderPeriod) * 5 + 1 : 0;
-                                            const period = 7 + Math.floor(eta / 5);
+                                            const eta = factors && articleBasicData && currentPeriod ? (articleBasicData.deliveryTime! * factors.deliveryDeadlineFactor + articleBasicData.deliveryTimeDeviation! * factors.deliveryDeviationExtra) * 5 - (currentPeriod - row.orderPeriod) * 5 + 1 : 0;
+                                            const period = currentPeriod! + Math.floor(eta / 5);
                                             const day = Math.ceil(eta % 5);  
                                             return (
                                                 <TableRow key={rowIndex} hover sx={{ "&:hover": { backgroundColor: "#f9f9f9" } }}>
