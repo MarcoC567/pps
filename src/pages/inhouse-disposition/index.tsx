@@ -16,11 +16,13 @@ export default function InhouseDispositionPage() {
     
     const dispositionInputWithProducts: DispositionInput = toDispositionInput(plannedStock);
     const dispositionInput = addProducts(dispositionInputWithProducts, productionPlan);
-    console.log(dispositionInput);
     
     const dispositionResult = dispositionService.calculateDispositionValues(productBOMs, dispositionInput);
-    localStorage.setItem(INHOUSE_DISPOSITION_INPUT, JSON.stringify(dispositionInput));
-    localStorage.setItem(INHOUSE_DISPOSITION_RESULT, JSON.stringify(dispositionResult));
+    console.log(dispositionInput);
+    console.log(dispositionResult);
+    
+    localStorage.setItem(INHOUSE_DISPOSITION_INPUT, JSON.stringify(Array.from(dispositionInput.entries())));
+    localStorage.setItem(INHOUSE_DISPOSITION_RESULT, JSON.stringify(Array.from(dispositionResult.entries())));
     
     setDispositionOutput(dispositionResult);
     setDispositionInput(dispositionInput);
