@@ -12,10 +12,10 @@ export const Display = ({ dpR, dpI }) => {
     return {
       demand: dpInput.get(partId)?.demand ?? 0,
       currentStock: dpInput.get(partId)?.currentStock ?? 0,
+      plannedSafetyStock: dpInput.get(partId)?.plannedSafetyStock ?? 0,
       workInProgress: dpInput.get(partId)?.workInProgress ?? 0,
       waitingQueue: dpInput.get(partId)?.waitingQueue ?? 0,
       productionOrder: dpResult.get(partId) ?? 0,
-      plannedSafetyStock: dpInput.get(partId)?.plannedSafetyStock ?? 0,
     };
   }
   //TODO: Translations
@@ -49,10 +49,10 @@ export const Display = ({ dpR, dpI }) => {
             <TableCell>Part</TableCell>
             <TableCell align="right">Demand</TableCell>
             <TableCell align="right">Current Stock</TableCell>
+            <TableCell align="right">Planned Safety Stock</TableCell>
             <TableCell align="right">Work in Progress</TableCell>
             <TableCell align="right">Waiting Queue</TableCell>
             <TableCell align="right">Production Order</TableCell>
-            <TableCell align="right">Planned Safety Stock</TableCell>
           </TableRow>
         </TableHead>
 
