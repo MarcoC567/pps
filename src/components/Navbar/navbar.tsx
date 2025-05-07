@@ -17,6 +17,7 @@ export default function Navbar() {
       href: "/inhouse-disposition",
       current: false,
     },
+    { name: t("production-order"), href: "/production-order", current: false },
     { name: t("capacityPlan"), href: "/capacity-plan", current: false },
     {
       name: t("purchasePartsDisposition"),

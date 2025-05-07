@@ -10,6 +10,7 @@ import CapacityPlanPage from "./pages/capacity-plan";
 import PurchaseDispositionPage from "./pages/purchase-disposition";
 import { LanguageProvider } from "./context/LanguageContext";
 import ExportPage from "./pages/xml-export/XMLexport.tsx";
+import ProductionOrderList from "./pages/batchSizeSplitting/BatchSizeSplitting.tsx";
 
 function App() {
   return (
@@ -27,14 +28,16 @@ function App() {
                 path="/inhouse-disposition"
                 element={<InhouseDispositionPage />}
               />
+              <Route
+                path="/production-order"
+                element={<ProductionOrderList />}
+              />
               <Route path="/capacity-plan" element={<CapacityPlanPage />} />
               <Route
                 path="/purchase-disposition"
                 element={<PurchaseDispositionPage />}
               />
-              <Route path="/xmlExport"
-                element={<ExportPage />}
-              />
+              <Route path="/xmlExport" element={<ExportPage />} />
             </Routes>
           </main>
         </NavigationProvider>

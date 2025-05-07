@@ -1,5 +1,10 @@
+//TODO geplantes Produktionsplan wie Prognose -> für Kaufteildispo
+
+//TODO Weiter nur wenn alles grün ist
+//TODO Sinnvolle Validation z.b. min 20 bei jedem Teil
 import { useEffect, useState } from "react";
 import ForecastTable from "./ForecastTable.tsx";
+import ProductionPlanTable from "./ProductionPlanTable.tsx";
 import SalesForecastTable from "./SalesForecastTable.tsx";
 import DirectSalesTable from "./DirectSalesTable.tsx";
 import StockAndQueueTable, { StockData } from "./StockAndQueueTable.tsx";
@@ -36,6 +41,7 @@ export default function Forecast() {
     { product: "p2WomenBike", quantity: 0, price: 0.0, penalty: 0.0 },
     { product: "p3MenBike", quantity: 0, price: 0.0, penalty: 0.0 },
   ]);
+
   const navigate = useNavigate();
   const handleNextClick = () => {
     navigate("/inhouse-disposition");
@@ -146,7 +152,15 @@ export default function Forecast() {
         </Typography>
 
         <ForecastTable />
-
+        <Typography
+          variant="h4"
+          align="center"
+          gutterBottom
+          sx={{ fontWeight: "bold", mb: 4 }}
+        >
+          {t("ProductionPlan")}
+        </Typography>
+        <ProductionPlanTable />
         <div
           style={{
             display: "flex",
@@ -156,12 +170,18 @@ export default function Forecast() {
             marginTop: "3rem",
           }}
         >
-          <SalesForecastTable salesForecastData={salesForecastData} />
+          <SalesForecastTable
+            salesForecastData={salesForecastData}
+            // onChange={checkFormValidity}
+          />
           <DirectSalesTable directSalesData={directSalesData} />
         </div>
 
         <div style={{ marginTop: "3rem" }}>
-          <StockAndQueueTable stockData={stockData} />
+          <StockAndQueueTable
+            stockData={stockData}
+            // onChange={checkFormValidity}
+          />
         </div>
         <button
           onClick={handleNextClick}

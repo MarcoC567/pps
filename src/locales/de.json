@@ -3,6 +3,7 @@
     "forecast": " Prognose & Planung",
     "forecastonly": "Prognose",
     "salesForecast": "Vertriebswunsch",
+    "productionProgramm": "Produktionsprogramm",
     "directSales": "Direktverkauf",
     "stockQueue": "Lagerbestand & Warteschlange",
     "next": "Weiter",
@@ -35,6 +36,31 @@
   "total_capacity": "Gesamtkapazität",
   "shifts":"Schichten",
   "overtime": "Überstunden",
+  "ProductionPlan": "Produktionsplan",
+
+  "production-order": "Reihenfolgeplanung und Splitting",
+  
+
+  "delieveryTime": "Lieferzeit",
+  "deviation": "Abweichung",
+  "discountedAmount": "Diskontmenge",
+  "initial_stock_in_period_n": "Anfangsbestand in Periode n",
+  "mode": "Modus",
+  "selectMode": "Modus wählen",
+  "sum_of_the_total_costs": "Summe der Gesamtkosten (€)",
+  "eta": "ETA (Tagen)",
+  "orderCost": "Bestellkosten (€)",
+  "totalCost": "Gesamtkosten (€)",
+  "special_order": "Sonderbestellung",
+  "cheap_vendor": "Billiganbieter",
+  "jit": "JIT",
+  "fast": "Eil",
+  "normal": "Normal",
+  "export_xml_title": "Export XML Eingabedatei für Simulation",
+  "xml_download": "XML herunterladen",
+  "futureInwardStockMovement": "Zukünftige Lagerzugang",
+  "orderPeriod": "Bestellperiode",
+  "inward_stock_movement": "Lagerzugang (Periode-Tag)",
 
 
   "article_4": "4 Hinterradgruppe",
@@ -65,7 +91,8 @@
   "article_55": "55 Rahmen und Räder",
   "article_56": "56 Fahrrad ohne Pedale",
 
-  
+    "tooltip_totalCost": "Gesamtkosten = Materialkosten + Bestellkosten",
+    "tooltip_eta": "ETA = (Lieferzeit + Abweichung) * 5. Mit einer Wahrscheinlichkeit von 93 % entspricht dieser Wert der zu erwartenden maximalen Lieferzeit. Mit einer Wahrscheinlichkeit von 7 % ist eine um 1 bis 3 Tage längere Lieferzeit als der ETA zu erwarten",
     "tooltip_article": "Hier stehen die Bezeichnungen der jeweiligen Eigenerzeugnisse.",
     "tooltip_stock": "Der aktuelle Lagerbestand der aus der XML Datei gelesen wurde.",
     "tooltip_plannedStock": "Bitte trage hier den Lagerbestand ein, den du gerne am Ende dieser Periode haben möchtest.",
@@ -77,7 +104,10 @@
     "tooltip_capacity_setup_time_new": "Hier siehst du die gesamte Rüstzeit für die aktuelle Periode. Sie wird errechnet durch das Multiplizieren ihres Richtwerts mal der Anzahl an Spalteneinträge.",
     "tooltip_total_Capacity": "Hier siehst du die gesamte Kapazität der Periode unter berücksichtigung der altlasten aus der Vorperiode.",
     "tooltip_Shifts": "Hier siehst du die Anzahl der Schichten die in dieser Periode gefahren werden. Du kannst dies anpassen, wobei mindestens eine und maximal drei angegeben werden können.",
-    "tooltip_overtime": "Hier siehst du die Gesamtanzahl der Überstunden in Minuten, die in dieser Periode gefahren werden."
+    "tooltip_overtime": "Hier siehst du die Gesamtanzahl der Überstunden in Minuten, die in dieser Periode gefahren werden.",
+    "tooltip_splitting": "Aufteilen",
+    "tooltip_arrow_up": "Nach oben Verschieben",
+    "tooltip_arrow_down": "Nach unten Verschieben"
 
 
 
