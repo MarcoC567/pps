@@ -1,4 +1,4 @@
-//TODO evtl die zugehörigkeit zum endprodukt darstellen durch mapping bzw. eig ist die Liste immer gleich könnte man evtl. auch hard codieren.
+//TODO Internationalisieren der Artikelbezeichnungen
 import {
   Table,
   TableBody,
@@ -14,6 +14,7 @@ import {
 import { useEffect, useState } from "react";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useLanguage } from "../../context/LanguageContext.tsx";
+import parts from "../../data/base-data/parts.json";
 
 export type StockData = {
   product: string;
@@ -157,7 +158,9 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
                 }}
               >
                 <TableCell>
-                  {t(`article_${row.product.split(" ")[0]}`)}
+                  {parts.artikel.find(
+                    (p) => p.artikelnummer === row.product.split(" ")[0]
+                  )?.bezeichnung || row.product}
                 </TableCell>
                 {["stock", "endStock", "waitingList", "inProduction"].map(
                   (field) => {

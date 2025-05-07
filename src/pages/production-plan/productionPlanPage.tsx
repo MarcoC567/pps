@@ -102,7 +102,7 @@ export default function Forecast() {
             const partNum = parseInt(p.artikelnummer);
             return partNum === Number(id);
           });
-          return part?.produktart === "E"; // nur Eigenfertigung
+          return part?.produktart === "E" || part?.produktart === "P"; // nur Eigenfertigung
         })
         .map((a: ArtikelXML) => {
           const id = a.id;
