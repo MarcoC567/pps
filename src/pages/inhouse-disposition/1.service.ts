@@ -6,18 +6,13 @@ import {
 import { PartId } from "./parts.type.ts";
 
 export class DispositionService {
-  productBOMs: PartBOM[];
   private output!: Map<PartId, number>;
   
-  constructor(productBOMs: PartBOM[]) {
-    this.productBOMs = productBOMs;
-  }
-  
-  public calculateDispositionValues(input: DispositionInput): Map<PartId, number> {
+  public calculateDispositionValues(productBOMs: PartBOM[], dispositionInput: DispositionInput): Map<PartId, number> {
     this.output = new Map<PartId, number>();
     
-    this.productBOMs.forEach(partBOM => {
-      this.traverseAndCalculate(partBOM, input);
+    productBOMs.forEach(partBOM => {
+      this.traverseAndCalculate(partBOM, dispositionInput);
     })
     
     return new Map<PartId, number>(this.output);

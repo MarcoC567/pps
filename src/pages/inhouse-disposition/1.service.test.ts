@@ -348,7 +348,7 @@ export const mockAll = (): Map<PartId, DispositionValues> =>
   new Map<PartId, DispositionValues>([
     // finished products
     ['P1',{ demand:15, plannedSafetyStock:15, currentStock:15, waitingQueue:3, workInProgress:3, productionOrder:0 }],
-    ['P2',{ demand:15, plannedSafetyStock:15, currentStock:15, waitingQueue:3, workInProgress:3, productionOrder:0 }],
+    ['P2',{ demand:15, plannedSafetyStock:3, currentStock:15, waitingQueue:3, workInProgress:3, productionOrder:0 }],
     ['P3',{ demand:9,  plannedSafetyStock:3,  currentStock:3,  waitingQueue:3, workInProgress:3, productionOrder:0 }],
     
     // E‑parts for P1
@@ -394,11 +394,11 @@ describe('DispositionService', () => {
   let service: DispositionService;
   
   beforeEach(() => {
-    service = new DispositionService(mockProducts);
+    service = new DispositionService();
   });
   
   it('calculates production orders for every part in the BOM tree', () => {
-    const result = service.calculateDispositionValues(mockInput());
+    const result = service.calculateDispositionValues(mockProducts, mockInput());
 
     // Helper to make assertions terser
     const prodOrder = (id: PartId) => result.get(id);
@@ -419,9 +419,7 @@ describe('DispositionService', () => {
   });
   
   it('calculates production orders for all 3 products and its children', () => {
-    (service as any).productBOMs = productBomAllProducts;
-    
-    const result = service.calculateDispositionValues(mockInputAllProducts());
+    const result = service.calculateDispositionValues(productBomAllProducts, mockInputAllProducts());
     
     // Helper to make assertions terser
     const prodOrder = (id: PartId) => result.get(id);
@@ -433,9 +431,7 @@ describe('DispositionService', () => {
   });
   
   it('calculates production orders for all 3 products and its children, that have WIP and Waiting parts', () => {
-    (service as any).productBOMs = productBomAllProducts;
-    
-    const result = service.calculateDispositionValues(mockInputAllProductsWithWIPandWaiting());
+    const result = service.calculateDispositionValues(productBomAllProducts, mockInputAllProductsWithWIPandWaiting());
     
     // Helper to make assertions terser
     const prodOrder = (id: PartId) => result.get(id);
@@ -447,9 +443,7 @@ describe('DispositionService', () => {
   });
   
   it('full test of the whole thing', () => {
-    (service as any).productBOMs = products;
-    
-    const result = service.calculateDispositionValues(mockAll());
+    const result = service.calculateDispositionValues(products, mockAll());
     
     // Helper to make assertions terser
     const prodOrder = (id: PartId) => result.get(id);
@@ -464,15 +458,15 @@ describe('DispositionService', () => {
     expect(prodOrder('E13')).toBe(15);
     expect(prodOrder('E18')).toBe(15);
     
-    expect(prodOrder('P2')).toBe(9);
-    expect(prodOrder('E56')).toBe(9);
-    expect(prodOrder('E55')).toBe(9);
-    expect(prodOrder('E5')).toBe(9);
-    expect(prodOrder('E11')).toBe(9);
-    expect(prodOrder('E54')).toBe(9);
-    expect(prodOrder('E8')).toBe(9);
-    expect(prodOrder('E14')).toBe(9);
-    expect(prodOrder('E19')).toBe(9);
+    expect(prodOrder('P2')).toBe(0);
+    expect(prodOrder('E56')).toBe(0);
+    expect(prodOrder('E55')).toBe(0);
+    expect(prodOrder('E5')).toBe(0);
+    expect(prodOrder('E11')).toBe(0);
+    expect(prodOrder('E54')).toBe(0);
+    expect(prodOrder('E8')).toBe(0);
+    expect(prodOrder('E14')).toBe(0);
+    expect(prodOrder('E19')).toBe(0);
     
     expect(prodOrder('P3')).toBe(3);
     expect(prodOrder('E31')).toBe(3);
@@ -485,9 +479,9 @@ describe('DispositionService', () => {
     expect(prodOrder('E20')).toBe(3);
     
     // shared parts
-    expect(prodOrder('E16')).toBe(27);
-    expect(prodOrder('E17')).toBe(27);
-    expect(prodOrder('E26')).toBe(24);
+    expect(prodOrder('E16')).toBe(15);
+    expect(prodOrder('E17')).toBe(15);
+    expect(prodOrder('E26')).toBe(12);
   });
   
   it('never returns negative production orders (floor at 0)', () => {
@@ -504,9 +498,8 @@ describe('DispositionService', () => {
         },
       ],
     ]);
-    (service as any).productBOMs = [{ partId: 'P1' }];
     
-    const result = service.calculateDispositionValues(negativeInput);
+    const result = service.calculateDispositionValues([{ partId: 'P1' }], negativeInput);
     
     expect(result.get('P1')).toBe(0);
   });
