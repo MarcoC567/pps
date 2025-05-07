@@ -29,6 +29,7 @@
   "purchasePartsDisposition": "Purchase disposition",
   "XMLexport": "XML Export",
   "ProductionPlan": "Production Plan",
+  "production-order": "Orderplanning and Splitting",
 
   "orderAmount":"Production Quantity",
   "capacity_last_period": "Capacity Demand Previous Period",
@@ -80,7 +81,10 @@
     "tooltip_capacity_setup_time_new": "This shows the total setup time for the current period, calculated as the setup value multiplied by the number of distinct parts involved.",
     "tooltip_total_Capacity": "This shows the total capacity for the current period, including leftover capacity from the previous period.",
     "tooltip_Shifts": "This shows the number of shifts scheduled for this period. You can adjust it between one and three shifts.",
-    "tooltip_overtime": "This shows the total overtime required for this period, in minutes."
+    "tooltip_overtime": "This shows the total overtime required for this period, in minutes.",
+    "tooltip_splitting": "Splitting",
+    "tooltip_arrow_up": "move Up",
+    "tooltip_arrow_down": "move Down"
 
   
 }

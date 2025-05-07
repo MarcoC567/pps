@@ -36,7 +36,8 @@
   "shifts":"Schichten",
   "overtime": "Überstunden",
   "ProductionPlan": "Produktionsplan",
-
+  "production-order": "Reihenfolgeplanung und Splitting",
+  
 
   "article_4": "4 Hinterradgruppe",
   "article_5": "5 Hinterradgruppe",
@@ -78,7 +79,10 @@
     "tooltip_capacity_setup_time_new": "Hier siehst du die gesamte Rüstzeit für die aktuelle Periode. Sie wird errechnet durch das Multiplizieren ihres Richtwerts mal der Anzahl an Spalteneinträge.",
     "tooltip_total_Capacity": "Hier siehst du die gesamte Kapazität der Periode unter berücksichtigung der altlasten aus der Vorperiode.",
     "tooltip_Shifts": "Hier siehst du die Anzahl der Schichten die in dieser Periode gefahren werden. Du kannst dies anpassen, wobei mindestens eine und maximal drei angegeben werden können.",
-    "tooltip_overtime": "Hier siehst du die Gesamtanzahl der Überstunden in Minuten, die in dieser Periode gefahren werden."
+    "tooltip_overtime": "Hier siehst du die Gesamtanzahl der Überstunden in Minuten, die in dieser Periode gefahren werden.",
+    "tooltip_splitting": "Aufteilen",
+    "tooltip_arrow_up": "Nach oben Verschieben",
+    "tooltip_arrow_down": "Nach unten Verschieben"
 
 
 
