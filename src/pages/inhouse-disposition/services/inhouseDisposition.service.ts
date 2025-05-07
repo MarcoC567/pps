@@ -2,12 +2,19 @@ import {
   DispositionInput,
   DispositionValues,
   PartBOM,
-} from "./bom.ts";
-import { PartId } from "./parts.type.ts";
+} from "../util/bom.ts";
+import { PartId } from "../util/parts.type.ts";
+
+export const INHOUSE_DISPOSITION_RESULT = 'inhouseDispositionResult';
+export const INHOUSE_DISPOSITION_INPUT = 'inhouseDispositionInput';
 
 export class DispositionService {
   private output!: Map<PartId, number>;
   
+  /*
+    Recursively calculate the disposition values for the given product BOMs and the given disposition input.
+    Saves the result in local storage.
+   */
   public calculateDispositionValues(productBOMs: PartBOM[], dispositionInput: DispositionInput): Map<PartId, number> {
     this.output = new Map<PartId, number>();
     
@@ -15,7 +22,9 @@ export class DispositionService {
       this.traverseAndCalculate(partBOM, dispositionInput);
     })
     
-    return new Map<PartId, number>(this.output);
+    const outputMap = new Map<PartId, number>(this.output);
+    localStorage.setItem(INHOUSE_DISPOSITION_RESULT, JSON.stringify(outputMap));
+    return outputMap;
   }
   
   private traverseAndCalculate(partBOM: PartBOM, input: DispositionInput, carryOver?: number): void {

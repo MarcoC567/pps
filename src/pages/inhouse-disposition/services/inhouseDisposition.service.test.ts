@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { PartBOM, products } from "./bom.ts";
-import { PartId } from "./parts.type.ts";
-import { DispositionService } from "./1.service.ts";
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { PartBOM, productBOMs } from "../util/bom.ts";
+import { PartId } from "../util/parts.type.ts";
+import { DispositionService } from "./inhouseDisposition.service.ts";
 
 interface DispositionValues {
   demand: number;
@@ -11,23 +11,6 @@ interface DispositionValues {
   workInProgress: number;
   productionOrder?: number;
 }
-
-/**
- * A tiny product structure for the test:
- *
- *            A
- *          /   \
- *         B     C  (isUsedInAll = true)
- */
-// const mockProducts: PartBOM[] = [
-//   {
-//     partId: 'P1',
-//     parts: [
-//       { partId: 'E4' },
-//       { partId: 'E5', isUsedInAll: true },
-//     ],
-//   },
-// ];
 
 function getProduct1BOMTree(): PartBOM {
   return {
@@ -79,10 +62,6 @@ function getProduct1BOMTree(): PartBOM {
   }
 }
 
-/**
- * Disposition input values fed into the service.
- * (productionOrder will be overwritten by the service)
- */
 const mockInput = (): Map<PartId, DispositionValues> =>
   new Map<PartId, DispositionValues>([
     [
@@ -395,12 +374,18 @@ describe('DispositionService', () => {
   
   beforeEach(() => {
     service = new DispositionService();
+    
+    vi.stubGlobal('localStorage', {
+      getItem: vi.fn(),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+      clear: vi.fn(),
+    });
   });
   
   it('calculates production orders for every part in the BOM tree', () => {
     const result = service.calculateDispositionValues(mockProducts, mockInput());
 
-    // Helper to make assertions terser
     const prodOrder = (id: PartId) => result.get(id);
 
     expect(prodOrder('P1')).toBe(50);
@@ -421,7 +406,6 @@ describe('DispositionService', () => {
   it('calculates production orders for all 3 products and its children', () => {
     const result = service.calculateDispositionValues(productBomAllProducts, mockInputAllProducts());
     
-    // Helper to make assertions terser
     const prodOrder = (id: PartId) => result.get(id);
     
     expect(prodOrder('P1')).toBe(9);
@@ -433,7 +417,6 @@ describe('DispositionService', () => {
   it('calculates production orders for all 3 products and its children, that have WIP and Waiting parts', () => {
     const result = service.calculateDispositionValues(productBomAllProducts, mockInputAllProductsWithWIPandWaiting());
     
-    // Helper to make assertions terser
     const prodOrder = (id: PartId) => result.get(id);
     
     expect(prodOrder('P1')).toBe(9);
@@ -443,9 +426,8 @@ describe('DispositionService', () => {
   });
   
   it('full test of the whole thing', () => {
-    const result = service.calculateDispositionValues(products, mockAll());
+    const result = service.calculateDispositionValues(productBOMs, mockAll());
     
-    // Helper to make assertions terser
     const prodOrder = (id: PartId) => result.get(id);
     
     expect(prodOrder('P1')).toBe(9);

@@ -164,4 +164,4 @@ const p3: PartBOM = {
   ],
 }
 
-export const products: PartBOM[] = [p1, p2, p3];
+export const productBOMs: PartBOM[] = [p1, p2, p3];
