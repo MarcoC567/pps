@@ -15,7 +15,7 @@ export function flattenTree(nodes, level = 0, parent = null) {
   return result;
 }
 
-export function toDispositionInput(productionPlan: ProductionPlan): DispositionInput{
+export function toDispositionInput(productionPlan: PlannedStock): DispositionInput{
   const emptyMap = new Map<string, DispositionValues>();
   productionPlan.forEach(p => {
     const key = extractKey(p.product);
@@ -37,6 +37,33 @@ function extractKey(str: string): string {
   return match ? ("E" + match[1]) : "";
 }
 
+export function addProducts(dpInput: DispositionInput, productionPlan: ProductionPlan): DispositionInput {
+  productionPlan.forEach(p => {
+    const key = mapProductKey(p.product);
+    if (!key) return;
+    dpInput.set(key, { // TODO: when I have the data
+      demand: p.values[0],
+      currentStock: 0,
+      plannedSafetyStock: 0,
+      workInProgress: 0,
+      waitingQueue: 0,
+      productionOrder: 0,
+    });
+  })
+  return dpInput;
+}
+
+function mapProductKey(product: string) {
+  switch (product) {
+    case "p1ChildrenBike":
+      return "P1"
+    case "p2WomenBike":
+      return "P2"
+    case "p3MenBike":
+      return "P3"
+  }
+}
 
 
-type ProductionPlan = { product: string, stock: number, endStock: number, waitingList: number, inProduction: number }[]
+type PlannedStock = { product: string, stock: number, endStock: number, waitingList: number, inProduction: number }[]
+type ProductionPlan = { product: "p1ChildrenBike" | "p2WomenBike" | "p3MenBike", values: number[] }[]
