@@ -1,4 +1,4 @@
-//TODO Testen wenn Dennis soweit ist
+//TODO EVTL Drag and Drop
 import {
   Box,
   Button,
@@ -31,21 +31,40 @@ export default function ProductionOrderListPage() {
   }>({});
 
   useEffect(() => {
-    const stored = localStorage.getItem("productionOrders");
-    if (stored) {
-      setOrders(JSON.parse(stored));
-    } else {
-      setOrders([
-        { product: "P1", quantity: 100 },
-        { product: "P2", quantity: 80 },
-        { product: "P3", quantity: 60 },
-      ]);
+    // 1) Prüfe zuerst auf productionOrders (aktuelle Änderungen)
+    const prodRaw = localStorage.getItem("productionOrders");
+    if (prodRaw) {
+      const parsedProd: [string, number][] = JSON.parse(prodRaw);
+      const convertedProd: ProductionOrder[] = parsedProd.map(
+        ([product, quantity]) => ({ product, quantity })
+      );
+      setOrders(convertedProd);
+      return;
     }
+
+    // 2) Wenn productionOrders nicht existiert, lade initial aus inhouseDispositionResult
+    const stored = localStorage.getItem("inhouseDispositionResult");
+    if (stored) {
+      const parsedInit: [string, number][] = JSON.parse(stored);
+      const convertedInit: ProductionOrder[] = parsedInit.map(
+        ([product, quantity]) => ({ product, quantity })
+      );
+      setOrders(convertedInit);
+      return;
+    }
+
+    // 3) Fallback, falls beides nicht gesetzt ist
+    setOrders([
+      { product: "P1", quantity: 100 },
+      { product: "P2", quantity: 80 },
+      { product: "P3", quantity: 60 },
+    ]);
   }, []);
 
   const save = (list: ProductionOrder[]) => {
     setOrders(list);
-    localStorage.setItem("productionOrders", JSON.stringify(list));
+    const serialized = list.map(({ product, quantity }) => [product, quantity]);
+    localStorage.setItem("productionOrders", JSON.stringify(serialized));
   };
 
   const moveUp = (i: number) => {

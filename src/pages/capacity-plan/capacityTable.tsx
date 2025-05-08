@@ -1,5 +1,4 @@
 //TODO Validation check
-//TODO Anpassung an echte daten wenn Dennis soweit ist
 //TODO Modell zuweisung (P1,2,3)
 import {
   Table,
@@ -21,8 +20,6 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 type WorkstationData = {
   setup_time: number | number[];
-  total_capacity_need_last_period: number;
-  total_setup_time_last_period: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 };
@@ -31,14 +28,39 @@ type Workstations = {
   [workstationName: string]: WorkstationData;
 };
 
+type ProductionEntry = [string, number];
+
+const productionRaw = localStorage.getItem("productionOrders");
+const productionList: ProductionEntry[] = productionRaw
+  ? JSON.parse(productionRaw)
+  : [];
+
+const productionMap = new Map<string, number>();
+const entryCountMap = new Map<string, number>();
+productionList.forEach(([product, quantity]) => {
+  productionMap.set(product, (productionMap.get(product) || 0) + quantity);
+  entryCountMap.set(product, (entryCountMap.get(product) || 0) + 1);
+});
+
 export default function CapacityTable() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [workstations, setWorkstations] = useState<Workstations>({});
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [shiftData, setShiftData] = useState<
     Record<string, { shifts: number; overtime: number }>
   >({});
+
+  const raw = localStorage.getItem("importData");
+  const importData = raw
+    ? (JSON.parse(raw) as {
+        results: {
+          waitinglistworkstations: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            workplace: { id: string; timeneed: string; waitinglist?: any }[];
+          };
+        };
+      })
+    : null;
 
   useEffect(() => {
     if (mockData) {
@@ -53,31 +75,22 @@ export default function CapacityTable() {
   };
 
   const calculateOvertime = (totalMinutes: number) => {
-    const shiftMinutes = 2400 * calculateShifts(totalMinutes);
-    const overtime = totalMinutes - shiftMinutes;
-    return Math.max(0, overtime);
-  };
-
-  const getShiftData = (ws: string, totalMinutes: number) => {
-    const calculatedShifts = calculateShifts(totalMinutes);
-    const calculatedOvertime = calculateOvertime(totalMinutes);
-    return { shifts: calculatedShifts, overtime: calculatedOvertime };
+    return Math.max(0, totalMinutes - 2400);
   };
 
   const handleNextClick = () => {
     const list = workstationKeys.map((wsKey) => {
-      const calculatedMinutes =
-        calculatedCapacities[wsKey] +
-        (Array.isArray(workstations[wsKey]?.setup_time)
-          ? workstations[wsKey]?.setup_time[0] || 0
-          : workstations[wsKey]?.setup_time || 0);
-
-      const entry = shiftData[wsKey] || getShiftData(wsKey, calculatedMinutes);
-      const stationNumber = wsKey.replace("workstation", "");
+      const newCap = calculatedCapacities[wsKey] || 0;
+      const newSetup = setupTimeNewPerWS[wsKey] || 0;
+      const oldCap = prevPeriodCapacity[wsKey] || 0;
+      const oldSetup = prevSetupTime[wsKey] || 0;
+      const total = newCap + newSetup + oldCap + oldSetup;
+      const shifts = shiftData[wsKey]?.shifts ?? calculateShifts(total);
+      const overtime = shiftData[wsKey]?.overtime ?? calculateOvertime(total);
       return {
-        station: stationNumber,
-        shift: entry.shifts,
-        overtime: entry.overtime,
+        station: wsKey.replace("workstation", ""),
+        shift: shifts,
+        overtime: overtime,
       };
     });
 
@@ -102,33 +115,24 @@ export default function CapacityTable() {
         },
       };
 
-      // XML-kompatibles Format erzeugen
       const list = workstationKeys.map((wsKey) => {
-        const entry = updated[wsKey] || getShiftData(wsKey, 0);
-        const stationNumber = wsKey.replace("workstation", "");
+        const entry = updated[wsKey] || {
+          shifts: calculateShifts(0),
+          overtime: 0,
+        };
         return {
-          station: stationNumber,
+          station: wsKey.replace("workstation", ""),
           shift: entry.shifts,
           overtime: entry.overtime,
         };
       });
 
-      // Speichern im localStorage
       localStorage.setItem("workingtimelist", JSON.stringify(list));
-
       return updated;
     });
   };
 
-  const allParts = Array.from(
-    new Set(
-      Object.values(workstations).flatMap((ws) =>
-        Object.keys(ws).filter(
-          (key) => key.startsWith("E") || key.startsWith("P")
-        )
-      )
-    )
-  ).sort((a, b) => {
+  const allParts = Array.from(productionMap.keys()).sort((a, b) => {
     const aIsE = a.startsWith("E");
     const bIsE = b.startsWith("E");
     const aNum = parseInt(a.substring(1));
@@ -143,15 +147,53 @@ export default function CapacityTable() {
   );
 
   const calculatedCapacities: Record<string, number> = {};
-
+  const setupTimeNewPerWS: Record<string, number> = {};
   workstationKeys.forEach((ws) => {
-    const sum = allParts.reduce((acc, part) => {
-      const amount = workstations[ws]?.[part]?.amount || 0;
-      const multiplicator = workstations[ws]?.[part]?.multiplicator || 1;
-      return acc + amount * multiplicator;
-    }, 0);
-    calculatedCapacities[ws] = sum;
+    const station = workstations[ws];
+    let capacitySum = 0;
+    let setupSum = 0;
+    allParts.forEach((part) => {
+      const entry = station?.[part];
+      if (!entry) return;
+      const productionQty = productionMap.get(part) || 0;
+      capacitySum += productionQty * entry.multiplicator;
+      const occurrences = productionQty > 0 ? entryCountMap.get(part) || 0 : 0;
+      const setupPerPart = Array.isArray(station.setup_time)
+        ? station.setup_time[0]
+        : station.setup_time;
+      setupSum += setupPerPart * occurrences;
+    });
+    calculatedCapacities[ws] = capacitySum;
+    setupTimeNewPerWS[ws] = setupSum;
   });
+
+  const prevPeriodCapacity: Record<string, number> = {};
+  const prevSetupTime: Record<string, number> = {};
+  if (importData?.results?.waitinglistworkstations?.workplace) {
+    importData.results.waitinglistworkstations.workplace.forEach(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (w: { id: string; timeneed: string; waitinglist?: any }) => {
+        const wsKey = `workstation${w.id}`;
+        prevPeriodCapacity[wsKey] = Number(w.timeneed);
+        const station = workstations[wsKey];
+        if (!station) {
+          prevSetupTime[wsKey] = 0;
+          return;
+        }
+        const setupPerPart = Array.isArray(station.setup_time)
+          ? station.setup_time[0]
+          : station.setup_time;
+        const wl = w.waitinglist;
+        if (Array.isArray(wl)) {
+          prevSetupTime[wsKey] = setupPerPart * wl.length;
+        } else if (wl && typeof wl === "object") {
+          prevSetupTime[wsKey] = setupPerPart;
+        } else {
+          prevSetupTime[wsKey] = 0;
+        }
+      }
+    );
+  }
 
   return (
     <div style={{ marginTop: "3rem", padding: "1rem" }}>
@@ -187,7 +229,6 @@ export default function CapacityTable() {
                 <TableCell sx={{ fontWeight: "bold" }}>
                   {t("orderAmount")}
                 </TableCell>
-
                 {workstationKeys.map((ws) => (
                   <TableCell
                     key={ws}
@@ -205,45 +246,45 @@ export default function CapacityTable() {
                 <TableRow key={idx} hover>
                   <TableCell>Modell X</TableCell>
                   <TableCell>{part}</TableCell>
-                  <TableCell>
-                    {(() => {
-                      const entry = Object.values(workstations).find(
-                        (ws) => part in ws
-                      )?.[part];
-                      if (!entry) return "-";
-                      const amount = entry.amount || 0;
-                      return amount;
-                    })()}
-                  </TableCell>
+                  <TableCell>{productionMap.get(part) ?? "-"}</TableCell>
                   {workstationKeys.map((ws) => {
                     const entry = workstations[ws]?.[part];
-                    const amount = entry?.amount || 0;
-                    const multiplicator = entry?.multiplicator || 1;
+                    if (!entry) {
+                      return (
+                        <TableCell key={ws} align="center">
+                          -
+                        </TableCell>
+                      );
+                    }
+                    const productionQty = productionMap.get(part) || 0;
+                    const multiplicator = entry.multiplicator;
+                    const cellValue = productionQty * multiplicator;
                     return (
                       <TableCell key={ws} align="center">
-                        {amount * multiplicator || "-"}
+                        {cellValue > 0 ? cellValue : "-"}
                       </TableCell>
                     );
                   })}
                 </TableRow>
               ))}
 
+              {/* Zwischenlinie */}
               <TableRow>
                 <TableCell colSpan={workstationKeys.length + 4}>
                   <div
                     style={{
                       height: "3px",
                       backgroundColor: "#333",
-                      marginTop: "1rem",
-                      marginBottom: "1rem",
+                      margin: "1rem 0",
                     }}
                   />
                 </TableCell>
               </TableRow>
 
+              {/* Kapazität neu */}
               <TableRow hover>
                 <TableCell colSpan={3}>
-                  <strong>{t("capacity_new")} </strong>
+                  <strong>{t("capacity_new")}</strong>
                   <Tooltip
                     title={t("tooltip_capacity_new")}
                     placement="top"
@@ -266,9 +307,10 @@ export default function CapacityTable() {
                 ))}
               </TableRow>
 
+              {/* Rüstzeit neu */}
               <TableRow hover>
                 <TableCell colSpan={3}>
-                  <strong>{t("capacity_setup_time_new")} </strong>
+                  <strong>{t("capacity_setup_time_new")}</strong>
                   <Tooltip
                     title={t("tooltip_capacity_setup_time_new")}
                     placement="top"
@@ -284,29 +326,17 @@ export default function CapacityTable() {
                     />
                   </Tooltip>
                 </TableCell>
-
-                {workstationKeys.map((ws) => {
-                  const setupTime = Array.isArray(workstations[ws]?.setup_time)
-                    ? workstations[ws]?.setup_time[0] || 0
-                    : workstations[ws]?.setup_time || 0;
-
-                  const numParts = allParts.filter(
-                    (part) => workstations[ws]?.[part]?.amount > 0
-                  ).length;
-
-                  const totalSetup = setupTime * numParts;
-
-                  return (
-                    <TableCell key={ws} align="center">
-                      {totalSetup}
-                    </TableCell>
-                  );
-                })}
+                {workstationKeys.map((ws) => (
+                  <TableCell key={ws} align="center">
+                    {setupTimeNewPerWS[ws] || 0}
+                  </TableCell>
+                ))}
               </TableRow>
 
+              {/* Kapazität vorherige Periode */}
               <TableRow hover>
                 <TableCell colSpan={3}>
-                  <strong>{t("capacity_last_period")} </strong>
+                  <strong>{t("capacity_last_period")}</strong>
                   <Tooltip
                     title={t("tooltip_capacity_last_period")}
                     placement="top"
@@ -322,17 +352,17 @@ export default function CapacityTable() {
                     />
                   </Tooltip>
                 </TableCell>
-
                 {workstationKeys.map((ws) => (
                   <TableCell key={ws} align="center">
-                    {workstations[ws]?.total_capacity_need_last_period ?? "-"}
+                    {prevPeriodCapacity[ws] ?? 0}
                   </TableCell>
                 ))}
               </TableRow>
 
+              {/* Rüstzeit vorherige Periode */}
               <TableRow hover>
                 <TableCell colSpan={3}>
-                  <strong>{t("capacity_setup_time_old_period")} </strong>
+                  <strong>{t("capacity_setup_time_old_period")}</strong>
                   <Tooltip
                     title={t("tooltip_capacity_setup_time_last_period")}
                     placement="top"
@@ -348,17 +378,17 @@ export default function CapacityTable() {
                     />
                   </Tooltip>
                 </TableCell>
-
                 {workstationKeys.map((ws) => (
                   <TableCell key={ws} align="center">
-                    {workstations[ws]?.total_setup_time_last_period ?? "-"}
+                    {prevSetupTime[ws] ?? 0}
                   </TableCell>
                 ))}
               </TableRow>
 
+              {/* Gesamtkapazität */}
               <TableRow hover>
                 <TableCell colSpan={3}>
-                  <strong>{t("total_capacity")} </strong>
+                  <strong>{t("total_capacity")}</strong>
                   <Tooltip
                     title={t("tooltip_total_Capacity")}
                     placement="top"
@@ -374,45 +404,25 @@ export default function CapacityTable() {
                     />
                   </Tooltip>
                 </TableCell>
-
                 {workstationKeys.map((ws) => {
-                  const kapazitätNeu = allParts.reduce((acc, part) => {
-                    const amount = workstations[ws]?.[part]?.amount || 0;
-                    const multiplicator =
-                      workstations[ws]?.[part]?.multiplicator || 1;
-                    return acc + amount * multiplicator;
-                  }, 0);
-
-                  const setupPerPart = Array.isArray(
-                    workstations[ws]?.setup_time
-                  )
-                    ? workstations[ws]?.setup_time[0] || 0
-                    : workstations[ws]?.setup_time || 0;
-
-                  const numParts = allParts.filter(
-                    (part) => workstations[ws]?.[part]
-                  ).length;
-
-                  const umrüstzeitNeu = setupPerPart * numParts;
-                  const kapazitätAlt =
-                    workstations[ws]?.total_capacity_need_last_period || 0;
-                  const umrüstzeitAlt =
-                    workstations[ws]?.total_setup_time_last_period || 0;
-
-                  const total =
-                    kapazitätNeu + umrüstzeitNeu + kapazitätAlt + umrüstzeitAlt;
-
+                  const newCap = calculatedCapacities[ws] || 0;
+                  const newSetupVal = setupTimeNewPerWS[ws] || 0;
+                  const oldCapVal = prevPeriodCapacity[ws] || 0;
+                  const oldSetupVal = prevSetupTime[ws] || 0;
+                  const totalVal =
+                    newCap + newSetupVal + oldCapVal + oldSetupVal;
                   return (
                     <TableCell key={ws} align="center">
-                      {total}
+                      {totalVal}
                     </TableCell>
                   );
                 })}
               </TableRow>
 
+              {/* Schichten */}
               <TableRow hover>
                 <TableCell colSpan={3}>
-                  <strong>{t("shifts")} </strong>
+                  <strong>{t("shifts")}</strong>
                   <Tooltip title={t("tooltip_Shifts")} placement="top" arrow>
                     <InfoOutlinedIcon
                       sx={{
@@ -424,21 +434,20 @@ export default function CapacityTable() {
                     />
                   </Tooltip>
                 </TableCell>
-
                 {workstationKeys.map((ws) => {
-                  const totalMinutes =
-                    calculatedCapacities[ws] +
-                    (Array.isArray(workstations[ws]?.setup_time)
-                      ? workstations[ws]?.setup_time[0]
-                      : workstations[ws]?.setup_time || 0);
+                  const newCap = calculatedCapacities[ws] || 0;
+                  const newSetupVal = setupTimeNewPerWS[ws] || 0;
+                  const oldCapVal = prevPeriodCapacity[ws] || 0;
+                  const oldSetupVal = prevSetupTime[ws] || 0;
+                  const totalVal =
+                    newCap + newSetupVal + oldCapVal + oldSetupVal;
+                  const shiftsVal =
+                    shiftData[ws]?.shifts ?? calculateShifts(totalVal);
                   return (
                     <TableCell key={ws} align="center">
                       <TextField
                         type="number"
-                        value={
-                          shiftData[ws]?.shifts ??
-                          getShiftData(ws, totalMinutes).shifts
-                        }
+                        value={shiftsVal}
                         onChange={(e) =>
                           handleShiftChange(ws, "shifts", e.target.value)
                         }
@@ -463,9 +472,10 @@ export default function CapacityTable() {
                 })}
               </TableRow>
 
+              {/* Überstunden */}
               <TableRow hover>
                 <TableCell colSpan={3}>
-                  <strong>{t("overtime")} </strong>
+                  <strong>{t("overtime")}</strong>
                   <Tooltip title={t("tooltip_overtime")} placement="top" arrow>
                     <InfoOutlinedIcon
                       sx={{
@@ -477,21 +487,20 @@ export default function CapacityTable() {
                     />
                   </Tooltip>
                 </TableCell>
-
                 {workstationKeys.map((ws) => {
-                  const totalMinutes =
-                    calculatedCapacities[ws] +
-                    (Array.isArray(workstations[ws]?.setup_time)
-                      ? workstations[ws]?.setup_time[0]
-                      : workstations[ws]?.setup_time || 0);
-                  const overtime =
-                    shiftData[ws]?.overtime ?? calculateOvertime(totalMinutes);
-
+                  const newCap = calculatedCapacities[ws] || 0;
+                  const newSetupVal = setupTimeNewPerWS[ws] || 0;
+                  const oldCapVal = prevPeriodCapacity[ws] || 0;
+                  const oldSetupVal = prevSetupTime[ws] || 0;
+                  const totalVal =
+                    newCap + newSetupVal + oldCapVal + oldSetupVal;
+                  const overtimeVal =
+                    shiftData[ws]?.overtime ?? calculateOvertime(totalVal);
                   return (
                     <TableCell key={ws} align="center">
                       <TextField
                         type="number"
-                        value={shiftData[ws]?.overtime ?? overtime}
+                        value={overtimeVal}
                         onChange={(e) =>
                           handleShiftChange(ws, "overtime", e.target.value)
                         }
@@ -519,7 +528,7 @@ export default function CapacityTable() {
           </Table>
           <button
             onClick={handleNextClick}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200 flex items-center gap-2 mx-auto "
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200 flex items-center gap-2 mx-auto"
           >
             {t("next")}
           </button>

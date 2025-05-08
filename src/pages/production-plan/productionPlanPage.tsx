@@ -1,5 +1,3 @@
-//TODO geplantes Produktionsplan wie Prognose -> für Kaufteildispo
-
 //TODO Weiter nur wenn alles grün ist
 //TODO Sinnvolle Validation z.b. min 20 bei jedem Teil
 import { useEffect, useState } from "react";

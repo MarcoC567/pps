@@ -100,7 +100,7 @@
     "tooltip_capacity_last_period": "This shows the capacity demand from the previous period that could not be fulfilled and is still pending or in process, in minutes.",
     "tooltip_capacity_new": "This shows the capacity demand of the current period, calculated as the multiplier times the number of production parts.",
     "tooltip_capacity_setup_time_last_period": "This shows the setup time remaining from the previous period.",
-    "tooltip_capacity_setup_time_new": "This shows the total setup time for the current period, calculated as the setup value multiplied by the number of distinct parts involved.",
+    "tooltip_capacity_setup_time_new": "This shows the total setup time for the current period, calculated as the setup value multiplied by the number of distinct parts involved but the splitted Parts will be added extra.",
     "tooltip_total_Capacity": "This shows the total capacity for the current period, including leftover capacity from the previous period.",
     "tooltip_Shifts": "This shows the number of shifts scheduled for this period. You can adjust it between one and three shifts.",
     "tooltip_overtime": "This shows the total overtime required for this period, in minutes.",
