@@ -34,6 +34,9 @@ export function toDispositionInput(productionPlan: PlannedStock): DispositionInp
 
 function extractKey(str: string): string {
   const match = str.match(/^(\d{1,2})\s/);
+  if (match && ["1", "2", "3"].includes(match[1])) {
+    return "P" + match[1];
+  }
   return match ? ("E" + match[1]) : "";
 }
 
@@ -41,14 +44,10 @@ export function addProducts(dpInput: DispositionInput, productionPlan: Productio
   productionPlan.forEach(p => {
     const key = mapProductKey(p.product);
     if (!key) return;
-    dpInput.set(key, { // TODO: when I have the data
-      demand: p.values[0],
-      currentStock: 0,
-      plannedSafetyStock: 0,
-      workInProgress: 0,
-      waitingQueue: 0,
-      productionOrder: 0,
-    });
+    const dpV = dpInput.get(key);
+    if (dpV) { // TODO: when I have the data
+      dpV.demand = p.values[0];
+    }
   })
   return dpInput;
 }

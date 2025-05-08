@@ -3,7 +3,7 @@ import { DispositionValues, productBOMs } from "./util/bom.ts";
 import { PartId } from "./util/parts.type.ts";
 import { flattenTree } from "./util/helpers.ts";
 
-export const Display = ({ dpR, dpI }) => {
+export const InhouseDisposition = ({ dpR, dpI }) => {
   const dpResult: Map<string, number> = dpR as Map<string, number>;
   const dpInput = dpI as Map<string, DispositionValues>;
   const flattenedBOMTree = flattenTree(productBOMs);
@@ -18,6 +18,7 @@ export const Display = ({ dpR, dpI }) => {
       productionOrder: dpResult.get(partId) ?? 0,
     };
   }
+  const fmt = (n: number) => Math.round(n).toLocaleString();
   //TODO: Translations
   
   return (
@@ -82,12 +83,12 @@ export const Display = ({ dpR, dpI }) => {
                     {part.partId + (["E16", "E17", "E26"].includes(part.partId) ? "*" : "") }
                   </Box>
                 </TableCell>
-                <TableCell align="right">{demand}</TableCell>
-                <TableCell align="right">{currentStock}</TableCell>
-                <TableCell align="right">{workInProgress}</TableCell>
-                <TableCell align="right">{waitingQueue}</TableCell>
-                <TableCell align="right">{productionOrder}</TableCell>
-                <TableCell align="right">{plannedSafetyStock}</TableCell>
+                <TableCell align="right">{fmt(demand)}</TableCell>
+                <TableCell align="right">{fmt(currentStock)}</TableCell>
+                <TableCell align="right">{fmt(plannedSafetyStock)}</TableCell>
+                <TableCell align="right">{fmt(workInProgress)}</TableCell>
+                <TableCell align="right">{fmt(waitingQueue)}</TableCell>
+                <TableCell align="right">{fmt(productionOrder??0)}</TableCell>
               </TableRow>
             );
           })}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { dispositionService} from "./services";
 import { DispositionInput, productBOMs } from "./util/bom.ts";
-import { Display } from "./display.tsx";
+import { InhouseDisposition } from "./inhouseDisposition.tsx";
 import { Paper } from "@mui/material";
 import { INHOUSE_DISPOSITION_INPUT, INHOUSE_DISPOSITION_RESULT } from "./services/inhouseDisposition.service.ts";
 import { addProducts, toDispositionInput } from "./util/helpers.ts";
@@ -34,7 +34,7 @@ export default function InhouseDispositionPage() {
   
   return <div>
     <Paper>
-      <Display dpR={dispositionOutput} dpI={dispositionInput} />
+      <InhouseDisposition dpR={dispositionOutput} dpI={dispositionInput} />
     </Paper>
   </div>;
 }

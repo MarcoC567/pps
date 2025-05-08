@@ -64,6 +64,6 @@ export class DispositionService {
                                   - (partBOM.isUsedInAll ? inputValues.currentStock / 3 : inputValues.currentStock)
                                   - (partBOM.isUsedInAll ? inputValues.waitingQueue / 3 : inputValues.waitingQueue)
                                   - (partBOM.isUsedInAll ? inputValues.workInProgress / 3 : inputValues.workInProgress);
-    return Math.max(0, productionOrderRaw);
+    return Math.max(0, Math.ceil(productionOrderRaw));
   }
 }
