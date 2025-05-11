@@ -60,6 +60,8 @@
   "futureInwardStockMovement": "Future inward stock movement",
   "orderPeriod": "Order period",
   "inward_stock_movement": "Inward stock movement (mean value + deviation): Period-Day",
+  "incomingAmount": "Incoming order quantity",
+  "day": "Day",
   
  "article_4": "4 Rear Wheel Assembly",
   "article_5": "5 Rear Wheel Assembly",

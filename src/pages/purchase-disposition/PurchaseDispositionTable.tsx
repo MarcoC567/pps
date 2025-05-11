@@ -8,6 +8,7 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useLanguage } from "../../context/LanguageContext";
 import { ProductionPlanData } from "../production-plan/ProductionPlanTable";
 import { useCurrentPeriod } from "../../context/CurrentPeriodContext";
+import { FutureStockEntry } from ".";
 
 type InitialInventory = { itemNr: number; amount: number; }[];
 export type OrderEntry = { article: number, quantity: number; modus: string };
@@ -15,6 +16,7 @@ export type OrderEntry = { article: number, quantity: number; modus: string };
 export default function PurchaseDispositionTable(props: {
   initialInventoryData: InitialInventory;
   productionData: ProductionPlanData;
+  futureInwardStockData: FutureStockEntry[]
 }) {
   const { t } = useLanguage()
   const { currentPeriod } = useCurrentPeriod();
@@ -90,6 +92,12 @@ export default function PurchaseDispositionTable(props: {
     });
   }, [initialInventoryData, productionData]);
 
+  const getIncomingForPeriod = (article: number, period: number) => {
+    return props.futureInwardStockData.filter(
+      stock => stock.article === article && stock.inwardStockMovement.period === period
+    );
+  };
+
   return (
     <div style={{ marginTop: "3rem", padding: "1rem" }}>
       <Typography
@@ -108,7 +116,7 @@ export default function PurchaseDispositionTable(props: {
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f0f0f0" }}>
               {[...fixedHeaders, ...dynamicHeaders, t("eta"), t("orderCost"), t("totalCost")].map((header, i) => (
-                <TableCell key={i} sx={{ fontWeight: "bold" }}>
+                <TableCell align="center" key={i} sx={{ fontWeight: "bold" }}>
                   {header.includes(t("eta")) ? (
                     <>
                       {header}
@@ -148,19 +156,100 @@ export default function PurchaseDispositionTable(props: {
                   hover
                   sx={{ "&:hover": { backgroundColor: "#f9f9f9" } }}
                 >
-                  <TableCell>{row.itemNr}</TableCell>
-                  <TableCell>{row.deliveryTime}</TableCell>
-                  <TableCell>{row.deviation}</TableCell>
-                  <TableCell>{row.usageRatioP1}</TableCell>
-                  <TableCell>{row.usageRatioP2}</TableCell>
-                  <TableCell>{row.usageRatioP3}</TableCell>
-                  <TableCell>{row.discountAmount}</TableCell>
-                  <TableCell>{row.amount}</TableCell>
-                  <TableCell>{row.grossRequirementN}</TableCell>
-                  <TableCell>{row.grossRequirementN1}</TableCell>
-                  <TableCell>{row.grossRequirementN2}</TableCell>
-                  <TableCell>{row.grossRequirementN3}</TableCell>
-                  <TableCell>
+                  <TableCell align="center">{row.itemNr}</TableCell>
+                  <TableCell align="center">{row.deliveryTime}</TableCell>
+                  <TableCell align="center">{row.deviation}</TableCell>
+                  <TableCell align="center">{row.usageRatioP1}</TableCell>
+                  <TableCell align="center">{row.usageRatioP2}</TableCell>
+                  <TableCell align="center">{row.usageRatioP3}</TableCell>
+                  <TableCell align="center">{row.discountAmount}</TableCell>
+                  <TableCell align="center">{row.amount}</TableCell>
+
+                  <TableCell align="center">
+                    {row.grossRequirementN}
+                    {getIncomingForPeriod(row.itemNr, currentPeriod!).length > 0 && (
+                      <Tooltip
+                        title={
+                          <div>
+                            {getIncomingForPeriod(row.itemNr, currentPeriod!).map((stock, i) => (
+                              <div key={i}>
+                                {t("incomingAmount")}: {stock.amount}, {t("day")}: {stock.inwardStockMovement.day}
+                              </div>
+                            ))}
+                          </div>
+                        }
+                        placement="top"
+                        arrow
+                      >
+                        <InfoOutlinedIcon sx={{ fontSize: 16, verticalAlign: "middle", color: "gray", ml: 0.5 }} />
+                      </Tooltip>
+                    )}
+                  </TableCell>
+
+                  <TableCell align="center">
+                    {row.grossRequirementN1}
+                    {getIncomingForPeriod(row.itemNr, currentPeriod! + 1).length > 0 && (
+                      <Tooltip
+                        title={
+                          <div>
+                            {getIncomingForPeriod(row.itemNr, currentPeriod! + 1).map((stock, i) => (
+                              <div key={i}>
+                                {t("incomingAmount")}: {stock.amount}, {t("day")}: {stock.inwardStockMovement.day}
+                              </div>
+                            ))}
+                          </div>
+                        }
+                        placement="top"
+                        arrow
+                      >
+                        <InfoOutlinedIcon sx={{ fontSize: 16, verticalAlign: "middle", color: "gray", ml: 0.5 }} />
+                      </Tooltip>
+                    )}
+                  </TableCell>
+
+                  <TableCell align="center">
+                    {row.grossRequirementN2}
+                    {getIncomingForPeriod(row.itemNr, currentPeriod! + 2).length > 0 && (
+                      <Tooltip
+                        title={
+                          <div>
+                            {getIncomingForPeriod(row.itemNr, currentPeriod! + 2).map((stock, i) => (
+                              <div key={i}>
+                                {t("incomingAmount")}: {stock.amount}, {t("day")}: {stock.inwardStockMovement.day}
+                              </div>
+                            ))}
+                          </div>
+                        }
+                        placement="top"
+                        arrow
+                      >
+                        <InfoOutlinedIcon sx={{ fontSize: 16, verticalAlign: "middle", color: "gray", ml: 0.5 }} />
+                      </Tooltip>
+                    )}
+                  </TableCell>
+
+                  <TableCell align="center">
+                    {row.grossRequirementN3}
+                    {getIncomingForPeriod(row.itemNr, currentPeriod! + 3).length > 0 && (
+                      <Tooltip
+                        title={
+                          <div>
+                            {getIncomingForPeriod(row.itemNr, currentPeriod! + 3).map((stock, i) => (
+                              <div key={i}>
+                                {t("incomingAmount")}: {stock.amount}, {t("day")}: {stock.inwardStockMovement.day}
+                              </div>
+                            ))}
+                          </div>
+                        }
+                        placement="top"
+                        arrow
+                      >
+                        <InfoOutlinedIcon sx={{ fontSize: 16, verticalAlign: "middle", color: "gray", ml: 0.5 }} />
+                      </Tooltip>
+                    )}
+                  </TableCell>
+
+                  <TableCell align="center">
                     <TextField
                       type="number"
                       value={entry.quantity}

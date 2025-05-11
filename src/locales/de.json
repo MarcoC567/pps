@@ -61,6 +61,8 @@
   "futureInwardStockMovement": "Zukünftige Lagerzugang",
   "orderPeriod": "Bestellperiode",
   "inward_stock_movement": "Lagerzugang (Mittelwert + Abweichung): Periode-Tag",
+  "incomingAmount": "Eingehende Bestellmenge",
+  "day": "Tag",
 
 
   "article_4": "4 Hinterradgruppe",

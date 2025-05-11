@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import { useLanguage } from '../../context/LanguageContext';
 import { ProductionPlanData } from '../production-plan/ProductionPlanTable';
+import { useCurrentPeriod } from '../../context/CurrentPeriodContext';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     fontWeight: 'bold',
@@ -20,6 +21,7 @@ const StyledSumRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function ProductionProgramTable(props: { productionData: ProductionPlanData }) {
+    const { currentPeriod } = useCurrentPeriod();
     const productionData = props.productionData;
     const { t } = useLanguage();
 
@@ -46,10 +48,10 @@ export default function ProductionProgramTable(props: { productionData: Producti
                     <TableHead>
                         <TableRow>
                             <StyledTableCell>{t("period")}</StyledTableCell>
-                            <StyledTableCell align="center">n</StyledTableCell>
-                            <StyledTableCell align="center">n+1</StyledTableCell>
-                            <StyledTableCell align="center">n+2</StyledTableCell>
-                            <StyledTableCell align="center">n+3</StyledTableCell>
+                            <StyledTableCell align="center">{currentPeriod!}</StyledTableCell>
+                            <StyledTableCell align="center">{currentPeriod! + 1}</StyledTableCell>
+                            <StyledTableCell align="center">{currentPeriod! + 2}</StyledTableCell>
+                            <StyledTableCell align="center">{currentPeriod! + 3}</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

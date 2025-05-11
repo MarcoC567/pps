@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { items } from "./const";
+import { basicData, items, modusOptions } from "./const";
 import ProductionProgramTable from "./ProductionProgramTable";
 import PurchaseDispositionTable from "./PurchaseDispositionTable";
 import { useState, useEffect } from "react";
@@ -9,13 +9,26 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageContext";
 import FutureInwardStockTable from "./FutureInwardStockTable";
 import { ProductionPlanData } from "../production-plan/ProductionPlanTable";
+import { useCurrentPeriod } from "../../context/CurrentPeriodContext";
 
 type WareHouseStockData = {
   itemNr: number;
   amount: number;
 }[];
 
+export type FutureStockEntry = {
+  orderPeriod: number,
+  mode: string,
+  article: number,
+  amount: number,
+  inwardStockMovement: {
+    period: number,
+    day: number
+  }
+}
+
 export default function PurchaseDispositionPage() {
+  const [futureInwardStockData, setFutureInwardStockData] = useState<FutureStockEntry[]>([]);
   const [wareHouseStockData, setWareHouseStockData] = useState<WareHouseStockData>();
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -24,6 +37,49 @@ export default function PurchaseDispositionPage() {
   };
   const { t } = useLanguage();
 
+  const { currentPeriod } = useCurrentPeriod();
+
+  // calculate future inward stock movement
+  useEffect(() => {
+    const importData = JSON.parse(localStorage.getItem('importData') || '{}') as {
+      results?: {
+        period: string
+        futureinwardstockmovement?: {
+          order?: Array<{ orderperiod: string, article: string, mode: string, amount: string }>;
+        };
+      };
+    };
+
+    console.log(importData.results?.futureinwardstockmovement?.order);
+
+    if (!importData.results?.futureinwardstockmovement?.order) setFutureInwardStockData([])
+    else {
+      setFutureInwardStockData(
+        importData.results?.futureinwardstockmovement?.order?.map(
+          (order) => {
+            const factors = modusOptions.find(option => option.modus == Number(order.mode));
+            const articleBasicData = basicData.find(item => item.itemNr == Number(order.article))
+            const eta = factors && articleBasicData && currentPeriod ? (articleBasicData.deliveryTime! * factors.deliveryDeadlineFactor + articleBasicData.deliveryTimeDeviation! * factors.deliveryDeviationExtra) * 5 - (currentPeriod - Number(order.orderperiod)) * 5 + 1 : 0;
+            const period = currentPeriod! + Math.floor(eta / 5);
+            const day = Math.ceil(eta % 5);
+            const newFutureStockEntry: FutureStockEntry = {
+              orderPeriod: Number(order.orderperiod),
+              amount: Number(order.amount),
+              mode: factors ? factors.key : "NaN",
+              article: Number(order.article),
+              inwardStockMovement: {
+                period, day
+              }
+            }
+            return newFutureStockEntry
+          }
+        )
+      )
+    }
+  }, [currentPeriod]);
+
+
+  // set warehouse stock data
   useEffect(() => {
     const importData = JSON.parse(localStorage.getItem('importData') || '{}') as {
       results?: {
@@ -84,7 +140,7 @@ export default function PurchaseDispositionPage() {
         }}
       >
         <ProductionProgramTable productionData={productionPlanData} />
-        <FutureInwardStockTable />
+        <FutureInwardStockTable futureInwardStockData={futureInwardStockData} />
         {loading ? (
           <div>
             <Box sx={{ display: 'flex', marginLeft: 40 }}>
@@ -97,6 +153,7 @@ export default function PurchaseDispositionPage() {
             <PurchaseDispositionTable
               initialInventoryData={wareHouseStockData}
               productionData={productionPlanData}
+              futureInwardStockData={futureInwardStockData}
             />
           )
         )}
