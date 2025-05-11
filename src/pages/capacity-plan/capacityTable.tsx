@@ -86,7 +86,11 @@ export default function CapacityTable() {
       const oldSetup = prevSetupTime[wsKey] || 0;
       const total = newCap + newSetup + oldCap + oldSetup;
       const shifts = shiftData[wsKey]?.shifts ?? calculateShifts(total);
-      const overtime = shiftData[wsKey]?.overtime ?? calculateOvertime(total);
+      // Roh-Überstunden (Minuten über 2400) …
+      const rawOvertime =
+        shiftData[wsKey]?.overtime ?? calculateOvertime(total);
+      // … und geteilt durch 5, aufgerundet
+      const overtime = Math.round(rawOvertime / 5);
       return {
         station: wsKey.replace("workstation", ""),
         shift: shifts,
@@ -500,7 +504,7 @@ export default function CapacityTable() {
                     <TableCell key={ws} align="center">
                       <TextField
                         type="number"
-                        value={overtimeVal}
+                        value={Math.round(overtimeVal / 5)}
                         onChange={(e) =>
                           handleShiftChange(ws, "overtime", e.target.value)
                         }

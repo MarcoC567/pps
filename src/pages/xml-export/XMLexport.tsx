@@ -6,7 +6,7 @@ import { modusOptions } from "../purchase-disposition/const";
 import { useLanguage } from "../../context/LanguageContext";
 
 export default function ExportPage() {
-  const { t } = useLanguage()
+  const { t } = useLanguage();
   // Load and parse saved data from localStorage
   const sellWish: SalesForecastData = JSON.parse(
     localStorage.getItem("sellwish") || "[]"
@@ -15,11 +15,14 @@ export default function ExportPage() {
   const sellDirect: DirectSalesData = JSON.parse(
     localStorage.getItem("selldirect") || "[]"
   );
-  //const sellDirect = JSON.parse(localStorage.getItem("sellDirect") || "[]");
+
   const orderList: OrderEntry[] = JSON.parse(
     localStorage.getItem("orderList") || "[]"
   );
-  // const productionList = JSON.parse(localStorage.getItem("productionList") || "[]");
+  const productionOrders = JSON.parse(
+    localStorage.getItem("productionOrders") || "[]"
+  );
+
   const workingTimeList = JSON.parse(
     localStorage.getItem("workingtimelist") || "[]"
   );
@@ -27,6 +30,7 @@ export default function ExportPage() {
   console.log("sellWish", sellWish);
   console.log("orderList", orderList);
   console.log("workingTimeList", workingTimeList);
+  console.log("ProductionList", productionOrders);
 
   const exportXML = async () => {
     const xmlContent = `
@@ -56,18 +60,26 @@ export default function ExportPage() {
         (order) =>
           `<order article="${order.article}" quantity="${
             order.quantity
-          }" modus="${modusOptions.find(option => option.key == order.modus)?.modus}"/>`
+          }" modus="${
+            modusOptions.find((option) => option.key == order.modus)?.modus
+          }"/>`
       )
       .join("\n    ")}
   </orderlist>
-  <productionlist>
-    
-  </productionlist>
+ <productionlist>
+  ${productionOrders
+    .filter(([, qty]) => qty > 0)
+    .map(([code, qty]) => {
+      const article = code.replace(/^[A-Za-z]+/, "");
+      return `<production article="${article}" quantity="${qty}" />`;
+    })
+    .join("\n    ")}
+</productionlist>
   <workingtimelist>
   ${workingTimeList
     .map(
       (workingTime: { station: string; shift: number; overtime: number }) =>
-        `<workingtimelist station="${workingTime.station}" shift="${workingTime.shift}" overtime="${workingTime.overtime}" />
+        `<workingtime station="${workingTime.station}" shift="${workingTime.shift}" overtime="${workingTime.overtime}" />
         `
     )
     .join("\n    ")}
