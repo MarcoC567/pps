@@ -60,7 +60,7 @@
   "xml_download": "XML herunterladen",
   "futureInwardStockMovement": "Zukünftige Lagerzugang",
   "orderPeriod": "Bestellperiode",
-  "inward_stock_movement": "Lagerzugang (Periode-Tag)",
+  "inward_stock_movement": "Lagerzugang (Mittelwert + Abweichung): Periode-Tag",
 
 
   "article_4": "4 Hinterradgruppe",

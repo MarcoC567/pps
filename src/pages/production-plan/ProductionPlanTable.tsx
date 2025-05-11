@@ -12,7 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { useLanguage } from "../../context/LanguageContext.tsx";
 
-type ProductionPlanData = {
+export type ProductionPlanData = {
   product: string;
   values: number[];
 }[];
@@ -40,6 +40,7 @@ export default function ProductionPlanTable() {
         setProductionPlanData(defaultProductionPlan);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = (

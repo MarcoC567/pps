@@ -8,6 +8,7 @@ import { Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageContext";
 import FutureInwardStockTable from "./FutureInwardStockTable";
+import { ProductionPlanData } from "../production-plan/ProductionPlanTable";
 
 type WareHouseStockData = {
   itemNr: number;
@@ -47,20 +48,27 @@ export default function PurchaseDispositionPage() {
     setTimeout(() => setLoading(false), 100);
   }, []);
 
-  const productionData = [
-    {
-      product: "P1 Children Bike",
-      values: [150, 150, 150, 150],
-    },
-    {
-      product: "P2 Women Bike",
-      values: [150, 150, 150, 100],
-    },
-    {
-      product: "P3 Men Bike",
-      values: [150, 150, 150, 100],
-    },
+  const defaultProductionPlan: ProductionPlanData = [
+    { product: "p1ChildrenBike", values: [0, 0, 0, 0] },
+    { product: "p2WomenBike", values: [0, 0, 0, 0] },
+    { product: "p3MenBike", values: [0, 0, 0, 0] },
   ];
+
+  const [productionPlanData, setProductionPlanData] = useState<ProductionPlanData>(defaultProductionPlan);
+
+  // Forecast beim ersten Laden aus localStorage holen
+  useEffect(() => {
+    const savedProductionPlan = localStorage.getItem("productionPlanData");
+    if (savedProductionPlan) {
+      try {
+        setProductionPlanData(JSON.parse(savedProductionPlan));
+      } catch (error) {
+        console.error("Fehler beim Parsen der Forecast-Daten:", error);
+        setProductionPlanData(defaultProductionPlan);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div style={{ padding: "1rem", display: "flex", justifyContent: "center" }}>
@@ -75,8 +83,8 @@ export default function PurchaseDispositionPage() {
           boxSizing: "border-box",
         }}
       >
-        <ProductionProgramTable productionData={productionData} />
-        <FutureInwardStockTable/>
+        <ProductionProgramTable productionData={productionPlanData} />
+        <FutureInwardStockTable />
         {loading ? (
           <div>
             <Box sx={{ display: 'flex', marginLeft: 40 }}>
@@ -88,7 +96,7 @@ export default function PurchaseDispositionPage() {
 
             <PurchaseDispositionTable
               initialInventoryData={wareHouseStockData}
-              productionData={productionData}
+              productionData={productionPlanData}
             />
           )
         )}

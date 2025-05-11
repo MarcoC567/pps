@@ -17,7 +17,7 @@
       "period": "Period",
       "p1ChildrenBike": "P1 Children's Bike",
   "p2WomenBike": "P2 Women's Bike",
-  "p3MenBike": " P3Men's Bike",
+  "p3MenBike": " P3 Men's Bike",
   "article": "Article",
   "stock": "Stock",
   "plannedStockAtTheEndOfThePeriod": "Planned Stock at the end of the Period",
@@ -59,7 +59,7 @@
   "xml_download": "Download XML",
   "futureInwardStockMovement": "Future inward stock movement",
   "orderPeriod": "Order period",
-  "inward_stock_movement": "Inward stock movement (Period-Day)",
+  "inward_stock_movement": "Inward stock movement (mean value + deviation): Period-Day",
   
  "article_4": "4 Rear Wheel Assembly",
   "article_5": "5 Rear Wheel Assembly",

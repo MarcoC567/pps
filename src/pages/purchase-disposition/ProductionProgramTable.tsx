@@ -8,11 +8,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import { useLanguage } from '../../context/LanguageContext';
-
-type ProductionData = {
-    product: string;
-    values: number[];
-}[];
+import { ProductionPlanData } from '../production-plan/ProductionPlanTable';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     fontWeight: 'bold',
@@ -23,7 +19,7 @@ const StyledSumRow = styled(TableRow)(({ theme }) => ({
     backgroundColor: theme.palette.grey[200],
 }));
 
-export default function ProductionProgramTable(props: { productionData: ProductionData }) {
+export default function ProductionProgramTable(props: { productionData: ProductionPlanData }) {
     const productionData = props.productionData;
     const { t } = useLanguage();
 
@@ -60,7 +56,7 @@ export default function ProductionProgramTable(props: { productionData: Producti
                         {productionData.map((row, index) => (
                             <TableRow key={index} hover>
                                 <TableCell component="th" scope="row">
-                                    {row.product}
+                                    {t(row.product)}
                                 </TableCell>
                                 {row.values.map((value, i) => (
                                     <TableCell key={i} align="center">

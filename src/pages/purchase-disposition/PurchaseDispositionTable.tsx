@@ -6,14 +6,14 @@ import { basicData, modusOptions } from "./const";
 import { useEffect, useMemo, useState } from "react";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useLanguage } from "../../context/LanguageContext";
+import { ProductionPlanData } from "../production-plan/ProductionPlanTable";
 
 type InitialInventory = { itemNr: number; amount: number; }[];
-type ProductionData = { product: string; values: number[]; }[];
 export type OrderEntry = { article: number, quantity: number; modus: string };
 
 export default function PurchaseDispositionTable(props: {
   initialInventoryData: InitialInventory;
-  productionData: ProductionData;
+  productionData: ProductionPlanData;
 }) {
   const { t } = useLanguage()
   const fixedHeaders = [
