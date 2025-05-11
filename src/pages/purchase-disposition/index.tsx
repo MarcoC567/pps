@@ -59,9 +59,10 @@ export default function PurchaseDispositionPage() {
           (order) => {
             const factors = modusOptions.find(option => option.modus == Number(order.mode));
             const articleBasicData = basicData.find(item => item.itemNr == Number(order.article))
-            const eta = factors && articleBasicData && currentPeriod ? (articleBasicData.deliveryTime! * factors.deliveryDeadlineFactor + articleBasicData.deliveryTimeDeviation! * factors.deliveryDeviationExtra) * 5 - (currentPeriod - Number(order.orderperiod)) * 5 + 1 : 0;
-            const period = currentPeriod! + Math.floor(eta / 5);
-            const day = Math.ceil(eta % 5);
+            let eta = factors && articleBasicData && currentPeriod ? Math.ceil((articleBasicData.deliveryTime! * factors.deliveryDeadlineFactor + articleBasicData.deliveryTimeDeviation! * factors.deliveryDeviationExtra) * 5 ) : 0;
+            eta = eta - (currentPeriod! + 1 - Number(order.orderperiod)) * 5
+            const period = currentPeriod! + 1 + Math.floor(eta / 5);
+            const day = (Math.ceil(eta) % 5) + 1;
             const newFutureStockEntry: FutureStockEntry = {
               orderPeriod: Number(order.orderperiod),
               amount: Number(order.amount),
