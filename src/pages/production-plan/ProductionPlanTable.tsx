@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLanguage } from "../../context/LanguageContext.tsx";
+import { useCurrentPeriod } from "../../context/CurrentPeriodContext.tsx";
 
 export type ProductionPlanData = {
   product: string;
@@ -19,6 +20,7 @@ export type ProductionPlanData = {
 
 export default function ProductionPlanTable() {
   const { t } = useLanguage();
+  const { currentPeriod } = useCurrentPeriod();
 
   const defaultProductionPlan: ProductionPlanData = [
     { product: "p1ChildrenBike", values: [0, 0, 0, 0] },
@@ -40,7 +42,7 @@ export default function ProductionPlanTable() {
         setProductionPlanData(defaultProductionPlan);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = (
@@ -80,7 +82,7 @@ export default function ProductionPlanTable() {
               <TableCell />
               {Array.from({ length: 4 }, (_, i) => (
                 <TableCell key={i} align="center" sx={{ fontWeight: "bold" }}>
-                  {t("period")} {`n+${i}`}
+                  {t("period")} {`${currentPeriod! + i + 1}`}
                 </TableCell>
               ))}
             </TableRow>

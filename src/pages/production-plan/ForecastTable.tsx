@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLanguage } from "../../context/LanguageContext.tsx";
+import { useCurrentPeriod } from "../../context/CurrentPeriodContext.tsx";
 
 type ForecastData = {
   product: string;
@@ -19,7 +20,7 @@ type ForecastData = {
 
 export default function ForecastTable() {
   const { t } = useLanguage();
-
+  const { currentPeriod } = useCurrentPeriod();
   const defaultForecast: ForecastData = [
     { product: "p1ChildrenBike", values: [0, 0, 0, 0] },
     { product: "p2WomenBike", values: [0, 0, 0, 0] },
@@ -79,7 +80,7 @@ export default function ForecastTable() {
               <TableCell />
               {Array.from({ length: 4 }, (_, i) => (
                 <TableCell key={i} align="center" sx={{ fontWeight: "bold" }}>
-                  {t("period")} {`n+${i}`}
+                  {t("period")} {`${currentPeriod! + i + 1}`}
                 </TableCell>
               ))}
             </TableRow>
