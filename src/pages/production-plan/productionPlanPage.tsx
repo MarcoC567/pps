@@ -42,6 +42,7 @@ export default function Forecast() {
 
   const navigate = useNavigate();
   const handleNextClick = () => {
+    localStorage.setItem("visited_/forecast", "true");
     navigate("/inhouse-disposition");
   };
 

@@ -106,6 +106,8 @@ export default function ProductionOrderListPage() {
 
   const navigate = useNavigate();
   const handleNextClick = () => {
+    save(orders);
+    localStorage.setItem("visited_/production-order", "true");
     navigate("/capacity-plan");
   };
 

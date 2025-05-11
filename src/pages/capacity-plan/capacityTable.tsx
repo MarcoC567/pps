@@ -99,6 +99,7 @@ export default function CapacityTable() {
     });
 
     localStorage.setItem("workingtimelist", JSON.stringify(list));
+    localStorage.setItem("visited_/capacity-plan", "true");
     navigate("/purchase-disposition");
   };
 

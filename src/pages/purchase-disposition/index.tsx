@@ -17,22 +17,27 @@ type WareHouseStockData = {
 }[];
 
 export type FutureStockEntry = {
-  orderPeriod: number,
-  mode: string,
-  article: number,
-  amount: number,
+  orderPeriod: number;
+  mode: string;
+  article: number;
+  amount: number;
   inwardStockMovement: {
-    period: number,
-    day: number
-  }
-}
+    period: number;
+    day: number;
+  };
+};
 
 export default function PurchaseDispositionPage() {
-  const [futureInwardStockData, setFutureInwardStockData] = useState<FutureStockEntry[]>([]);
-  const [wareHouseStockData, setWareHouseStockData] = useState<WareHouseStockData>();
+  const [futureInwardStockData, setFutureInwardStockData] = useState<
+    FutureStockEntry[]
+  >([]);
+  const [wareHouseStockData, setWareHouseStockData] =
+    useState<WareHouseStockData>();
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const handleNextClick = () => {
+    localStorage.setItem("visited_/purchase-disposition", "true");
+    localStorage.setItem("visited_/xmlExport", "true");
     navigate("/xmlExport");
   };
   const { t } = useLanguage();
@@ -41,48 +46,69 @@ export default function PurchaseDispositionPage() {
 
   // calculate future inward stock movement
   useEffect(() => {
-    const importData = JSON.parse(localStorage.getItem('importData') || '{}') as {
+    const importData = JSON.parse(
+      localStorage.getItem("importData") || "{}"
+    ) as {
       results?: {
-        period: string
+        period: string;
         futureinwardstockmovement?: {
-          order?: Array<{ orderperiod: string, article: string, mode: string, amount: string }>;
+          order?: Array<{
+            orderperiod: string;
+            article: string;
+            mode: string;
+            amount: string;
+          }>;
         };
       };
     };
 
     console.log(importData.results?.futureinwardstockmovement?.order);
 
-    if (!importData.results?.futureinwardstockmovement?.order) setFutureInwardStockData([])
+    if (!importData.results?.futureinwardstockmovement?.order)
+      setFutureInwardStockData([]);
     else {
       setFutureInwardStockData(
-        importData.results?.futureinwardstockmovement?.order?.map(
-          (order) => {
-            const factors = modusOptions.find(option => option.modus == Number(order.mode));
-            const articleBasicData = basicData.find(item => item.itemNr == Number(order.article))
-            let eta = factors && articleBasicData && currentPeriod ? Math.ceil((articleBasicData.deliveryTime! * factors.deliveryDeadlineFactor + articleBasicData.deliveryTimeDeviation! * factors.deliveryDeviationExtra) * 5 ) : 0;
-            eta = eta - (currentPeriod! + 1 - Number(order.orderperiod)) * 5
-            const period = currentPeriod! + 1 + Math.floor(eta / 5);
-            const day = (Math.ceil(eta) % 5) + 1;
-            const newFutureStockEntry: FutureStockEntry = {
-              orderPeriod: Number(order.orderperiod),
-              amount: Number(order.amount),
-              mode: factors ? factors.key : "NaN",
-              article: Number(order.article),
-              inwardStockMovement: {
-                period, day
-              }
-            }
-            return newFutureStockEntry
-          }
-        )
-      )
+        importData.results?.futureinwardstockmovement?.order?.map((order) => {
+          const factors = modusOptions.find(
+            (option) => option.modus == Number(order.mode)
+          );
+          const articleBasicData = basicData.find(
+            (item) => item.itemNr == Number(order.article)
+          );
+          let eta =
+            factors && articleBasicData && currentPeriod
+              ? Math.ceil(
+                  (articleBasicData.deliveryTime! *
+                    factors.deliveryDeadlineFactor +
+                    articleBasicData.deliveryTimeDeviation! *
+                      factors.deliveryDeviationExtra) *
+                    5
+                )
+              : 0;
+          eta = eta - (currentPeriod! + 1 - Number(order.orderperiod)) * 5;
+          const period = currentPeriod! + 1 + Math.floor(eta / 5);
+          const day = (Math.ceil(eta) % 5) + 1;
+          const newFutureStockEntry: FutureStockEntry = {
+            orderPeriod: Number(order.orderperiod),
+            amount: Number(order.amount),
+            mode: factors ? factors.key : "NaN",
+            article: Number(order.article),
+            inwardStockMovement: {
+              period,
+              day,
+            },
+          };
+          return newFutureStockEntry;
+        })
+      );
     }
   }, [currentPeriod]);
 
-
   // set warehouse stock data
   useEffect(() => {
-    const importData = JSON.parse(localStorage.getItem('importData') || '{}') as {
+    const importData = JSON.parse(
+      localStorage.getItem("importData") || "{}"
+    ) as {
       results?: {
         warehousestock?: {
           article?: Record<string, { amount?: string }>;
@@ -94,7 +120,9 @@ export default function PurchaseDispositionPage() {
 
     setWareHouseStockData(
       items.map((itemNumber) => {
-        const amount: string = importData.results?.warehousestock?.article?.[`${itemNumber - 1}`]?.amount ?? "0";
+        const amount: string =
+          importData.results?.warehousestock?.article?.[`${itemNumber - 1}`]
+            ?.amount ?? "0";
         return {
           itemNr: itemNumber,
           amount: Number(amount),
@@ -111,7 +139,8 @@ export default function PurchaseDispositionPage() {
     { product: "p3MenBike", values: [0, 0, 0, 0] },
   ];
 
-  const [productionPlanData, setProductionPlanData] = useState<ProductionPlanData>(defaultProductionPlan);
+  const [productionPlanData, setProductionPlanData] =
+    useState<ProductionPlanData>(defaultProductionPlan);
 
   // Forecast beim ersten Laden aus localStorage holen
   useEffect(() => {
@@ -144,13 +173,12 @@ export default function PurchaseDispositionPage() {
         <FutureInwardStockTable futureInwardStockData={futureInwardStockData} />
         {loading ? (
           <div>
-            <Box sx={{ display: 'flex', marginLeft: 40 }}>
+            <Box sx={{ display: "flex", marginLeft: 40 }}>
               <CircularProgress />
             </Box>
           </div>
         ) : (
           wareHouseStockData && (
-
             <PurchaseDispositionTable
               initialInventoryData={wareHouseStockData}
               productionData={productionPlanData}
