@@ -2,18 +2,19 @@ import { useEffect, useState } from "react";
 import { Box, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { useLanguage } from "../../context/LanguageContext";
 import { basicData, modusOptions } from "./const";
+import { useCurrentPeriod } from "../../context/CurrentPeriodContext";
 
 type FutureStockEntry = {
     orderPeriod: number,
-    mode: number,
+    mode: string,
     article: number,
     amount: number
 }
 
 export default function FutureInwardStockTable() {
     const { t } = useLanguage()
+    const { currentPeriod } = useCurrentPeriod();
     const [futureInwardStockData, setFutureInwardStockData] = useState<FutureStockEntry[] | undefined>([])
-    const [currentPeriod, setCurrentPeriod] = useState<number>()
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -26,8 +27,6 @@ export default function FutureInwardStockTable() {
             };
         };
 
-        setCurrentPeriod(Number(importData.results?.period))
-
         console.log(importData.results?.futureinwardstockmovement?.order);
 
         setFutureInwardStockData(
@@ -36,7 +35,7 @@ export default function FutureInwardStockTable() {
                     const newFutureStockEntry: FutureStockEntry = {
                         orderPeriod: Number(order.orderperiod),
                         amount: Number(order.amount),
-                        mode: Number(order.mode),
+                        mode: modusOptions.find((option) => option.modus == Number(order.mode))!.key,
                         article: Number(order.article)
                     }
                     return newFutureStockEntry
@@ -81,7 +80,7 @@ export default function FutureInwardStockTable() {
                                 {
                                     futureInwardStockData.map(
                                         (row, rowIndex) => {
-                                            const factors = modusOptions.find(option => option.modus == row.mode);
+                                            const factors = modusOptions.find(option => option.key == row.mode);
                                             const articleBasicData = basicData.find(item => item.itemNr == row.article)
                                             const eta = factors && articleBasicData && currentPeriod ? (articleBasicData.deliveryTime! * factors.deliveryDeadlineFactor + articleBasicData.deliveryTimeDeviation! * factors.deliveryDeviationExtra) * 5 - (currentPeriod - row.orderPeriod) * 5 + 1 : 0;
                                             const period = currentPeriod! + Math.floor(eta / 5);
@@ -89,7 +88,7 @@ export default function FutureInwardStockTable() {
                                             return (
                                                 <TableRow key={rowIndex} hover sx={{ "&:hover": { backgroundColor: "#f9f9f9" } }}>
                                                     <TableCell>{row.article}</TableCell>
-                                                    <TableCell>{row.mode}</TableCell>
+                                                    <TableCell>{t(row.mode)}</TableCell>
                                                     <TableCell>{row.amount}</TableCell>
                                                     <TableCell>{row.orderPeriod}</TableCell>
                                                     <TableCell>{`${period} - ${day}`}</TableCell>

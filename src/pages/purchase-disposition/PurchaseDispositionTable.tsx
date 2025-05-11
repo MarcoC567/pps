@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useLanguage } from "../../context/LanguageContext";
 import { ProductionPlanData } from "../production-plan/ProductionPlanTable";
+import { useCurrentPeriod } from "../../context/CurrentPeriodContext";
 
 type InitialInventory = { itemNr: number; amount: number; }[];
 export type OrderEntry = { article: number, quantity: number; modus: string };
@@ -16,6 +17,7 @@ export default function PurchaseDispositionTable(props: {
   productionData: ProductionPlanData;
 }) {
   const { t } = useLanguage()
+  const { currentPeriod } = useCurrentPeriod();
   const fixedHeaders = [
     t("article"),
     t("delieveryTime"),
@@ -25,10 +27,10 @@ export default function PurchaseDispositionTable(props: {
     "P3",
     t("discountedAmount"),
     t("initial_stock_in_period_n"),
-    "n",
-    "n+1",
-    "n+2",
-    "n+3",
+    `${t('period')} ${currentPeriod!}`,
+    `${t('period')} ${currentPeriod! + 1}`,
+    `${t('period')} ${currentPeriod! + 2}`,
+    `${t('period')} ${currentPeriod! + 3}`,
   ];
   const dynamicHeaders = [t("quantity"), t("mode")];
   const initialInventoryData = props.initialInventoryData;
