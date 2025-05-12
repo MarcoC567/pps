@@ -77,7 +77,7 @@ export default function PurchaseDispositionPage() {
           );
           let eta =
             factors && articleBasicData && currentPeriod
-              ? Math.ceil(
+              ? Math.floor(
                   (articleBasicData.deliveryTime! *
                     factors.deliveryDeadlineFactor +
                     articleBasicData.deliveryTimeDeviation! *
@@ -85,7 +85,7 @@ export default function PurchaseDispositionPage() {
                     5
                 )
               : 0;
-          eta = eta - (currentPeriod! + 1 - Number(order.orderperiod)) * 5;
+          eta = eta - (currentPeriod! + 1 - Number(order.orderperiod)) * 5 + 1;
           const period = currentPeriod! + 1 + Math.floor(eta / 5);
           const day = (Math.ceil(eta) % 5) + 1;
           const newFutureStockEntry: FutureStockEntry = {
