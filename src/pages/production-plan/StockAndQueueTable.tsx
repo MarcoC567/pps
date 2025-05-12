@@ -1,4 +1,3 @@
-//TODO Internationalisieren der Artikelbezeichnungen
 import {
   Table,
   TableBody,
@@ -6,12 +5,11 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
   Paper,
+  Typography,
   TextField,
   Tooltip,
 } from "@mui/material";
-import { useEffect, useState } from "react";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useLanguage } from "../../context/LanguageContext.tsx";
 import parts from "../../data/base-data/parts.json";
@@ -22,35 +20,24 @@ export type StockData = {
   endStock: number;
   waitingList: number;
   inProduction: number;
-};
+}[];
 
-export default function StockAndQueueTable(props: { stockData: StockData[] }) {
-  const [stockData, setStockData] = useState<StockData[]>([]);
+interface StockAndQueueTableProps {
+  data: StockData;
+  onChange: (newData: StockData) => void;
+}
+
+export default function StockAndQueueTable({
+  data,
+  onChange,
+}: StockAndQueueTableProps) {
   const { t } = useLanguage();
 
-  useEffect(() => {
-    const plannedStockAtTheEndOfThePeriod = localStorage.getItem(
-      "plannedStockAtTheEndOfThePeriod"
+  const handleChange = (index: number, newValue: string) => {
+    const updated = data.map((row, i) =>
+      i === index ? { ...row, endStock: Number(newValue) || 0 } : row
     );
-    if (plannedStockAtTheEndOfThePeriod)
-      setStockData(JSON.parse(plannedStockAtTheEndOfThePeriod));
-    else {
-      setStockData(props.stockData);
-    }
-  }, [props.stockData]);
-
-  const handleChange = (
-    index: number,
-    key: keyof Omit<StockData, "product">,
-    value: string
-  ) => {
-    const updated = [...stockData];
-    updated[index][key] = Number(value) || 0;
-    setStockData(updated);
-    localStorage.setItem(
-      "plannedStockAtTheEndOfThePeriod",
-      JSON.stringify(updated)
-    );
+    onChange(updated);
   };
 
   return (
@@ -88,128 +75,85 @@ export default function StockAndQueueTable(props: { stockData: StockData[] }) {
                   />
                 </Tooltip>
               </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                {t("stock")}
-                <Tooltip title={t("tooltip_stock")} placement="top" arrow>
-                  <InfoOutlinedIcon
-                    sx={{
-                      fontSize: 16,
-                      verticalAlign: "middle",
-                      color: "gray",
-                      cursor: "pointer",
-                    }}
-                  />
-                </Tooltip>
-              </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                {t("plannedStockAtTheEndOfThePeriod")}
-                <Tooltip title={t("tooltip_planneStock")} placement="top" arrow>
-                  <InfoOutlinedIcon
-                    sx={{
-                      fontSize: 16,
-                      verticalAlign: "middle",
-                      color: "gray",
-                      cursor: "pointer",
-                    }}
-                  />
-                </Tooltip>
-              </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                {t("queue")}
-                <Tooltip title={t("tooltip_queue")} placement="top" arrow>
-                  <InfoOutlinedIcon
-                    sx={{
-                      fontSize: 16,
-                      verticalAlign: "middle",
-                      color: "gray",
-                      cursor: "pointer",
-                    }}
-                  />
-                </Tooltip>
-              </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                {t("contractInWork")}
-                <Tooltip
-                  title={t("tooltip_contractInWork")}
-                  placement="top"
-                  arrow
-                >
-                  <InfoOutlinedIcon
-                    sx={{
-                      fontSize: 16,
-                      verticalAlign: "middle",
-                      color: "gray",
-                      cursor: "pointer",
-                    }}
-                  />
-                </Tooltip>
-              </TableCell>
+              {["stock", "endStock", "waitingList", "inProduction"].map(
+                (field) => (
+                  <TableCell
+                    key={field}
+                    align="center"
+                    sx={{ fontWeight: "bold" }}
+                  >
+                    {t(field)}
+                    <Tooltip
+                      title={t(`tooltip_${field}`)}
+                      placement="top"
+                      arrow
+                    >
+                      <InfoOutlinedIcon
+                        sx={{
+                          fontSize: 16,
+                          verticalAlign: "middle",
+                          color: "gray",
+                          cursor: "pointer",
+                        }}
+                      />
+                    </Tooltip>
+                  </TableCell>
+                )
+              )}
             </TableRow>
           </TableHead>
-          <TableBody>
-            {stockData.map((row, i) => (
-              <TableRow
-                key={i}
-                hover
-                sx={{
-                  "&:hover": {
-                    backgroundColor: "#f9f9f9",
-                  },
-                }}
-              >
-                <TableCell>
-                  {parts.artikel.find(
-                    (p) => p.artikelnummer === row.product.split(" ")[0]
-                  )?.bezeichnung || row.product}
-                </TableCell>
-                {["stock", "endStock", "waitingList", "inProduction"].map(
-                  (field) => {
-                    const value =
-                      row[field as keyof Omit<StockData, "product">];
-                    const isEndStock = field === "endStock";
 
-                    return (
-                      <TableCell key={field} align="center">
-                        <TextField
-                          type="number"
-                          value={value}
-                          onChange={(e) => {
-                            if (isEndStock) {
-                              handleChange(
-                                i,
-                                field as keyof Omit<StockData, "product">,
-                                e.target.value
-                              );
-                            }
-                          }}
-                          disabled={!isEndStock}
-                          variant="outlined"
-                          size="small"
-                          sx={{
-                            width: "4rem",
-                            input: {
-                              textAlign: "center",
-                              padding: "6px",
-                              borderRadius: "8px",
-                              backgroundColor: isEndStock
-                                ? "#fdfdfd"
-                                : "#f0f0f0",
-                              border: isEndStock
-                                ? `1px solid ${value === 0 ? "red" : "green"}`
-                                : "1px solid #ccc",
-                              transition: "border 0.2s",
-                            },
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              border: "none",
-                            },
-                          }}
-                        />
-                      </TableCell>
-                    );
-                  }
-                )}
-              </TableRow>
-            ))}
+          <TableBody>
+            {data.map((row, i) => {
+              const isValid = row.endStock !== 0;
+              // Artikelnummer aus String extrahieren
+              const artNum = Number(row.product.split(" ")[0]);
+              const part = parts.artikel.find(
+                (p) => Number(p.artikelnummer) === artNum
+              );
+              const displayName = part ? part.bezeichnung : row.product;
+
+              return (
+                <TableRow
+                  key={i}
+                  hover
+                  sx={{ "&:hover": { backgroundColor: "#f9f9f9" } }}
+                >
+                  <TableCell>{displayName}</TableCell>
+                  <TableCell align="center">{row.stock}</TableCell>
+                  <TableCell align="center">
+                    <TextField
+                      type="number"
+                      value={row.endStock}
+                      onChange={(e) => handleChange(i, e.target.value)}
+                      variant="outlined"
+                      size="small"
+                      inputRef={(el) => {
+                        if (el) {
+                          el.dataset.valid = isValid.toString();
+                          el.classList.add("table-input");
+                        }
+                      }}
+                      sx={{
+                        width: "4rem",
+                        input: {
+                          textAlign: "center",
+                          padding: "6px",
+                          borderRadius: "8px",
+                          backgroundColor: "#fdfdfd",
+                          border: `1px solid ${isValid ? "green" : "red"}`,
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          border: "none",
+                        },
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell align="center">{row.waitingList}</TableCell>
+                  <TableCell align="center">{row.inProduction}</TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>

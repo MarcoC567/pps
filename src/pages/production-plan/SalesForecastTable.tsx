@@ -9,7 +9,6 @@ import {
   Typography,
   TextField,
 } from "@mui/material";
-import { useEffect, useState } from "react";
 import { useLanguage } from "../../context/LanguageContext.tsx";
 
 export type SalesForecastData = {
@@ -17,37 +16,25 @@ export type SalesForecastData = {
   current: number;
 }[];
 
-export default function SalesForecastTable(props: {
-  salesForecastData: SalesForecastData;
-}) {
-  const [salesForecastData, setSalesForecastData] = useState<SalesForecastData>(
-    []
-  );
+interface SalesForecastTableProps {
+  data: SalesForecastData;
+  onChange: (newData: SalesForecastData) => void;
+}
 
-  useEffect(() => {
-    const savedSellWish = localStorage.getItem("sellwish");
-    if (savedSellWish) {
-      setSalesForecastData(JSON.parse(savedSellWish));
-    } else {
-      setSalesForecastData(props.salesForecastData);
-    }
-  }, [props.salesForecastData]);
+export default function SalesForecastTable({
+  data,
+  onChange,
+}: SalesForecastTableProps) {
+  const { t } = useLanguage();
 
-  const handleChange = (index: number, key: "current", value: string) => {
-    const updated = [...salesForecastData];
-    updated[index][key] = Number(value) || 0;
-    setSalesForecastData(updated);
-
-    localStorage.setItem("sellwish", JSON.stringify(updated));
+  const handleChange = (index: number, newValue: string) => {
+    const updated = data.map((row, i) =>
+      i === index ? { ...row, current: Number(newValue) || 0 } : row
+    );
+    onChange(updated);
   };
 
-  const salesSum = salesForecastData.reduce(
-    (acc, row) => ({
-      current: acc.current + row.current,
-    }),
-    { current: 0 }
-  );
-  const { t } = useLanguage();
+  const sum = data.reduce((acc, row) => acc + row.current, 0);
 
   return (
     <div style={{ marginTop: "3rem", padding: "1rem" }}>
@@ -78,46 +65,54 @@ export default function SalesForecastTable(props: {
               </TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
-            {salesForecastData.map((row, idx) => (
-              <TableRow
-                key={idx}
-                hover
-                sx={{ "&:hover": { backgroundColor: "#f9f9f9" } }}
-              >
-                <TableCell>{t(row.product)}</TableCell>
-                <TableCell align="center">
-                  <TextField
-                    type="number"
-                    value={row.current}
-                    onChange={(e) =>
-                      handleChange(idx, "current", e.target.value)
-                    }
-                    variant="outlined"
-                    size="small"
-                    sx={{
-                      width: "4rem",
-                      input: {
-                        textAlign: "center",
-                        padding: "6px",
-                        borderRadius: "8px",
-                        backgroundColor: "#fdfdfd",
-                        border: `1px solid ${
-                          row.current === 0 ? "red" : "green"
-                        }`,
-                      },
-                      "& .MuiOutlinedInput-notchedOutline": { border: "none" },
-                    }}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
+            {data.map((row, idx) => {
+              const isValid = row.current !== 0;
+              return (
+                <TableRow
+                  key={idx}
+                  hover
+                  sx={{ "&:hover": { backgroundColor: "#f9f9f9" } }}
+                >
+                  <TableCell>{t(row.product)}</TableCell>
+                  <TableCell align="center">
+                    <TextField
+                      type="number"
+                      value={row.current}
+                      onChange={(e) => handleChange(idx, e.target.value)}
+                      variant="outlined"
+                      size="small"
+                      inputRef={(el) => {
+                        if (el) {
+                          el.dataset.valid = isValid.toString();
+                          el.classList.add("table-input");
+                        }
+                      }}
+                      sx={{
+                        width: "4rem",
+                        input: {
+                          textAlign: "center",
+                          padding: "6px",
+                          borderRadius: "8px",
+                          backgroundColor: "#fdfdfd",
+                          border: `1px solid ${isValid ? "green" : "red"}`,
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          border: "none",
+                        },
+                      }}
+                    />
+                  </TableCell>
+                </TableRow>
+              );
+            })}
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell>
                 <strong>{t("sum")}:</strong>
               </TableCell>
               <TableCell align="center">
-                <strong>{salesSum.current}</strong>
+                <strong>{sum}</strong>
               </TableCell>
             </TableRow>
           </TableBody>

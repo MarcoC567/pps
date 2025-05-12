@@ -12,7 +12,7 @@ export default function Navbar() {
   const { t } = useLanguage();
   const location = useLocation();
   const currentPath = location.pathname;
-
+  const { language, setLanguage } = useLanguage();
   // Initiale Navigation (wie gehabt)
   const initialNavigation = [
     { name: t("XMLimport"), href: "/xmlImport" },
@@ -68,6 +68,7 @@ export default function Navbar() {
                   </span>
                 );
               }
+
               // Sonst normale <a>
               return (
                 <a
@@ -85,6 +86,28 @@ export default function Navbar() {
                 </a>
               );
             })}
+            <button
+              onClick={() => setLanguage("de")}
+              className={classNames(
+                language === "de"
+                  ? "bg-gray-700 text-white"
+                  : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                "px-3 py-1 rounded-md text-sm font-medium"
+              )}
+            >
+              DE
+            </button>
+            <button
+              onClick={() => setLanguage("en")}
+              className={classNames(
+                language === "en"
+                  ? "bg-gray-700 text-white"
+                  : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                "px-3 py-1 rounded-md text-sm font-medium"
+              )}
+            >
+              EN
+            </button>
           </div>
         </div>
       </div>

@@ -9,7 +9,6 @@ import {
   Typography,
   TextField,
 } from "@mui/material";
-import { useEffect, useState } from "react";
 import { useLanguage } from "../../context/LanguageContext.tsx";
 import { useCurrentPeriod } from "../../context/CurrentPeriodContext.tsx";
 
@@ -18,43 +17,34 @@ export type ProductionPlanData = {
   values: number[];
 }[];
 
-export default function ProductionPlanTable() {
+interface ProductionPlanTableProps {
+  data: ProductionPlanData;
+  onChange: (newData: ProductionPlanData) => void;
+}
+
+export default function ProductionPlanTable({
+  data,
+  onChange,
+}: ProductionPlanTableProps) {
   const { t } = useLanguage();
   const { currentPeriod } = useCurrentPeriod();
 
-  const defaultProductionPlan: ProductionPlanData = [
-    { product: "p1ChildrenBike", values: [0, 0, 0, 0] },
-    { product: "p2WomenBike", values: [0, 0, 0, 0] },
-    { product: "p3MenBike", values: [0, 0, 0, 0] },
-  ];
-
-  const [ProductionPlanData, setProductionPlanData] =
-    useState<ProductionPlanData>(defaultProductionPlan);
-
-  // Forecast beim ersten Laden aus localStorage holen
-  useEffect(() => {
-    const savedProductionPlan = localStorage.getItem("productionPlanData");
-    if (savedProductionPlan) {
-      try {
-        setProductionPlanData(JSON.parse(savedProductionPlan));
-      } catch (error) {
-        console.error("Fehler beim Parsen der Forecast-Daten:", error);
-        setProductionPlanData(defaultProductionPlan);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const handleChange = (
     rowIndex: number,
-    valueIndex: number,
+    colIndex: number,
     newValue: string
   ) => {
-    const updatedData = [...ProductionPlanData];
-    updatedData[rowIndex].values[valueIndex] = Number(newValue) || 0;
-    setProductionPlanData(updatedData);
-
-    localStorage.setItem("productionPlanData", JSON.stringify(updatedData));
+    const updated = data.map((row, ri) =>
+      ri === rowIndex
+        ? {
+            ...row,
+            values: row.values.map((v, ci) =>
+              ci === colIndex ? Number(newValue) || 0 : v
+            ),
+          }
+        : row
+    );
+    onChange(updated);
   };
 
   return (
@@ -82,13 +72,14 @@ export default function ProductionPlanTable() {
               <TableCell />
               {Array.from({ length: 4 }, (_, i) => (
                 <TableCell key={i} align="center" sx={{ fontWeight: "bold" }}>
-                  {t("period")} {`${currentPeriod! + i + 1}`}
+                  {t("period")} {currentPeriod! + i + 1}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
+
           <TableBody>
-            {ProductionPlanData.map((row, rowIndex) => (
+            {data.map((row, rowIndex) => (
               <TableRow
                 key={rowIndex}
                 hover
@@ -97,44 +88,53 @@ export default function ProductionPlanTable() {
                 <TableCell component="th" scope="row">
                   {t(row.product)}
                 </TableCell>
-                {row.values.map((value, colIndex) => (
-                  <TableCell key={colIndex} align="center">
-                    <TextField
-                      type="number"
-                      value={value}
-                      onChange={(e) =>
-                        handleChange(rowIndex, colIndex, e.target.value)
-                      }
-                      variant="outlined"
-                      size="small"
-                      sx={{
-                        width: "4rem",
-                        input: {
-                          textAlign: "center",
-                          padding: "6px",
-                          borderRadius: "8px",
-                          backgroundColor: "#fdfdfd",
-                          border: `1px solid ${value === 0 ? "red" : "green"}`,
-                        },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          border: "none",
-                        },
-                      }}
-                    />
-                  </TableCell>
-                ))}
+                {row.values.map((value, colIndex) => {
+                  const isValid = value !== 0;
+                  return (
+                    <TableCell key={colIndex} align="center">
+                      <TextField
+                        type="number"
+                        value={value}
+                        onChange={(e) =>
+                          handleChange(rowIndex, colIndex, e.target.value)
+                        }
+                        variant="outlined"
+                        size="small"
+                        inputRef={(el) => {
+                          if (el) {
+                            el.dataset.valid = isValid.toString();
+                            el.classList.add("table-input");
+                          }
+                        }}
+                        sx={{
+                          width: "4rem",
+                          input: {
+                            textAlign: "center",
+                            padding: "6px",
+                            borderRadius: "8px",
+                            backgroundColor: "#fdfdfd",
+                            border: `1px solid ${isValid ? "green" : "red"}`,
+                          },
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            border: "none",
+                          },
+                        }}
+                      />
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             ))}
-            {ProductionPlanData.length > 0 && ProductionPlanData[0]?.values && (
+            {data.length > 0 && (
               <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
                 <TableCell>
                   <strong>{t("sum")}</strong>
                 </TableCell>
-                {ProductionPlanData[0].values.map((_, colIndex) => (
-                  <TableCell key={colIndex} align="center">
+                {data[0].values.map((_, idx) => (
+                  <TableCell key={idx} align="center">
                     <strong>
-                      {ProductionPlanData.reduce(
-                        (sum, row) => sum + (row.values?.[colIndex] || 0),
+                      {data.reduce(
+                        (sum, row) => sum + (row.values[idx] || 0),
                         0
                       )}
                     </strong>
