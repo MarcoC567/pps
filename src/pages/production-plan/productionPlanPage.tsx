@@ -195,7 +195,7 @@ export default function ProductionPlanPage() {
       setTimeout(() => firstInvalid.classList.remove("highlight"), 1500);
       return;
     }
-    localStorage.setItem("visited_/production-plan", "true");
+    localStorage.setItem("visited_/forecast", "true");
     navigate("/inhouse-disposition");
   };
 
