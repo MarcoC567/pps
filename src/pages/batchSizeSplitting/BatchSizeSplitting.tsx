@@ -1,4 +1,4 @@
-//TODO EVTL Drag and Drop
+// ProductionOrderListPage.tsx
 import {
   Box,
   Button,
@@ -22,6 +22,9 @@ type ProductionOrder = {
 };
 
 export default function ProductionOrderListPage() {
+  const { t } = useLanguage();
+  const navigate = useNavigate();
+
   const [orders, setOrders] = useState<ProductionOrder[]>([]);
   const [splitAmount, setSplitAmount] = useState<{ [index: number]: number }>(
     {}
@@ -30,8 +33,17 @@ export default function ProductionOrderListPage() {
     [index: number]: boolean;
   }>({});
 
+  // Hilfsfunktion, um in LS zu speichern
+  const saveToLS = (list: ProductionOrder[]) => {
+    const serialized: [string, number][] = list.map(({ product, quantity }) => [
+      product,
+      quantity,
+    ]);
+    localStorage.setItem("productionOrders", JSON.stringify(serialized));
+  };
+
   useEffect(() => {
-    // 1) Prüfe zuerst auf productionOrders (aktuelle Änderungen)
+    // 1) Prüfe, ob schon productionOrders existieren
     const prodRaw = localStorage.getItem("productionOrders");
     if (prodRaw) {
       const parsedProd: [string, number][] = JSON.parse(prodRaw);
@@ -42,7 +54,7 @@ export default function ProductionOrderListPage() {
       return;
     }
 
-    // 2) Wenn productionOrders nicht existiert, lade initial aus inhouseDispositionResult
+    // 2) Sonst: aus inhouseDispositionResult laden, wenn vorhanden
     const stored = localStorage.getItem("inhouseDispositionResult");
     if (stored) {
       const parsedInit: [string, number][] = JSON.parse(stored);
@@ -50,21 +62,25 @@ export default function ProductionOrderListPage() {
         ([product, quantity]) => ({ product, quantity })
       );
       setOrders(convertedInit);
+      // direkt in LS speichern
+      saveToLS(convertedInit);
       return;
     }
 
-    // 3) Fallback, falls beides nicht gesetzt ist
-    setOrders([
+    // 3) Fallback: hartcodierte Default-Orders
+    const fallback: ProductionOrder[] = [
       { product: "P1", quantity: 100 },
       { product: "P2", quantity: 80 },
       { product: "P3", quantity: 60 },
-    ]);
+    ];
+    setOrders(fallback);
+    saveToLS(fallback);
   }, []);
 
+  // Auch nach jeder Interaktion speichern
   const save = (list: ProductionOrder[]) => {
     setOrders(list);
-    const serialized = list.map(({ product, quantity }) => [product, quantity]);
-    localStorage.setItem("productionOrders", JSON.stringify(serialized));
+    saveToLS(list);
   };
 
   const moveUp = (i: number) => {
@@ -104,14 +120,12 @@ export default function ProductionOrderListPage() {
     setSplitAmount({});
   };
 
-  const navigate = useNavigate();
   const handleNextClick = () => {
+    // speichere nochmal den Stand ab
     save(orders);
     localStorage.setItem("visited_/production-order", "true");
     navigate("/capacity-plan");
   };
-
-  const { t } = useLanguage();
 
   return (
     <div style={{ padding: "1rem", display: "flex", justifyContent: "center" }}>
@@ -129,7 +143,7 @@ export default function ProductionOrderListPage() {
           alignItems: "center",
         }}
       >
-        <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
+        <Typography variant="h4" align="center" fontWeight="bold" gutterBottom>
           {t("production-order")}
         </Typography>
         <Box
@@ -219,14 +233,10 @@ export default function ProductionOrderListPage() {
             </Box>
           ))}
         </Box>
-        {/* </Paper> */}
 
         <Divider sx={{ my: 3 }} />
 
-        <button
-          onClick={handleNextClick}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200 flex items-center gap-2 mx-auto "
-        >
+        <button onClick={handleNextClick} className={`mt-4 mx-auto my-btn`}>
           {t("next")}
         </button>
       </Paper>

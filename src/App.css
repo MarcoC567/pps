@@ -23,3 +23,48 @@
     animation: logo-spin infinite 20s linear;
   }
 }
+
+/* app.css */
+
+/* Standard-Styles (Dark und Light) */
+.my-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+/* Light Mode Overrides */
+@media (prefers-color-scheme: light) {
+  .my-btn {
+    background-color: #2563eb; /* kräftiges Blau */
+    color: #ffffff;
+  }
+  .my-btn:hover:not(:disabled) {
+    background-color: #1e40af; /* dunkleres Blau */
+  }
+  .my-btn:disabled {
+    background-color: #9ca3af; /* Grauton */
+    color: #f3f4f6;
+    cursor: not-allowed;
+  }
+}
+
+/* Optional: Dark Mode Overrides, falls du später willst */
+@media (prefers-color-scheme: dark) {
+  .my-btn {
+    background-color: #3b82f6;
+    color: #000000;
+  }
+  .my-btn:hover:not(:disabled) {
+    background-color: #60a5fa;
+  }
+  .my-btn:disabled {
+    background-color: #4b5563;
+    color: #9ca3af;
+  }
+}

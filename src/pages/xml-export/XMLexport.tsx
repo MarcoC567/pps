@@ -125,10 +125,7 @@ export default function ExportPage() {
         >
           {t("export_xml_title")}
         </Typography>
-        <button
-          onClick={exportXML}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200 flex items-center gap-2 mx-auto "
-        >
+        <button onClick={exportXML} className={`mt-4 mx-auto my-btn`}>
           {t("xml_download")}
         </button>
       </Paper>

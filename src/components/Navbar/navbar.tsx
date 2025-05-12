@@ -90,8 +90,8 @@ export default function Navbar() {
               onClick={() => setLanguage("de")}
               className={classNames(
                 language === "de"
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                  ? "my-btn text-indigo-800"
+                  : "text-gray-300 hover:bg-gray-700 hover:text-gray-600",
                 "px-3 py-1 rounded-md text-sm font-medium"
               )}
             >
@@ -101,8 +101,8 @@ export default function Navbar() {
               onClick={() => setLanguage("en")}
               className={classNames(
                 language === "en"
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                  ? "my-btn text-indigo-800"
+                  : " text-gray-300 hover:bg-gray-700 hover:text-gray-600",
                 "px-3 py-1 rounded-md text-sm font-medium"
               )}
             >

@@ -30,21 +30,22 @@ type Workstations = {
 
 type ProductionEntry = [string, number];
 
-const productionRaw = localStorage.getItem("productionOrders");
-const productionList: ProductionEntry[] = productionRaw
-  ? JSON.parse(productionRaw)
-  : [];
-
-const productionMap = new Map<string, number>();
-const entryCountMap = new Map<string, number>();
-productionList.forEach(([product, quantity]) => {
-  productionMap.set(product, (productionMap.get(product) || 0) + quantity);
-  entryCountMap.set(product, (entryCountMap.get(product) || 0) + 1);
-});
-
 export default function CapacityTable() {
   const { t } = useLanguage();
   const navigate = useNavigate();
+
+  const productionRaw = localStorage.getItem("productionOrders");
+  const productionList: ProductionEntry[] = productionRaw
+    ? JSON.parse(productionRaw)
+    : [];
+
+  const productionMap = new Map<string, number>();
+  const entryCountMap = new Map<string, number>();
+  productionList.forEach(([product, quantity]) => {
+    productionMap.set(product, (productionMap.get(product) || 0) + quantity);
+    entryCountMap.set(product, (entryCountMap.get(product) || 0) + 1);
+  });
+
   const [workstations, setWorkstations] = useState<Workstations>({});
   const [shiftData, setShiftData] = useState<
     Record<string, { shifts: number; overtime: number }>
@@ -225,9 +226,7 @@ export default function CapacityTable() {
           <Table size="small">
             <TableHead>
               <TableRow sx={{ backgroundColor: "#f0f0f0" }}>
-                <TableCell sx={{ fontWeight: "bold" }}>
-                  {t("bikeModel")}
-                </TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>{t("")}</TableCell>
                 <TableCell sx={{ fontWeight: "bold" }}>
                   {t("article")}
                 </TableCell>
@@ -249,7 +248,7 @@ export default function CapacityTable() {
             <TableBody>
               {allParts.map((part, idx) => (
                 <TableRow key={idx} hover>
-                  <TableCell>Modell X</TableCell>
+                  <TableCell></TableCell>
                   <TableCell>{part}</TableCell>
                   <TableCell>{productionMap.get(part) ?? "-"}</TableCell>
                   {workstationKeys.map((ws) => {
@@ -531,10 +530,7 @@ export default function CapacityTable() {
               </TableRow>
             </TableBody>
           </Table>
-          <button
-            onClick={handleNextClick}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200 flex items-center gap-2 mx-auto"
-          >
+          <button onClick={handleNextClick} className={`mt-4 mx-auto my-btn`}>
             {t("next")}
           </button>
         </TableContainer>

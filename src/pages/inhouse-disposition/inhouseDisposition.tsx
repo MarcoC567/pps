@@ -126,7 +126,7 @@ export const InhouseDisposition = ({ dpR, dpI }) => {
               <TableCell align="right">
                 <button
                   onClick={handleNextClick}
-                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200 flex items-center gap-2 mx-auto "
+                  className={`mt-4 mx-auto my-btn`}
                 >
                   {t("next")}
                 </button>

@@ -84,6 +84,7 @@ export default function ProductionPlanPage() {
     console.log(raw);
     if (raw) {
       try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const parsed: any = JSON.parse(raw);
 
         // a) Lagerbestand
@@ -94,12 +95,14 @@ export default function ProductionPlanPage() {
         const wl = parsed.results?.waitinglistworkstations?.workplace;
         const wlArr = Array.isArray(wl) ? wl : wl ? [wl] : [];
         const waitingMap: Record<number, number> = {};
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         wlArr.forEach((wp: any) => {
           const items = Array.isArray(wp.waitinglist)
             ? wp.waitinglist
             : wp.waitinglist
             ? [wp.waitinglist]
             : [];
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           items.forEach((e: any) => {
             if (e?.item && e?.amount) {
               const id = Number(e.item);
@@ -112,6 +115,7 @@ export default function ProductionPlanPage() {
         const ow = parsed.results?.ordersinwork?.workplace;
         const owArr = Array.isArray(ow) ? ow : ow ? [ow] : [];
         const inWorkMap: Record<number, number> = {};
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         owArr.forEach((o: any) => {
           if (o?.item && o?.amount) {
             const id = Number(o.item);
@@ -121,6 +125,7 @@ export default function ProductionPlanPage() {
 
         // d) rows bauen
         const rows: StockData = list
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .filter((a: any) => {
             const id = Number(a.id);
             const part = parts.artikel.find(
@@ -128,6 +133,7 @@ export default function ProductionPlanPage() {
             );
             return part?.produktart === "E" || part?.produktart === "P";
           })
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .map((a: any) => {
             const id = Number(a.id);
             const part = parts.artikel.find(
@@ -250,12 +256,7 @@ export default function ProductionPlanPage() {
       <button
         onClick={handleNext}
         disabled={!allValid()}
-        className={
-          `mt-4 px-4 py-2 rounded flex items-center gap-2 mx-auto transition ` +
-          (allValid()
-            ? "bg-blue-500 hover:bg-blue-600 text-white"
-            : "bg-gray-400 cursor-not-allowed")
-        }
+        className={`mt-4 mx-auto my-btn`}
       >
         {t("next")}
       </button>

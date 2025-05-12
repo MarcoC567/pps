@@ -1,36 +1,38 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode } from "react";
 
 interface CurrentPeriodContextType {
   currentPeriod: number | undefined;
   setCurrentPeriod: (period: number) => void;
 }
 
-const CurrentPeriodContext = createContext<CurrentPeriodContextType | undefined>(undefined);
+const CurrentPeriodContext = createContext<
+  CurrentPeriodContextType | undefined
+>(undefined);
 
 export const useCurrentPeriod = () => {
   const context = useContext(CurrentPeriodContext);
-  if (!context) throw new Error('useCurrentPeriod must be used within CurrentPeriodProvider');
+  if (!context)
+    throw new Error(
+      "useCurrentPeriod must be used within CurrentPeriodProvider"
+    );
   return context;
 };
 
-export const CurrentPeriodProvider = ({ children }: { children: ReactNode }) => {
-  const [currentPeriod, setCurrentPeriod] = useState<number>();
-
-  useEffect(() => {
-    const importData = JSON.parse(localStorage.getItem('importData') || '{}') as {
-      results?: {
-        period: string;
-        futureinwardstockmovement?: {
-          order?: Array<{ orderperiod: string; article: string; mode: string; amount: string }>;
-        };
-      };
+export const CurrentPeriodProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
+  const [currentPeriod, setCurrentPeriod] = useState<number>(() => {
+    // synchron vom ersten Render
+    const importData = JSON.parse(
+      localStorage.getItem("importData") || "{}"
+    ) as {
+      results?: { period: string };
     };
-
-    const parsedPeriod = Number(importData.results?.period);
-    if (!isNaN(parsedPeriod)) {
-      setCurrentPeriod(parsedPeriod);
-    }
-  }, []);
+    const parsed = Number(importData.results?.period);
+    return !isNaN(parsed) ? parsed : 0; // oder `undefined`, je nach gewünschtem Fallback
+  });
 
   return (
     <CurrentPeriodContext.Provider value={{ currentPeriod, setCurrentPeriod }}>

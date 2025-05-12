@@ -105,42 +105,42 @@ export default function XMLimport() {
           onChange={handleFileChange}
           onClick={(e) => ((e.target as HTMLInputElement).value = "")}
         />
-        <button
-          onClick={handleSelectButtonClick}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200 flex items-center gap-2 mx-auto "
-        >
-          XML Datei auswählen
-          <DocumentArrowUpIcon className="w-5 h-5" />
-        </button>
-        {file && (
-          <div className="mt-2 text-sm text-gray-500 flex items-center justify-between border rounded px-2 py-1">
-            <span className="truncate">Ausgewählte Datei: {file.name}</span>
-            <button
-              onClick={() => {
-                setFile(null);
-                setFileError(null);
-                setJsonData(null);
-                setCanImport(false);
-              }}
-              className="ml-2 text-red-500 hover:text-red-700 font-bold text-lg"
-              title="Datei entfernen"
-            >
-              &times;
-            </button>
-          </div>
-        )}
-        {fileError && <p className="mt-2 text-red-500 text-sm">{fileError}</p>}
-        <button
-          onClick={handleImportButtonClick}
-          disabled={!canImport || fileError !== null}
-          className={`mt-4 px-4 py-2 rounded transition duration-200 flex items-center gap-2 mx-auto ${
-            !canImport || fileError !== null
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-              : "bg-green-500 text-white hover:bg-green-600 cursor-pointer"
-          }`}
-        >
-          Weiter
-        </button>
+        <div className="mt-4 flex flex-col items-center gap-4">
+          <button
+            onClick={handleSelectButtonClick}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200 flex items-center gap-2 mx-auto my-btn "
+          >
+            XML Datei auswählen
+            <DocumentArrowUpIcon className="w-5 h-5" />
+          </button>
+          {file && (
+            <div className="mt-2 text-sm text-gray-500 flex items-center justify-between border rounded px-2 py-1">
+              <span className="truncate">Ausgewählte Datei: {file.name}</span>
+              <button
+                onClick={() => {
+                  setFile(null);
+                  setFileError(null);
+                  setJsonData(null);
+                  setCanImport(false);
+                }}
+                className={`mt-4 mx-auto my-btn`}
+                title="Datei entfernen"
+              >
+                &times;
+              </button>
+            </div>
+          )}
+          {fileError && (
+            <p className="mt-2 text-red-500 text-sm">{fileError}</p>
+          )}
+          <button
+            onClick={handleImportButtonClick}
+            disabled={!canImport || fileError !== null}
+            className={`mt-4 mx-auto my-btn`}
+          >
+            Weiter
+          </button>
+        </div>
       </div>
     </div>
   );
