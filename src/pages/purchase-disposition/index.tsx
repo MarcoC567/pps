@@ -27,6 +27,8 @@ export type FutureStockEntry = {
   };
 };
 
+export type OrderEntry = { article: number; quantity: number; modus: string };
+
 export default function PurchaseDispositionPage() {
   const [futureInwardStockData, setFutureInwardStockData] = useState<
     FutureStockEntry[]
@@ -78,12 +80,12 @@ export default function PurchaseDispositionPage() {
           let eta =
             factors && articleBasicData && currentPeriod
               ? Math.floor(
-                  (articleBasicData.deliveryTime! *
-                    factors.deliveryDeadlineFactor +
-                    articleBasicData.deliveryTimeDeviation! *
-                      factors.deliveryDeviationExtra) *
-                    5
-                )
+                (articleBasicData.deliveryTime! *
+                  factors.deliveryDeadlineFactor +
+                  articleBasicData.deliveryTimeDeviation! *
+                  factors.deliveryDeviationExtra) *
+                5
+              )
               : 0;
           eta = eta - (currentPeriod! + 1 - Number(order.orderperiod)) * 5 + 1;
           const period = currentPeriod! + 1 + Math.floor(eta / 5);
@@ -156,6 +158,27 @@ export default function PurchaseDispositionPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Persistenz
+  const [orderList, setOrderList] = useState<OrderEntry[]>(() => {
+    const saved = localStorage.getItem("orderList");
+    return saved
+      ? JSON.parse(saved)
+      : wareHouseStockData?.map((item) => {
+        return {
+          article: item.itemNr,
+          quantity: 0,
+          modus: "",
+        };
+      });
+  });
+
+  useEffect(() => {
+    localStorage.setItem("orderList", JSON.stringify(orderList));
+  }, [orderList]);
+
+  // — Validierung
+  const allValid = (): boolean => orderList.every((order) => (order.quantity == 0 && order.modus == "") || (order.quantity > 0 && order.modus != ""))
+
   return (
     <div style={{ padding: "1rem", display: "flex", justifyContent: "center" }}>
       <Paper
@@ -183,11 +206,13 @@ export default function PurchaseDispositionPage() {
               initialInventoryData={wareHouseStockData}
               productionData={productionPlanData}
               futureInwardStockData={futureInwardStockData}
+              orderList={orderList}
+              setOrderList={setOrderList}
             />
           )
         )}
 
-        <button onClick={handleNextClick} className={`mt-4 mx-auto my-btn`}>
+        <button onClick={handleNextClick} disabled={!allValid()} className={`mt-4 mx-auto my-btn`}>
           {t("next")}
         </button>
       </Paper>

@@ -1,9 +1,9 @@
 import { Paper, Typography } from "@mui/material";
-import { OrderEntry } from "../purchase-disposition/PurchaseDispositionTable";
 import { SalesForecastData } from "../production-plan/SalesForecastTable";
 import { DirectSalesData } from "../production-plan/DirectSalesTable";
 import { modusOptions } from "../purchase-disposition/const";
 import { useLanguage } from "../../context/LanguageContext";
+import { OrderEntry } from "../purchase-disposition";
 
 export default function ExportPage() {
   const { t } = useLanguage();
