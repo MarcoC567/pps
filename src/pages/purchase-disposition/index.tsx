@@ -131,8 +131,6 @@ export default function PurchaseDispositionPage() {
         };
       })
     );
-
-    setTimeout(() => setLoading(false), 100);
   }, []);
 
   const defaultProductionPlan: ProductionPlanData = [
@@ -158,26 +156,42 @@ export default function PurchaseDispositionPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Persistenz
-  const [orderList, setOrderList] = useState<OrderEntry[]>(() => {
+  const [orderList, setOrderList] = useState<OrderEntry[]>();
+
+  useEffect(() => {
     const saved = localStorage.getItem("orderList");
-    return saved
-      ? JSON.parse(saved)
-      : wareHouseStockData?.map((item) => {
-        return {
+    if (saved && saved != "undefined") {
+      try {
+        setOrderList(JSON.parse(saved));
+      } catch (e) {
+        console.error("Failed to parse saved orderList:", e);
+      }
+    } else if (wareHouseStockData) {
+      setOrderList(
+        wareHouseStockData.map((item) => ({
           article: item.itemNr,
           quantity: 0,
           modus: "",
-        };
-      });
-  });
+        }))
+      );
+    }
 
+    setTimeout(() => setLoading(false), 100);
+  }, [wareHouseStockData]);
+
+  // Persistenz
   useEffect(() => {
     localStorage.setItem("orderList", JSON.stringify(orderList));
   }, [orderList]);
 
-  // — Validierung
-  const allValid = (): boolean => orderList.every((order) => (order.quantity == 0 && order.modus == "") || (order.quantity > 0 && order.modus != ""))
+  // Validierung
+  const allValid = (): boolean =>
+    Array.isArray(orderList) &&
+    orderList.every(
+      (order) =>
+        (order.quantity === 0 && order.modus === "") ||
+        (order.quantity > 0 && order.modus !== "")
+    );
 
   return (
     <div style={{ padding: "1rem", display: "flex", justifyContent: "center" }}>
@@ -201,7 +215,7 @@ export default function PurchaseDispositionPage() {
             </Box>
           </div>
         ) : (
-          wareHouseStockData && (
+          orderList && wareHouseStockData && (
             <PurchaseDispositionTable
               initialInventoryData={wareHouseStockData}
               productionData={productionPlanData}
