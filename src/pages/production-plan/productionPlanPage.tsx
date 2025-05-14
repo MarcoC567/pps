@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import ForecastTable, { ForecastData } from "./ForecastTable.tsx";
 import ProductionPlanTable, {
@@ -16,17 +17,27 @@ import { useLanguage } from "../../context/LanguageContext.tsx";
 export default function ProductionPlanPage() {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const importData = JSON.parse(
+    localStorage.getItem("importData") || "{}"
+  ) as {
+    results: {
+      forecast: {
+        p1: string,
+        p2: string,
+        p3: string
+      }
+    };
+  };
 
   // — Forecast, ProductionPlan, SalesForecast & DirectSales wie gehabt
   const [forecastData, setForecastData] = useState<ForecastData>(() => {
     const saved = localStorage.getItem("forecastdata");
-    return saved
-      ? JSON.parse(saved)
-      : [
-          { product: "p1ChildrenBike", values: [0, 0, 0, 0] },
-          { product: "p2WomenBike", values: [0, 0, 0, 0] },
-          { product: "p3MenBike", values: [0, 0, 0, 0] },
-        ];
+    return saved ? JSON.parse(saved) :
+      [
+        { product: "p1ChildrenBike", values: [Number(importData.results.forecast.p1), 0, 0, 0] },
+        { product: "p2WomenBike", values: [Number(importData.results.forecast.p2), 0, 0, 0] },
+        { product: "p3MenBike", values: [Number(importData.results.forecast.p3), 0, 0, 0] },
+      ];
   });
 
   const [productionData, setProductionData] = useState<ProductionPlanData>(
@@ -35,10 +46,10 @@ export default function ProductionPlanPage() {
       return saved
         ? JSON.parse(saved)
         : [
-            { product: "p1ChildrenBike", values: [0, 0, 0, 0] },
-            { product: "p2WomenBike", values: [0, 0, 0, 0] },
-            { product: "p3MenBike", values: [0, 0, 0, 0] },
-          ];
+          { product: "p1ChildrenBike", values: [0, 0, 0, 0] },
+          { product: "p2WomenBike", values: [0, 0, 0, 0] },
+          { product: "p3MenBike", values: [0, 0, 0, 0] },
+        ];
     }
   );
 
@@ -47,10 +58,10 @@ export default function ProductionPlanPage() {
     return saved
       ? JSON.parse(saved)
       : [
-          { product: "p1ChildrenBike", current: 0 },
-          { product: "p2WomenBike", current: 0 },
-          { product: "p3MenBike", current: 0 },
-        ];
+        { product: "p1ChildrenBike", current: Number(importData.results.forecast.p1), },
+        { product: "p2WomenBike", current: Number(importData.results.forecast.p2), },
+        { product: "p3MenBike", current: Number(importData.results.forecast.p3), },
+      ];
   });
 
   const [directData] = useState<DirectSalesData>(() => {
@@ -58,10 +69,10 @@ export default function ProductionPlanPage() {
     return saved
       ? JSON.parse(saved)
       : [
-          { product: "p1ChildrenBike", quantity: 0, price: 0, penalty: 0 },
-          { product: "p2WomenBike", quantity: 0, price: 0, penalty: 0 },
-          { product: "p3MenBike", quantity: 0, price: 0, penalty: 0 },
-        ];
+        { product: "p1ChildrenBike", quantity: 0, price: 0, penalty: 0 },
+        { product: "p2WomenBike", quantity: 0, price: 0, penalty: 0 },
+        { product: "p3MenBike", quantity: 0, price: 0, penalty: 0 },
+      ];
   });
 
   // — StockData initial im State-Initializer
@@ -100,8 +111,8 @@ export default function ProductionPlanPage() {
           const items = Array.isArray(wp.waitinglist)
             ? wp.waitinglist
             : wp.waitinglist
-            ? [wp.waitinglist]
-            : [];
+              ? [wp.waitinglist]
+              : [];
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           items.forEach((e: any) => {
             if (e?.item && e?.amount) {
@@ -142,7 +153,7 @@ export default function ProductionPlanPage() {
             return {
               product: part ? `${a.id} ${part.bezeichnung}` : `Artikel ${a.id}`,
               stock: Number(a.amount) || 0,
-              endStock: 0,
+              endStock: 50,
               waitingList: waitingMap[id] || 0,
               inProduction: inWorkMap[id] || 0,
             };
@@ -160,11 +171,39 @@ export default function ProductionPlanPage() {
       .map((p) => ({
         product: `${p.artikelnummer} ${p.bezeichnung}`,
         stock: 0,
-        endStock: 0,
+        endStock: 50,
         waitingList: 0,
         inProduction: 0,
       }));
   });
+
+  // Geplanter Lagerbestand für P1, P2, P3 automatisch ausrechnen lassen
+  useEffect(() => {
+    const updatedStockData = [...stockData];
+    updatedStockData[0] = {
+      ...updatedStockData[0],
+      endStock: productionData[0].values[0] - salesData[0].current + stockData[0].inProduction + stockData[0].waitingList + stockData[0].stock,
+    };
+    setStockData(updatedStockData);
+  }, [productionData[0].values[0], salesData[0].current]);
+
+  useEffect(() => {
+    const updatedStockData = [...stockData];
+    updatedStockData[1] = {
+      ...updatedStockData[1],
+      endStock: productionData[1].values[0] - salesData[1].current + stockData[1].inProduction + stockData[1].waitingList + stockData[1].stock,
+    };
+    setStockData(updatedStockData);
+  }, [productionData[1].values[0], salesData[1].current]);
+
+  useEffect(() => {
+    const updatedStockData = [...stockData];
+    updatedStockData[2] = {
+      ...updatedStockData[2],
+      endStock: productionData[2].values[0] - salesData[2].current + stockData[2].inProduction + stockData[2].waitingList + stockData[2].stock,
+    };
+    setStockData(updatedStockData);
+  }, [productionData[2].values[0], salesData[2].current]);
 
   // — Persistenz
   useEffect(() => {
