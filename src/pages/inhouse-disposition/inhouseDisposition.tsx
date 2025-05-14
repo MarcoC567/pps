@@ -67,13 +67,13 @@ export const InhouseDisposition = ({ dpR, dpI }) => {
                 },
               }}
             >
-              <TableCell>Part</TableCell>
-              <TableCell align="right">Demand</TableCell>
-              <TableCell align="right">Current Stock</TableCell>
-              <TableCell align="right">Planned Safety Stock</TableCell>
-              <TableCell align="right">Work in Progress</TableCell>
-              <TableCell align="right">Waiting Queue</TableCell>
-              <TableCell align="right">Production Order</TableCell>
+              <TableCell>{t("inhouse_disposition_parts")}</TableCell>
+              <TableCell align="right">{t("inhouse_disposition_demand")}</TableCell>
+              <TableCell align="right">{t("inhouse_disposition_current_stock")}</TableCell>
+              <TableCell align="right">{t("inhouse_disposition_safety_stock")}</TableCell>
+              <TableCell align="right">{t("inhouse_disposition_work_in_progress")}</TableCell>
+              <TableCell align="right">{t("inhouse_disposition_waiting_queue")}</TableCell>
+              <TableCell align="right">{t("inhouse_disposition_production_order")}</TableCell>
             </TableRow>
           </TableHead>
 
@@ -120,7 +120,7 @@ export const InhouseDisposition = ({ dpR, dpI }) => {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell>*Shared parts</TableCell>
+              <TableCell>{t("inhouse_disposition_shared_parts")}</TableCell>
               <TableCell />
               <TableCell />
               <TableCell align="right">

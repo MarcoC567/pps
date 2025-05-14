@@ -109,11 +109,21 @@
     "tooltip_overtime": "Hier siehst du die Gesamtanzahl der Überstunden in Minuten, die in dieser Periode gefahren werden.",
     "tooltip_splitting": "Aufteilen",
     "tooltip_arrow_up": "Nach oben Verschieben",
-    "tooltip_arrow_down": "Nach unten Verschieben"
+    "tooltip_arrow_down": "Nach unten Verschieben",
 
+  "landing_page_title": "Willkommen beim Planungstool",
+  "landing_page_button": "Starte die Planung",
 
+  "inhouse_disposition_parts": "Teile",
+  "inhouse_disposition_demand": "Nachfrage",
+  "inhouse_disposition_current_stock": "Lagerbestand",
+  "inhouse_disposition_safety_stock": "Geplanter Lagerbestand",
+  "inhouse_disposition_work_in_progress": "In Arbeit",
+  "inhouse_disposition_waiting_queue": "Warteschlange",
+  "inhouse_disposition_production_order": "Produktionsmenge",
+  "inhouse_disposition_shared_parts": "Mehrfach verwendete Teile"
 
-  }
+}
 
   
 

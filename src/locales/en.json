@@ -108,9 +108,22 @@
     "tooltip_overtime": "This shows the total overtime required for this period, in minutes.",
     "tooltip_splitting": "Splitting",
     "tooltip_arrow_up": "move Up",
-    "tooltip_arrow_down": "move Down"
+    "tooltip_arrow_down": "move Down",
 
-  
+  "landing_page_title": "Welcome to the planing tool",
+  "landing_page_button": "Start planning",
+
+  "inhouse_disposition_parts": "Parts",
+  "inhouse_disposition_demand": "Demand",
+  "inhouse_disposition_current_stock": "Current Stock",
+  "inhouse_disposition_safety_stock": "Planned Safety Stock",
+  "inhouse_disposition_work_in_progress": "Work in Progress",
+  "inhouse_disposition_waiting_queue": "Waiting Queue",
+  "inhouse_disposition_production_order": "Prodution Order",
+  "inhouse_disposition_shared_parts": "Shared Parts"
+
+
+
 }
 
   
