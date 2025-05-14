@@ -479,8 +479,59 @@ export default function CapacityTable() {
               {/* Überstunden */}
               <TableRow hover>
                 <TableCell colSpan={3}>
-                  <strong>{t("overtime")}</strong>
-                  <Tooltip title={t("tooltip_overtime")} placement="top" arrow>
+                  <strong>{t("overtime_in_total")}</strong>
+                  <Tooltip title={t("tooltip_overtime_in_total")} placement="top" arrow>
+                    <InfoOutlinedIcon
+                      sx={{
+                        fontSize: 16,
+                        verticalAlign: "middle",
+                        color: "gray",
+                        cursor: "pointer",
+                      }}
+                    />
+                  </Tooltip>
+                </TableCell>
+                {workstationKeys.map((ws) => {
+                  const newCap = calculatedCapacities[ws] || 0;
+                  const newSetupVal = setupTimeNewPerWS[ws] || 0;
+                  const oldCapVal = prevPeriodCapacity[ws] || 0;
+                  const oldSetupVal = prevSetupTime[ws] || 0;
+                  const totalVal =
+                    newCap + newSetupVal + oldCapVal + oldSetupVal;
+                  const overtimeVal =
+                    shiftData[ws]?.overtime ?? calculateOvertime(totalVal);
+                  return (
+                    <TableCell key={ws} align="center">
+                      <TextField
+                        type="number"
+                        value={Math.round(overtimeVal)}
+                        onChange={(e) =>
+                          handleShiftChange(ws, "overtime", e.target.value)
+                        }
+                        variant="outlined"
+                        size="small"
+                        sx={{
+                          width: "4rem",
+                          input: {
+                            textAlign: "center",
+                            padding: "6px",
+                            borderRadius: "8px",
+                            backgroundColor: "#fdfdfd",
+                            border: "1px solid #ccc",
+                          },
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            border: "none",
+                          },
+                        }}
+                      />
+                    </TableCell>
+                  );
+                })}
+              </TableRow>
+              <TableRow hover>
+                <TableCell colSpan={3}>
+                  <strong>{t("overtime_per_day")}</strong>
+                  <Tooltip title={t("tooltip_overtime_per_day")} placement="top" arrow>
                     <InfoOutlinedIcon
                       sx={{
                         fontSize: 16,
