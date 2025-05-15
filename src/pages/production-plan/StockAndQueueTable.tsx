@@ -105,7 +105,7 @@ export default function StockAndQueueTable({
 
           <TableBody>
             {data.map((row, i) => {
-              const isValid = row.endStock !== 0;
+              const isValid = row.endStock >= 0;
               // Artikelnummer aus String extrahieren
               const artNum = Number(row.product.split(" ")[0]);
               const part = parts.artikel.find(

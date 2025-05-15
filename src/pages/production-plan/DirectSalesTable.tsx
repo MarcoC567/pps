@@ -45,8 +45,9 @@ export default function DirectSalesTable(props: {
     key: "quantity" | "price" | "penalty",
     value: string
   ) => {
+    const num = Math.max(0, Number(value) || 0);
     const updated = [...directSalesData];
-    updated[index][key] = Number(value) || 0;
+    updated[index][key] = num;
     setDirectSalesData(updated);
     localStorage.setItem("selldirect", JSON.stringify(updated));
   };

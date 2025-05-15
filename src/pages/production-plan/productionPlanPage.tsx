@@ -224,10 +224,10 @@ export default function ProductionPlanPage() {
 
   // — Validierung
   const allValid = (): boolean =>
-    forecastData.every((r) => r.values.every((v) => v !== 0)) &&
-    productionData.every((r) => r.values.every((v) => v !== 0)) &&
-    salesData.every((r) => r.current !== 0) &&
-    stockData.every((r) => r.endStock !== 0);
+    forecastData.every((r) => r.values.every((v) => v >= 0)) &&
+    productionData.every((r) => r.values.every((v) => v >= 0)) &&
+    salesData.every((r) => r.current >= 0) &&
+    stockData.every((r) => r.endStock >= 0);
 
   // — Next
   const handleNext = () => {

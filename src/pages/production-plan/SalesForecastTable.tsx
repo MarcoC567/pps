@@ -68,7 +68,7 @@ export default function SalesForecastTable({
 
           <TableBody>
             {data.map((row, idx) => {
-              const isValid = row.current !== 0;
+              const isValid = row.current >= 0;
               return (
                 <TableRow
                   key={idx}

@@ -91,7 +91,7 @@ export default function ForecastTable({ data, onChange }: ForecastTableProps) {
                   {t(row.product)}
                 </TableCell>
                 {row.values.map((value, colIndex) => {
-                  const isValid = value !== 0;
+                  const isValid = value >= 0;
                   return (
                     <TableCell key={colIndex} align="center">
                       <TextField
