@@ -75,8 +75,9 @@ export default function CapacityTable() {
     return 3;
   };
 
-  const calculateOvertime = (totalMinutes: number) => {
-    return Math.max(0, totalMinutes - 2400);
+  const calculateOvertime = (totalMinutes: number, shifts: number) => {
+    // Overtime is maximum 1200 min
+    return Math.min(1200, Math.max(0, totalMinutes - 2400 * shifts));
   };
 
   const handleNextClick = () => {
@@ -89,7 +90,7 @@ export default function CapacityTable() {
       const shifts = shiftData[wsKey]?.shifts ?? calculateShifts(total);
       // Roh-Überstunden (Minuten über 2400) …
       const rawOvertime =
-        shiftData[wsKey]?.overtime ?? calculateOvertime(total);
+        shiftData[wsKey]?.overtime ?? calculateOvertime(total, shifts);
       // … und geteilt durch 5, aufgerundet
       const overtime = Math.round(rawOvertime / 5);
       return {
@@ -107,13 +108,21 @@ export default function CapacityTable() {
   const handleShiftChange = (
     ws: string,
     key: "shifts" | "overtime",
-    value: string
+    value: string,
+    totalMinutes: number
   ) => {
     let numValue = Math.max(0, Number(value) || 0);
     if (key === "shifts") numValue = Math.min(numValue, 3);
 
     setShiftData((prev) => {
-      const updated = {
+      const updated = key === "shifts" ? {
+        ...prev,
+        [ws]: {
+          ...prev[ws],
+          ["shifts"]: numValue,
+          ["overtime"]: calculateOvertime(totalMinutes, numValue)
+        },
+      } : {
         ...prev,
         [ws]: {
           ...prev[ws],
@@ -453,7 +462,7 @@ export default function CapacityTable() {
                         type="number"
                         value={shiftsVal}
                         onChange={(e) =>
-                          handleShiftChange(ws, "shifts", e.target.value)
+                          handleShiftChange(ws, "shifts", e.target.value, totalVal)
                         }
                         variant="outlined"
                         size="small"
@@ -498,15 +507,17 @@ export default function CapacityTable() {
                   const oldSetupVal = prevSetupTime[ws] || 0;
                   const totalVal =
                     newCap + newSetupVal + oldCapVal + oldSetupVal;
+                  const shiftsVal =
+                    shiftData[ws]?.shifts ?? calculateShifts(totalVal);
                   const overtimeVal =
-                    shiftData[ws]?.overtime ?? calculateOvertime(totalVal);
+                    shiftData[ws]?.overtime ?? calculateOvertime(totalVal, shiftsVal);
                   return (
                     <TableCell key={ws} align="center">
                       <TextField
                         type="number"
                         value={Math.round(overtimeVal)}
                         onChange={(e) =>
-                          handleShiftChange(ws, "overtime", e.target.value)
+                          handleShiftChange(ws, "overtime", e.target.value, totalVal)
                         }
                         variant="outlined"
                         size="small"
@@ -549,15 +560,17 @@ export default function CapacityTable() {
                   const oldSetupVal = prevSetupTime[ws] || 0;
                   const totalVal =
                     newCap + newSetupVal + oldCapVal + oldSetupVal;
+                  const shiftsVal =
+                    shiftData[ws]?.shifts ?? calculateShifts(totalVal);
                   const overtimeVal =
-                    shiftData[ws]?.overtime ?? calculateOvertime(totalVal);
+                    shiftData[ws]?.overtime ?? calculateOvertime(totalVal, shiftsVal);  
                   return (
                     <TableCell key={ws} align="center">
                       <TextField
                         type="number"
                         value={Math.round(overtimeVal / 5)}
                         onChange={(e) =>
-                          handleShiftChange(ws, "overtime", e.target.value)
+                          handleShiftChange(ws, "overtime", e.target.value, totalVal)
                         }
                         variant="outlined"
                         size="small"
