@@ -94,7 +94,8 @@
   "article_55": "55 Rahmen und Räder",
   "article_56": "56 Fahrrad ohne Pedale",
 
-  "tooltip_totalCost": "Gesamtkosten = Materialkosten + Bestellkosten",
+  "tooltip_orderCost": "Bestellkosten = Kosten der Lieferung für den Artikel * Faktor der Bestellkosten für den ausgewählten Lieferungsmodus",
+  "tooltip_totalCost": "Gesamtkosten = Materialkosten + Bestellkosten. Materialkosten = Preisfaktor des ausgewählten Lieferungsmodus * Stückkosten (* 90% wenn Bestellmenge >= Diskontmenge) * Bestellmenge.",
   "tooltip_eta": "ETA = (Lieferzeit + Abweichung) * 5. Mit einer Wahrscheinlichkeit von 93 % entspricht dieser Wert der zu erwartenden maximalen Lieferzeit. Mit einer Wahrscheinlichkeit von 7 % ist eine um 1 bis 3 Tage längere Lieferzeit als der ETA zu erwarten",
   "tooltip_article": "Hier stehen die Bezeichnungen der jeweiligen Eigenerzeugnisse.",
   "tooltip_stock": "Der aktuelle Lagerbestand der aus der XML Datei gelesen wurde.",

@@ -1,8 +1,8 @@
 import Box from "@mui/material/Box";
 import { basicData, items, modusOptions } from "./const";
 import ProductionProgramTable from "./ProductionProgramTable";
-import PurchaseDispositionTable from "./PurchaseDispositionTable";
-import { useState, useEffect } from "react";
+import PurchaseDispositionTable from './PurchaseDispositionTable';
+import { useState, useEffect, useMemo } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -26,6 +26,20 @@ export type FutureStockEntry = {
     day: number;
   };
 };
+
+export type PurchaseDispositionStaticData = {
+  itemNr: number;
+  amount: number;
+  discountAmount: number;
+  deliveryTime: number | null | undefined;
+  deviation: number | null | undefined;
+  usageRatioP1: number;
+  usageRatioP2: number;
+  usageRatioP3: number;
+  deliveryCost: number | null | undefined;
+  startPrice: number | undefined;
+  grossRequirements: number[];
+}[] | undefined
 
 export type OrderEntry = { article: number; quantity: number; modus: string };
 
@@ -156,28 +170,107 @@ export default function PurchaseDispositionPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [orderList, setOrderList] = useState<OrderEntry[]>();
+  const rows: PurchaseDispositionStaticData = useMemo(() => {
+    return wareHouseStockData?.map((item, index) => {
+      const data = basicData[index];
+      const calculateGrossRequirement = (
+        u1: number,
+        u2: number,
+        u3: number,
+        idx: number
+      ) =>
+        u1 * productionPlanData[0].values[idx] +
+        u2 * productionPlanData[1].values[idx] +
+        u3 * productionPlanData[2].values[idx];
 
-  useEffect(() => {
+      return {
+        itemNr: item.itemNr,
+        amount: item.amount,
+        discountAmount: data.discountQuantity,
+        deliveryTime: data.deliveryTime,
+        deviation: data.deliveryTimeDeviation,
+        usageRatioP1: data.usageRatioP1,
+        usageRatioP2: data.usageRatioP2,
+        usageRatioP3: data.usageRatioP3,
+        deliveryCost: data.deliveryCost,
+        startPrice: data.startPrice,
+        grossRequirements: [
+          calculateGrossRequirement(data.usageRatioP1, data.usageRatioP2, data.usageRatioP3, 0),
+          calculateGrossRequirement(data.usageRatioP1, data.usageRatioP2, data.usageRatioP3, 1),
+          calculateGrossRequirement(data.usageRatioP1, data.usageRatioP2, data.usageRatioP3, 2),
+          calculateGrossRequirement(data.usageRatioP1, data.usageRatioP2, data.usageRatioP3, 3),
+        ],
+      };
+    });
+  }, [wareHouseStockData, productionPlanData]);
+
+  const [orderList, setOrderList] = useState<OrderEntry[] | undefined>(() => {
     const saved = localStorage.getItem("orderList");
-    if (saved && saved != "undefined") {
+    if (saved && saved !== "undefined") {
       try {
-        setOrderList(JSON.parse(saved));
+        return JSON.parse(saved);
       } catch (e) {
         console.error("Failed to parse saved orderList:", e);
       }
-    } else if (wareHouseStockData) {
+    }
+    return undefined;
+  });
+
+  const getIncomingForPeriod = (article: number, period: number) => {
+    return futureInwardStockData.filter(
+      (stock) =>
+        stock.article === article && stock.inwardStockMovement.period === period
+    );
+  };
+
+  useEffect(() => {
+    if (!orderList && rows && futureInwardStockData) {
       setOrderList(
-        wareHouseStockData.map((item) => ({
-          article: item.itemNr,
-          quantity: 0,
-          modus: "",
-        }))
+        rows.map((item) => {
+          let optimalQuantity = 0;
+          let optimalMode = "";
+          let initialInventory = item.amount
+          const eta = item.deliveryTime! + item.deviation!
+
+          for (let i = 0; i <= 3; i++) {
+            initialInventory -= item.grossRequirements[i]
+            const inwardStockinThisPeriod = getIncomingForPeriod(
+              item.itemNr, i + currentPeriod! + 1
+            )
+            // Incoming stock
+            if (item.itemNr == 21) {
+              console.log(i, initialInventory, inwardStockinThisPeriod)
+            }
+            if (initialInventory < 0) {
+              if (eta > i) {
+                optimalQuantity = item.discountAmount
+                optimalMode = "fast"
+              }
+              else {
+                optimalQuantity = item.discountAmount
+                optimalMode = "normal"
+              }
+              if (initialInventory + optimalQuantity < 0) {
+                  optimalQuantity = -(initialInventory)  
+                }
+              break;
+            }
+            initialInventory += inwardStockinThisPeriod.reduce((sum, current) => sum + current.amount, 0)
+          }
+
+          return (
+            {
+              article: item.itemNr,
+              quantity: optimalQuantity,
+              modus: optimalMode,
+            })
+        }
+        )
       );
     }
 
     setTimeout(() => setLoading(false), 100);
-  }, [wareHouseStockData]);
+  }, [orderList, rows, futureInwardStockData]);
 
   // Persistenz
   useEffect(() => {
@@ -215,10 +308,9 @@ export default function PurchaseDispositionPage() {
             </Box>
           </div>
         ) : (
-          orderList && wareHouseStockData && (
+          orderList && rows && (
             <PurchaseDispositionTable
-              initialInventoryData={wareHouseStockData}
-              productionData={productionPlanData}
+              rows={rows}
               futureInwardStockData={futureInwardStockData}
               orderList={orderList}
               setOrderList={setOrderList}

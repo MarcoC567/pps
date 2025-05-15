@@ -122,32 +122,37 @@ export default function StockAndQueueTable({
                   <TableCell>{displayName}</TableCell>
                   <TableCell align="center">{row.stock}</TableCell>
                   <TableCell align="center">
-                    <TextField
-                      type="number"
-                      value={row.endStock}
-                      onChange={(e) => handleChange(i, e.target.value)}
-                      variant="outlined"
-                      size="small"
-                      inputRef={(el) => {
-                        if (el) {
-                          el.dataset.valid = isValid.toString();
-                          el.classList.add("table-input");
-                        }
-                      }}
-                      sx={{
-                        width: "4rem",
-                        input: {
-                          textAlign: "center",
-                          padding: "6px",
-                          borderRadius: "8px",
-                          backgroundColor: "#fdfdfd",
-                          border: `1px solid ${isValid ? "green" : "red"}`,
-                        },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          border: "none",
-                        },
-                      }}
-                    />
+                    {
+                      i < 3 ? (
+                        <span>{row.endStock}</span>
+                      ) : (
+                        <TextField
+                          type="number"
+                          value={row.endStock}
+                          onChange={(e) => handleChange(i, e.target.value)}
+                          variant="outlined"
+                          size="small"
+                          inputRef={(el) => {
+                            if (el) {
+                              el.dataset.valid = isValid.toString();
+                              el.classList.add("table-input");
+                            }
+                          }}
+                          sx={{
+                            width: "4rem",
+                            input: {
+                              textAlign: "center",
+                              padding: "6px",
+                              borderRadius: "8px",
+                              backgroundColor: "#fdfdfd",
+                              border: `1px solid ${isValid ? "green" : "red"}`,
+                            },
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              border: "none",
+                            },
+                          }}
+                        />)
+                    }
                   </TableCell>
                   <TableCell align="center">{row.waitingList}</TableCell>
                   <TableCell align="center">{row.inProduction}</TableCell>

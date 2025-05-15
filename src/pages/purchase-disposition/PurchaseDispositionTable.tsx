@@ -12,24 +12,19 @@ import {
   MenuItem,
   Tooltip,
 } from "@mui/material";
-import { basicData, modusOptions } from "./const";
-import { useMemo } from "react";
+import { modusOptions } from "./const";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useLanguage } from "../../context/LanguageContext";
-import { ProductionPlanData } from "../production-plan/ProductionPlanTable";
 import { useCurrentPeriod } from "../../context/CurrentPeriodContext";
-import { FutureStockEntry, OrderEntry } from ".";
-
-type InitialInventory = { itemNr: number; amount: number }[];
-
+import { FutureStockEntry, OrderEntry, PurchaseDispositionStaticData } from ".";
 
 export default function PurchaseDispositionTable(props: {
-  initialInventoryData: InitialInventory;
-  productionData: ProductionPlanData;
+  rows: PurchaseDispositionStaticData;
   futureInwardStockData: FutureStockEntry[];
   orderList: OrderEntry[],
   setOrderList: (newOrderList: OrderEntry[]) => void;
 }) {
+  const rows = props.rows;
   const orderList = props.orderList;
   const setOrderList = props.setOrderList;
   const { t } = useLanguage();
@@ -49,8 +44,6 @@ export default function PurchaseDispositionTable(props: {
     `${t("period")} ${currentPeriod! + 4}`,
   ];
   const dynamicHeaders = [t("quantity"), t("mode")];
-  const initialInventoryData = props.initialInventoryData;
-  const productionData = props.productionData;
 
   const handleQuantityChange = (index: number, value: number) => {
     const updated = [...orderList];
@@ -63,58 +56,6 @@ export default function PurchaseDispositionTable(props: {
     updated[index].modus = value;
     setOrderList(updated);
   };
-
-  const rows = useMemo(() => {
-    return initialInventoryData.map((item, index) => {
-      const data = basicData[index];
-      const calculateGrossRequirement = (
-        u1: number,
-        u2: number,
-        u3: number,
-        idx: number
-      ) =>
-        u1 * productionData[0].values[idx] +
-        u2 * productionData[1].values[idx] +
-        u3 * productionData[2].values[idx];
-
-      return {
-        itemNr: item.itemNr,
-        amount: item.amount,
-        discountAmount: data.discountQuantity,
-        deliveryTime: data.deliveryTime,
-        deviation: data.deliveryTimeDeviation,
-        usageRatioP1: data.usageRatioP1,
-        usageRatioP2: data.usageRatioP2,
-        usageRatioP3: data.usageRatioP3,
-        deliveryCost: data.deliveryCost,
-        startPrice: data.startPrice,
-        grossRequirementN: calculateGrossRequirement(
-          data.usageRatioP1,
-          data.usageRatioP2,
-          data.usageRatioP3,
-          0
-        ),
-        grossRequirementN1: calculateGrossRequirement(
-          data.usageRatioP1,
-          data.usageRatioP2,
-          data.usageRatioP3,
-          1
-        ),
-        grossRequirementN2: calculateGrossRequirement(
-          data.usageRatioP1,
-          data.usageRatioP2,
-          data.usageRatioP3,
-          2
-        ),
-        grossRequirementN3: calculateGrossRequirement(
-          data.usageRatioP1,
-          data.usageRatioP2,
-          data.usageRatioP3,
-          3
-        ),
-      };
-    });
-  }, [initialInventoryData, productionData]);
 
   const getIncomingForPeriod = (article: number, period: number) => {
     return props.futureInwardStockData.filter(
@@ -155,47 +96,43 @@ export default function PurchaseDispositionTable(props: {
                 t("totalCost"),
               ].map((header, i) => (
                 <TableCell align="center" key={i} sx={{ fontWeight: "bold" }}>
-                  {header.includes(t("eta")) ? (
-                    <>
-                      {header}
-                      <Tooltip title={t("tooltip_eta")} placement="top" arrow>
-                        <InfoOutlinedIcon
-                          sx={{
-                            fontSize: 16,
-                            verticalAlign: "middle",
-                            color: "gray",
-                            cursor: "pointer",
-                          }}
-                        />
-                      </Tooltip>
-                    </>
-                  ) : header.includes(t("totalCost")) ? (
-                    <>
-                      {header}
-                      <Tooltip
-                        title={t("tooltip_totalCost")}
-                        placement="top"
-                        arrow
-                      >
-                        <InfoOutlinedIcon
-                          sx={{
-                            fontSize: 16,
-                            verticalAlign: "middle",
-                            color: "gray",
-                            cursor: "pointer",
-                          }}
-                        />
-                      </Tooltip>
-                    </>
-                  ) : (
-                    header
-                  )}
+                  {(() => {
+                    const tooltipMap: { [key: string]: string } = {
+                      [t("eta")]: t("tooltip_eta"),
+                      [t("totalCost")]: t("tooltip_totalCost"),
+                      [t("orderCost")]: t("tooltip_orderCost"),
+                    };
+
+                    const matchingKey = Object.keys(tooltipMap).find((key) =>
+                      header.includes(key)
+                    );
+
+                    if (matchingKey) {
+                      return (
+                        <>
+                          {header}
+                          <Tooltip title={tooltipMap[matchingKey]} placement="top" arrow>
+                            <InfoOutlinedIcon
+                              sx={{
+                                fontSize: 16,
+                                verticalAlign: "middle",
+                                color: "gray",
+                                cursor: "pointer",
+                              }}
+                            />
+                          </Tooltip>
+                        </>
+                      );
+                    }
+
+                    return header;
+                  })()}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row, rowIndex) => {
+            {rows?.map((row, rowIndex) => {
               const entry = orderList[rowIndex];
               const selectedModus = entry.modus;
               const orderQuantity = entry.quantity;
@@ -238,137 +175,44 @@ export default function PurchaseDispositionTable(props: {
                   <TableCell align="center">{row.discountAmount}</TableCell>
                   <TableCell align="center">{row.amount}</TableCell>
 
-                  <TableCell align="center">
-                    {row.grossRequirementN}
-                    {getIncomingForPeriod(row.itemNr, currentPeriod! + 1).length >
-                      0 && (
-                        <Tooltip
-                          title={
-                            <div>
-                              {getIncomingForPeriod(
-                                row.itemNr,
-                                currentPeriod! + 1
-                              ).map((stock, i) => (
-                                <div key={i}>
-                                  {t("incomingAmount")}: {stock.amount},{" "}
-                                  {t("day")}: {stock.inwardStockMovement.day}
-                                </div>
-                              ))}
-                            </div>
-                          }
-                          placement="top"
-                          arrow
-                        >
-                          <InfoOutlinedIcon
-                            sx={{
-                              fontSize: 16,
-                              verticalAlign: "middle",
-                              color: "gray",
-                              ml: 0.5,
-                            }}
-                          />
-                        </Tooltip>
-                      )}
-                  </TableCell>
-
-                  <TableCell align="center">
-                    {row.grossRequirementN1}
-                    {getIncomingForPeriod(row.itemNr, currentPeriod! + 2)
-                      .length > 0 && (
-                        <Tooltip
-                          title={
-                            <div>
-                              {getIncomingForPeriod(
-                                row.itemNr,
-                                currentPeriod! + 2
-                              ).map((stock, i) => (
-                                <div key={i}>
-                                  {t("incomingAmount")}: {stock.amount},{" "}
-                                  {t("day")}: {stock.inwardStockMovement.day}
-                                </div>
-                              ))}
-                            </div>
-                          }
-                          placement="top"
-                          arrow
-                        >
-                          <InfoOutlinedIcon
-                            sx={{
-                              fontSize: 16,
-                              verticalAlign: "middle",
-                              color: "gray",
-                              ml: 0.5,
-                            }}
-                          />
-                        </Tooltip>
-                      )}
-                  </TableCell>
-
-                  <TableCell align="center">
-                    {row.grossRequirementN2}
-                    {getIncomingForPeriod(row.itemNr, currentPeriod! + 3)
-                      .length > 0 && (
-                        <Tooltip
-                          title={
-                            <div>
-                              {getIncomingForPeriod(
-                                row.itemNr,
-                                currentPeriod! + 3
-                              ).map((stock, i) => (
-                                <div key={i}>
-                                  {t("incomingAmount")}: {stock.amount},{" "}
-                                  {t("day")}: {stock.inwardStockMovement.day}
-                                </div>
-                              ))}
-                            </div>
-                          }
-                          placement="top"
-                          arrow
-                        >
-                          <InfoOutlinedIcon
-                            sx={{
-                              fontSize: 16,
-                              verticalAlign: "middle",
-                              color: "gray",
-                              ml: 0.5,
-                            }}
-                          />
-                        </Tooltip>
-                      )}
-                  </TableCell>
-
-                  <TableCell align="center">
-                    {row.grossRequirementN3}
-                    {getIncomingForPeriod(row.itemNr, currentPeriod! + 4)
-                      .length > 0 && (
-                        <Tooltip
-                          title={
-                            <div>
-                              {getIncomingForPeriod(
-                                row.itemNr,
-                                currentPeriod! + 4
-                              ).map((stock, i) => (
-                                <div key={i}>
-                                  {t("incomingAmount")}: {stock.amount},{" "}
-                                  {t("day")}: {stock.inwardStockMovement.day}
-                                </div>
-                              ))}
-                            </div>
-                          }
-                          placement="top"
-                          arrow
-                        >
-                          <InfoOutlinedIcon
-                            sx={{
-                              fontSize: 16,
-                              verticalAlign: "middle",
-                              color: "gray",
-                              ml: 0.5,
-                            }}
-                          />
-                        </Tooltip>
-                      )}
-                  </TableCell>
+                  {
+                    row.grossRequirements.map((grossRequirementi, index) => {
+                      return (
+                        <TableCell key={index} align="center">
+                          {grossRequirementi}
+                          {getIncomingForPeriod(row.itemNr, currentPeriod! + index + 1).length >
+                            0 && (
+                              <Tooltip
+                                title={
+                                  <div>
+                                    {getIncomingForPeriod(
+                                      row.itemNr,
+                                      currentPeriod! + index + 1
+                                    ).map((stock, i) => (
+                                      <div key={i}>
+                                        {t("incomingAmount")}: {stock.amount},{" "}
+                                        {t("day")}: {stock.inwardStockMovement.day}
+                                      </div>
+                                    ))}
+                                  </div>
+                                }
+                                placement="top"
+                                arrow
+                              >
+                                <InfoOutlinedIcon
+                                  sx={{
+                                    fontSize: 16,
+                                    verticalAlign: "middle",
+                                    color: "gray",
+                                    ml: 0.5,
+                                  }}
+                                />
+                              </Tooltip>
+                            )}
+                        </TableCell>
+                      )
+                    })
+                  }
 
                   <TableCell align="center">
                     <TextField
@@ -389,7 +233,7 @@ export default function PurchaseDispositionTable(props: {
                           padding: "6px",
                           borderRadius: "8px",
                           backgroundColor: "#fdfdfd",
-                          border: `1px solid ${entry.quantity < 0 || (entry.quantity == 0 && entry.modus !== "")? "red" : "green"}`
+                          border: `1px solid ${entry.quantity < 0 || (entry.quantity == 0 && entry.modus !== "") ? "red" : "green"}`
                         },
                         "& .MuiOutlinedInput-notchedOutline": {
                           border: "none",
@@ -439,29 +283,28 @@ export default function PurchaseDispositionTable(props: {
                 ))}
               <TableCell align="center">
                 <strong>
-                  {rows
-                    .reduce((sum, _, rowIndex) => {
-                      const { modus, quantity } = orderList[rowIndex];
-                      const factors = modusOptions.find(
-                        (option) => option.key == modus
-                      );
-                      const unitCost =
-                        quantity >= rows[rowIndex].discountAmount &&
-                          modus === "normal"
-                          ? 0.9 * rows[rowIndex].startPrice!
-                          : rows[rowIndex].startPrice!;
-                      const materialCost = factors
-                        ? factors.priceFactor * unitCost * quantity
+                  {rows?.reduce((sum, _, rowIndex) => {
+                    const { modus, quantity } = orderList[rowIndex];
+                    const factors = modusOptions.find(
+                      (option) => option.key == modus
+                    );
+                    const unitCost =
+                      quantity >= rows[rowIndex].discountAmount &&
+                        modus === "normal"
+                        ? 0.9 * rows[rowIndex].startPrice!
+                        : rows[rowIndex].startPrice!;
+                    const materialCost = factors
+                      ? factors.priceFactor * unitCost * quantity
+                      : 0;
+                    const orderCost =
+                      quantity > 0
+                        ? factors
+                          ? rows[rowIndex].deliveryCost! *
+                          factors.orderCostFactor
+                          : 0
                         : 0;
-                      const orderCost =
-                        quantity > 0
-                          ? factors
-                            ? rows[rowIndex].deliveryCost! *
-                            factors.orderCostFactor
-                            : 0
-                          : 0;
-                      return sum + materialCost + orderCost;
-                    }, 0)
+                    return sum + materialCost + orderCost;
+                  }, 0)
                     .toFixed(2)}
                 </strong>
               </TableCell>

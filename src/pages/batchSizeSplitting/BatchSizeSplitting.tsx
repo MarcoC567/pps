@@ -44,15 +44,15 @@ export default function ProductionOrderListPage() {
 
   useEffect(() => {
     // 1) Prüfe, ob schon productionOrders existieren
-    const prodRaw = localStorage.getItem("productionOrders");
-    if (prodRaw) {
-      const parsedProd: [string, number][] = JSON.parse(prodRaw);
-      const convertedProd: ProductionOrder[] = parsedProd.map(
-        ([product, quantity]) => ({ product, quantity })
-      );
-      setOrders(convertedProd);
-      return;
-    }
+    // const prodRaw = localStorage.getItem("productionOrders");
+    // if (prodRaw) {
+    //   const parsedProd: [string, number][] = JSON.parse(prodRaw);
+    //   const convertedProd: ProductionOrder[] = parsedProd.map(
+    //     ([product, quantity]) => ({ product, quantity })
+    //   );
+    //   setOrders(convertedProd);
+    //   return;
+    // }
 
     // 2) Sonst: aus inhouseDispositionResult laden, wenn vorhanden
     const stored = localStorage.getItem("inhouseDispositionResult");
