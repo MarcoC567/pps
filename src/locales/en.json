@@ -123,10 +123,10 @@
   "inhouse_disposition_work_in_progress": "Work in Progress",
   "inhouse_disposition_waiting_queue": "Waiting Queue",
   "inhouse_disposition_production_order": "Prodution Order",
-  "inhouse_disposition_shared_parts": "Shared Parts"
+  "inhouse_disposition_shared_parts": "Shared Parts",
 
-
-
+  "production_plan_table_forecast": "Stock Forecast",
+  "production_plan_table_forecast_tooltip": "This is the forecast for the expected stock in the coming periods considering the current stock, sales forecast and the selected production plan"
 }
 
   
