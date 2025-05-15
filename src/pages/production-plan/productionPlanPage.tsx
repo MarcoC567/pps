@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import ForecastTable, { ForecastData } from "./ForecastTable.tsx";
 import ProductionPlanTable, {
@@ -14,22 +13,62 @@ import { Paper, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageContext.tsx";
 
+//
+// 1) Define a new type for expected end stocks
+//
+export type ExpectedEndStocks = {
+  product: string;
+  values: number[];
+}[];
+
+//
+// 2) Helper to compute expected endStock for each product & period
+//    First period: currentStock + inProduction + waitingList
+//                  - forecast(0) + production(0)
+//    Following periods: endStock(i-1) - forecast(i) + production(i)
+//
+function computeExpectedEndStocks(
+  productionData: ProductionPlanData,
+  forecastData: ForecastData,
+  stockData: StockData
+): ExpectedEndStocks {
+  return productionData.map((prodRow, productIndex) => {
+    const forecastRow = forecastData[productIndex];
+    const s = stockData[productIndex];
+    const result = [0, 0, 0, 0];
+
+    // Period 1 (index 0)
+    const first = s.stock + s.inProduction + s.waitingList
+      - forecastRow.values[0] + prodRow.values[0];
+    result[0] = first;
+
+    // Periods 2..4 (index 1..3)
+    for (let i = 1; i < 4; i++) {
+      result[i] = result[i - 1] - forecastRow.values[i] + prodRow.values[i];
+    }
+
+    return {
+      product: prodRow.product,
+      values: result,
+    };
+  });
+}
+
 export default function ProductionPlanPage() {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const importData = JSON.parse(
-    localStorage.getItem("importData") || "{}"
-  ) as {
+
+  // These imports are truncated for brevity
+  const importData = JSON.parse(localStorage.getItem("importData") || "{}") as {
     results: {
       forecast: {
-        p1: string,
-        p2: string,
-        p3: string
-      }
+        p1: string;
+        p2: string;
+        p3: string;
+      };
     };
   };
 
-  // — Forecast, ProductionPlan, SalesForecast & DirectSales wie gehabt
   const [forecastData, setForecastData] = useState<ForecastData>(() => {
     const saved = localStorage.getItem("forecastdata");
     return saved ? JSON.parse(saved) :
@@ -75,7 +114,6 @@ export default function ProductionPlanPage() {
       ];
   });
 
-  // — StockData initial im State-Initializer
   const [stockData, setStockData] = useState<StockData>(() => {
     // 1) LocalStorage, wenn nicht leer
     const saved = localStorage.getItem("plannedStockAtTheEndOfThePeriod");
@@ -177,12 +215,22 @@ export default function ProductionPlanPage() {
       }));
   });
 
-  // Geplanter Lagerbestand für P1, P2, P3 automatisch ausrechnen lassen
+  //
+  // 3) If you need to store or display the single‐period auto-calculation,
+  //    you can either remove it or keep it as you prefer. Below is shown
+  //    as-is, but relies on the older approach. You can remove these if
+  //    you just want to rely on computeExpectedEndStocks instead.
+  //
   useEffect(() => {
     const updatedStockData = [...stockData];
     updatedStockData[0] = {
       ...updatedStockData[0],
-      endStock: productionData[0].values[0] - salesData[0].current + stockData[0].inProduction + stockData[0].waitingList + stockData[0].stock,
+      endStock:
+        productionData[0].values[0] -
+        salesData[0].current +
+        stockData[0].inProduction +
+        stockData[0].waitingList +
+        stockData[0].stock,
     };
     setStockData(updatedStockData);
   }, [productionData[0].values[0], salesData[0].current]);
@@ -191,7 +239,12 @@ export default function ProductionPlanPage() {
     const updatedStockData = [...stockData];
     updatedStockData[1] = {
       ...updatedStockData[1],
-      endStock: productionData[1].values[0] - salesData[1].current + stockData[1].inProduction + stockData[1].waitingList + stockData[1].stock,
+      endStock:
+        productionData[1].values[0] -
+        salesData[1].current +
+        stockData[1].inProduction +
+        stockData[1].waitingList +
+        stockData[1].stock,
     };
     setStockData(updatedStockData);
   }, [productionData[1].values[0], salesData[1].current]);
@@ -200,21 +253,29 @@ export default function ProductionPlanPage() {
     const updatedStockData = [...stockData];
     updatedStockData[2] = {
       ...updatedStockData[2],
-      endStock: productionData[2].values[0] - salesData[2].current + stockData[2].inProduction + stockData[2].waitingList + stockData[2].stock,
+      endStock:
+        productionData[2].values[0] -
+        salesData[2].current +
+        stockData[2].inProduction +
+        stockData[2].waitingList +
+        stockData[2].stock,
     };
     setStockData(updatedStockData);
   }, [productionData[2].values[0], salesData[2].current]);
 
-  // — Persistenz
+  // Persist updated data
   useEffect(() => {
     localStorage.setItem("forecastdata", JSON.stringify(forecastData));
   }, [forecastData]);
+
   useEffect(() => {
     localStorage.setItem("productionPlanData", JSON.stringify(productionData));
   }, [productionData]);
+
   useEffect(() => {
     localStorage.setItem("sellwish", JSON.stringify(salesData));
   }, [salesData]);
+
   useEffect(() => {
     localStorage.setItem(
       "plannedStockAtTheEndOfThePeriod",
@@ -222,14 +283,12 @@ export default function ProductionPlanPage() {
     );
   }, [stockData]);
 
-  // — Validierung
   const allValid = (): boolean =>
     forecastData.every((r) => r.values.every((v) => v >= 0)) &&
     productionData.every((r) => r.values.every((v) => v >= 0)) &&
     salesData.every((r) => r.current >= 0) &&
     stockData.every((r) => r.endStock >= 0);
 
-  // — Next
   const handleNext = () => {
     const firstInvalid = document.querySelector<HTMLInputElement>(
       'input.table-input[data-valid="false"]'
@@ -243,6 +302,15 @@ export default function ProductionPlanPage() {
     localStorage.setItem("visited_/forecast", "true");
     navigate("/inhouse-disposition");
   };
+
+  //
+  // 4) Compute expectedEndStocks and pass them down to ProductionPlanTable
+  //
+  const expectedEndStocks = computeExpectedEndStocks(
+    productionData,
+    forecastData,
+    stockData
+  );
 
   return (
     <Paper
@@ -273,7 +341,11 @@ export default function ProductionPlanPage() {
       >
         {t("ProductionPlan")}
       </Typography>
-      <ProductionPlanTable data={productionData} onChange={setProductionData} />
+      <ProductionPlanTable
+        data={productionData}
+        expectedEndStocks={expectedEndStocks}
+        onChange={setProductionData}
+      />
 
       <div
         style={{
