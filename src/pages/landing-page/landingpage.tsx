@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNavigation } from "../../context/Navigation/navigationContext";
-import { useLanguage } from "../../context/LanguageContext"
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ export default function LandingPage() {
       </h1>
       <button
         onClick={handleClick}
-        className="bg-blue-600 text-white text-lg font-medium py-3 px-6 rounded-xl shadow-md hover:bg-blue-700 transition"
+        className="bg-blue-600 text-white text-lg font-medium py-3 px-6 rounded-xl shadow-md hover:bg-blue-700 transition my-btn"
       >
         {t("landing_page_button")}
       </button>
