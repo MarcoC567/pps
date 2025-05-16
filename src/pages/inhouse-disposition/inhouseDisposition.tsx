@@ -103,7 +103,7 @@ export const InhouseDisposition = ({dpR, dpI}) => {
               }}
             >
               <TableCell
-                colSpan={7}
+                colSpan={8}
                 sx={{
                   color: "white",
                   fontSize: "1.1rem",
