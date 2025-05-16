@@ -227,7 +227,7 @@ export default function PurchaseDispositionTable(props: {
                       variant="outlined"
                       size="small"
                       sx={{
-                        width: "4rem",
+                        width: "5rem",
                         input: {
                           textAlign: "center",
                           padding: "6px",
