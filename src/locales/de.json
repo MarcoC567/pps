@@ -124,9 +124,10 @@
   "inhouse_disposition_work_in_progress": "In Arbeit",
   "inhouse_disposition_waiting_queue": "Warteschlange",
   "inhouse_disposition_production_order": "Produktionsmenge",
-  "inhouse_disposition_shared_parts": "Mehrfach verwendete Teile",
+  "inhouse_disposition_shared_parts": "*Mehrfach verwendete Teile",
+  "inhouse_disposition_title": "Eigenfertigungsdisposition",
 
-  "production_plan_table_forecast": "Stock Forecast",
+  "production_plan_table_forecast": "Vsl. Lagerbestand",
   "production_plan_table_forecast_tooltip": "Dies ist die Prognose für den erwarteten Lagerbestand in den kommenden Perioden, basierend auf dem aktuellen Lagerbestand, der Verkaufsprognose und dem ausgewählten Produktionsplan."
 
 }

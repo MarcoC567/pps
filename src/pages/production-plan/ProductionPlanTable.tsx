@@ -162,7 +162,7 @@ export default function ProductionPlanTable({
             */}
             <TableRow>
               <TableCell>
-                <strong>{t("production_plan_table_forecast")}</strong>
+                <strong>{t("production_plan_table_forecast")+" "}</strong>
                 <Tooltip title={t("production_plan_table_forecast_tooltip")} placement="top" arrow>
                   <InfoOutlinedIcon
                     sx={{
@@ -177,16 +177,10 @@ export default function ProductionPlanTable({
               {expectedEndStocks.length > 0 &&
                 expectedEndStocks[0].values.map((_, colIndex) => (
                   <TableCell key={colIndex} align="center">
-                    {/* We'll display a dash if there's no data, but in theory
-                        each product row has an entry. */}
                   </TableCell>
                 ))}
             </TableRow>
             
-            {/* 
-              One approach: for each product, display its 4 endStock values
-              in a separate row. 
-            */}
             {expectedEndStocks.map((expected, idx) => (
               <TableRow key={idx} sx={{backgroundColor: "#fafafa"}}>
                 <TableCell>{t(expected.product)}</TableCell>

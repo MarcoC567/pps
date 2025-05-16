@@ -13,6 +13,7 @@ export default function InhouseDispositionPage() {
   useEffect(() => {
     const plannedStock = JSON.parse(localStorage.getItem("plannedStockAtTheEndOfThePeriod") ?? "");
     const productionPlan = JSON.parse(localStorage.getItem("productionPlanData") ?? "");
+    const forecastPlan = JSON.parse(localStorage.getItem("sellwish") ?? "");
     
     const dispositionInputWithProducts: DispositionInput = toDispositionInput(plannedStock);
     const dispositionInput = addProducts(dispositionInputWithProducts, productionPlan);
