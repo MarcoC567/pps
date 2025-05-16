@@ -41,7 +41,7 @@ export type PurchaseDispositionStaticData = {
   grossRequirements: number[];
 }[] | undefined
 
-export type OrderEntry = { article: number; quantity: number; modus: string };
+export type OrderEntry = { article: number; quantity: number; modus: string, jitwarning: boolean };
 
 export default function PurchaseDispositionPage() {
   const [futureInwardStockData, setFutureInwardStockData] = useState<
@@ -230,6 +230,7 @@ export default function PurchaseDispositionPage() {
           let optimalQuantity = 0;
           let optimalMode = "";
           let initialInventory = item.amount
+          let warning = false
           const eta = item.deliveryTime! + item.deviation!
 
           for (let i = 0; i <= 3; i++) {
@@ -238,13 +239,15 @@ export default function PurchaseDispositionPage() {
               item.itemNr, i + currentPeriod! + 1
             )
             // Incoming stock
-            if (item.itemNr == 21) {
-              console.log(i, initialInventory, inwardStockinThisPeriod)
-            }
             if (initialInventory < 0) {
               if (eta > i) {
                 optimalQuantity = item.discountAmount
                 optimalMode = "fast"
+                // Eil is still too late
+                if (item.deliveryTime! / 2 > i) {
+                  console.log("TH IS THSI ISSI IS", item.itemNr)
+                  warning = true;
+                }
               }
               else {
                 optimalQuantity = item.discountAmount
@@ -263,6 +266,7 @@ export default function PurchaseDispositionPage() {
               article: item.itemNr,
               quantity: optimalQuantity,
               modus: optimalMode,
+              jitwarning: warning
             })
         }
         )
@@ -270,6 +274,7 @@ export default function PurchaseDispositionPage() {
     }
 
     setTimeout(() => setLoading(false), 100);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderList, rows, futureInwardStockData]);
 
   // Persistenz

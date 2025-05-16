@@ -92,9 +92,9 @@
   "article_55": "55 Frame and Wheels",
   "article_56": "56 Bicycle without Pedals",
 
-  "tooltip_orderCost": "Order cost = Delivery cost for the article * Order Cost Factor for the selected Delivery Mode",
-  "tooltip_totalCost": "Total cost = Material cost + Order cost. Material cost = Price factor of the selected Delivery Mode * Cost of the article (* 90% if Order quantity >= Discounted Amount) * Order quantity",
-  "tooltip_eta": "ETA = (delivery time + deviation) * 5. With a probability of 93%, this value corresponds to the expected maximum delivery time. With a probability of 7%, a delivery time that is 1 to 3 days longer than the ETA can be expected.",
+  "tooltip_orderCost": "Order costs = Delivery costs for the item * Order cost factor for the selected delivery mode.",
+  "tooltip_totalCost": "Total costs = Material costs + Order costs. Material costs = Price factor of the selected delivery mode * Unit costs (* Discount factor of the delivery mode, if order quantity >= discount quantity) * Order quantity.",
+  "tooltip_eta": "ETA (days) = (Delivery time * Delivery date factor of the delivery mode + Deviation * Delivery date deviation factor of the delivery mode + Time of process + Deviation of time of process) * 5. With a 93% probability, this value represents the expected maximum delivery time. With a 7% probability, a delivery time 1 to 3 days longer than the ETA can be expected.",
   "tooltip_article": "Here are the designations of the respective in-house produced items.",
   "tooltip_stock": "The current stock level as read from the XML file.",
   "tooltip_endStock": "Please enter the desired stock level you want to have at the end of this period.",

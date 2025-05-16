@@ -1,5 +1,4 @@
-//TODO Validation check
-//TODO Modell zuweisung (P1,2,3)
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Table,
   TableBody,
@@ -12,7 +11,7 @@ import {
   TableContainer,
   Tooltip,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useLanguage } from "../../context/LanguageContext.tsx";
 import mockData from "./mockData.json";
 import { useNavigate } from "react-router-dom";
@@ -50,6 +49,12 @@ export default function CapacityTable() {
   const [shiftData, setShiftData] = useState<
     Record<string, { shifts: number; overtime: number }>
   >({});
+  const [setupTimeNewPerWS, setSetupTimeNewPerWS] = useState<
+    Record<string, number>
+  >({});
+  const [prevSetupTime, setPrevSetupTime] = useState<Record<string, number>>({});
+  const isSetupTimeNewInitialized = useRef(false); // Track setupTimeNewPerWS initialization
+  const isPrevSetupTimeInitialized = useRef(false); // Track prevSetupTime initialization
 
   const raw = localStorage.getItem("importData");
   const importData = raw
@@ -76,7 +81,6 @@ export default function CapacityTable() {
   };
 
   const calculateOvertime = (totalMinutes: number, shifts: number) => {
-    // Overtime is maximum 1200 min
     return Math.min(1200, Math.max(0, totalMinutes - 2400 * shifts));
   };
 
@@ -88,10 +92,8 @@ export default function CapacityTable() {
       const oldSetup = prevSetupTime[wsKey] || 0;
       const total = newCap + newSetup + oldCap + oldSetup;
       const shifts = shiftData[wsKey]?.shifts ?? calculateShifts(total);
-      // Roh-Überstunden (Minuten über 2400) …
       const rawOvertime =
         shiftData[wsKey]?.overtime ?? calculateOvertime(total, shifts);
-      // … und geteilt durch 5, aufgerundet
       const overtime = Math.round(rawOvertime / 5);
       return {
         station: wsKey.replace("workstation", ""),
@@ -113,6 +115,7 @@ export default function CapacityTable() {
   ) => {
     let numValue = Math.max(0, Number(value) || 0);
     if (key === "shifts") numValue = Math.min(numValue, 3);
+    if (key === "overtime") numValue = Math.min(numValue, 1200);
 
     setShiftData((prev) => {
       const updated = key === "shifts" ? {
@@ -161,51 +164,134 @@ export default function CapacityTable() {
     (ws) => ws !== "workstation5"
   );
 
+  // Initialize setupTimeNewPerWS only once when dependencies are ready
+  useEffect(() => {
+    if (
+      isSetupTimeNewInitialized.current ||
+      workstationKeys.length === 0 ||
+      allParts.length === 0
+    ) {
+      return;
+    }
+
+    const saved = localStorage.getItem("setupTimeNewPerWS");
+    if (saved) {
+      setSetupTimeNewPerWS(JSON.parse(saved));
+    } else {
+      const initial: Record<string, number> = {};
+      workstationKeys.forEach((ws) => {
+        const station = workstations[ws];
+        let setupSum = 0;
+        allParts.forEach((part) => {
+          const entry = station?.[part];
+          if (!entry) return;
+          const productionQty = productionMap.get(part) || 0;
+          const occurrences = productionQty > 0 ? entryCountMap.get(part) || 0 : 0;
+          const setupPerPart = Array.isArray(station.setup_time)
+            ? station.setup_time[0]
+            : station.setup_time;
+          setupSum += setupPerPart * occurrences;
+        });
+        initial[ws] = setupSum;
+      });
+      setSetupTimeNewPerWS(initial);
+    }
+    isSetupTimeNewInitialized.current = true;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workstations, productionMap, workstationKeys, allParts]);
+
+  // Save setupTimeNewPerWS to localStorage only when it changes
+  useEffect(() => {
+    if (Object.keys(setupTimeNewPerWS).length > 0) {
+      localStorage.setItem("setupTimeNewPerWS", JSON.stringify(setupTimeNewPerWS));
+    }
+  }, [setupTimeNewPerWS]);
+
+  // Initialize prevSetupTime only once when dependencies are ready
+  useEffect(() => {
+    if (
+      isPrevSetupTimeInitialized.current ||
+      workstationKeys.length === 0 ||
+      !importData?.results?.waitinglistworkstations?.workplace
+    ) {
+      return;
+    }
+
+    const saved = localStorage.getItem("prevSetupTime");
+    if (saved) {
+      setPrevSetupTime(JSON.parse(saved));
+    } else {
+      const initial: Record<string, number> = {};
+      importData.results.waitinglistworkstations.workplace.forEach(
+        (w: { id: string; timeneed: string; waitinglist?: any }) => {
+          const wsKey = `workstation${w.id}`;
+          const station = workstations[wsKey];
+          if (!station) {
+            initial[wsKey] = 0;
+            return;
+          }
+          const setupPerPart = Array.isArray(station.setup_time)
+            ? station.setup_time[0]
+            : station.setup_time;
+          const wl = w.waitinglist;
+          if (Array.isArray(wl)) {
+            initial[wsKey] = setupPerPart * wl.length;
+          } else if (wl && typeof wl === "object") {
+            initial[wsKey] = setupPerPart;
+          } else {
+            initial[wsKey] = 0;
+          }
+        }
+      );
+      setPrevSetupTime(initial);
+    }
+    isPrevSetupTimeInitialized.current = true;
+  }, [workstations, importData, workstationKeys]);
+
+  // Save prevSetupTime to localStorage only when it changes
+  useEffect(() => {
+    if (Object.keys(prevSetupTime).length > 0) {
+      localStorage.setItem("prevSetupTime", JSON.stringify(prevSetupTime));
+    }
+  }, [prevSetupTime]);
+
+  // Handler for setup time changes (new)
+  const handleSetupTimeChange = (ws: string, value: string) => {
+    const numValue = Math.max(0, Number(value) || 0);
+    setSetupTimeNewPerWS((prev) => ({
+      ...prev,
+      [ws]: numValue,
+    }));
+  };
+
+  // Handler for previous setup time changes
+  const handlePrevSetupTimeChange = (ws: string, value: string) => {
+    const numValue = Math.max(0, Number(value) || 0);
+    setPrevSetupTime((prev) => ({
+      ...prev,
+      [ws]: numValue,
+    }));
+  };
+
   const calculatedCapacities: Record<string, number> = {};
-  const setupTimeNewPerWS: Record<string, number> = {};
   workstationKeys.forEach((ws) => {
     const station = workstations[ws];
     let capacitySum = 0;
-    let setupSum = 0;
     allParts.forEach((part) => {
       const entry = station?.[part];
       if (!entry) return;
       const productionQty = productionMap.get(part) || 0;
       capacitySum += productionQty * entry.multiplicator;
-      const occurrences = productionQty > 0 ? entryCountMap.get(part) || 0 : 0;
-      const setupPerPart = Array.isArray(station.setup_time)
-        ? station.setup_time[0]
-        : station.setup_time;
-      setupSum += setupPerPart * occurrences;
     });
     calculatedCapacities[ws] = capacitySum;
-    setupTimeNewPerWS[ws] = setupSum;
   });
 
   const prevPeriodCapacity: Record<string, number> = {};
-  const prevSetupTime: Record<string, number> = {};
   if (importData?.results?.waitinglistworkstations?.workplace) {
     importData.results.waitinglistworkstations.workplace.forEach(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (w: { id: string; timeneed: string; waitinglist?: any }) => {
         const wsKey = `workstation${w.id}`;
         prevPeriodCapacity[wsKey] = Number(w.timeneed);
-        const station = workstations[wsKey];
-        if (!station) {
-          prevSetupTime[wsKey] = 0;
-          return;
-        }
-        const setupPerPart = Array.isArray(station.setup_time)
-          ? station.setup_time[0]
-          : station.setup_time;
-        const wl = w.waitinglist;
-        if (Array.isArray(wl)) {
-          prevSetupTime[wsKey] = setupPerPart * wl.length;
-        } else if (wl && typeof wl === "object") {
-          prevSetupTime[wsKey] = setupPerPart;
-        } else {
-          prevSetupTime[wsKey] = 0;
-        }
       }
     );
   }
@@ -341,7 +427,27 @@ export default function CapacityTable() {
                 </TableCell>
                 {workstationKeys.map((ws) => (
                   <TableCell key={ws} align="center">
-                    {setupTimeNewPerWS[ws] || 0}
+                    <TextField
+                      type="number"
+                      value={setupTimeNewPerWS[ws] ?? 0}
+                      onChange={(e) => handleSetupTimeChange(ws, e.target.value)}
+                      variant="outlined"
+                      size="small"
+                      inputProps={{ min: 0 }}
+                      sx={{
+                        widthremotework: "4rem",
+                        input: {
+                          textAlign: "center",
+                          padding: "6px",
+                          borderRadius: "8px",
+                          backgroundColor: "#fdfdfd",
+                          border: "1px solid #ccc",
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          border: "none",
+                        },
+                      }}
+                    />
                   </TableCell>
                 ))}
               </TableRow>
@@ -393,7 +499,27 @@ export default function CapacityTable() {
                 </TableCell>
                 {workstationKeys.map((ws) => (
                   <TableCell key={ws} align="center">
-                    {prevSetupTime[ws] ?? 0}
+                    <TextField
+                      type="number"
+                      value={prevSetupTime[ws] ?? 0}
+                      onChange={(e) => handlePrevSetupTimeChange(ws, e.target.value)}
+                      variant="outlined"
+                      size="small"
+                      inputProps={{ min: 0 }}
+                      sx={{
+                        width: "4rem",
+                        input: {
+                          textAlign: "center",
+                          padding: "6px",
+                          borderRadius: "8px",
+                          backgroundColor: "#fdfdfd",
+                          border: "1px solid #ccc",
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          border: "none",
+                        },
+                      }}
+                    />
                   </TableCell>
                 ))}
               </TableRow>
@@ -489,7 +615,11 @@ export default function CapacityTable() {
               <TableRow hover>
                 <TableCell colSpan={3}>
                   <strong>{t("overtime_in_total")}</strong>
-                  <Tooltip title={t("tooltip_overtime_in_total")} placement="top" arrow>
+                  <Tooltip
+                    title={t("tooltip_overtime_in_total")}
+                    placement="top"
+                    arrow
+                  >
                     <InfoOutlinedIcon
                       sx={{
                         fontSize: 16,
@@ -539,10 +669,16 @@ export default function CapacityTable() {
                   );
                 })}
               </TableRow>
+
+              {/* Überstunden pro Tag */}
               <TableRow hover>
                 <TableCell colSpan={3}>
                   <strong>{t("overtime_per_day")}</strong>
-                  <Tooltip title={t("tooltip_overtime_per_day")} placement="top" arrow>
+                  <Tooltip
+                    title={t("tooltip_overtime_per_day")}
+                    placement="top"
+                    arrow
+                  >
                     <InfoOutlinedIcon
                       sx={{
                         fontSize: 16,
@@ -563,7 +699,7 @@ export default function CapacityTable() {
                   const shiftsVal =
                     shiftData[ws]?.shifts ?? calculateShifts(totalVal);
                   const overtimeVal =
-                    shiftData[ws]?.overtime ?? calculateOvertime(totalVal, shiftsVal);  
+                    shiftData[ws]?.overtime ?? calculateOvertime(totalVal, shiftsVal);
                   return (
                     <TableCell key={ws} align="center">
                       <TextField

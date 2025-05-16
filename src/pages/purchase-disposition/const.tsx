@@ -65,8 +65,8 @@ export const basicData = itemAdditionalData.map(
 
 type OrderModeData = {
   key: string;
-  deliveryTimeFactor: number;
-  deliveryTimeDeviation: number;
+  timeOfProcess: number;
+  timeOfProcessDeviation: number;
   deliveryDeadlineFactor: number;
   deliveryDeviationExtra: number;
   quantityFactor: number;
@@ -80,8 +80,8 @@ type OrderModeData = {
 export const modusOptions: Array<OrderModeData> = [
     {
       key: "special_order",
-      deliveryTimeFactor: 1.0,
-      deliveryTimeDeviation: 0.1,
+      timeOfProcess: 1.0,
+      timeOfProcessDeviation: 0.1,
       deliveryDeadlineFactor: 0.4,
       deliveryDeviationExtra: 0.0,
       quantityFactor: 1.0,
@@ -93,8 +93,8 @@ export const modusOptions: Array<OrderModeData> = [
     },
     {
       key: "cheap_vendor",
-      deliveryTimeFactor: 3.0,
-      deliveryTimeDeviation: 0.5,
+      timeOfProcess: 3.0,
+      timeOfProcessDeviation: 0.5,
       deliveryDeadlineFactor: 1.3,
       deliveryDeviationExtra: 2.0,
       quantityFactor: 0.9,
@@ -106,8 +106,8 @@ export const modusOptions: Array<OrderModeData> = [
     },
     {
       key: "jit",
-      deliveryTimeFactor: 0.0,
-      deliveryTimeDeviation: 0.0,
+      timeOfProcess: 0.0,
+      timeOfProcessDeviation: 0.0,
       deliveryDeadlineFactor: 0.2,
       deliveryDeviationExtra: 0.0,
       quantityFactor: 1.0,
@@ -119,8 +119,8 @@ export const modusOptions: Array<OrderModeData> = [
     },
     {
       key: "fast",
-      deliveryTimeFactor: 0.0,
-      deliveryTimeDeviation: 0.0,
+      timeOfProcess: 0.0,
+      timeOfProcessDeviation: 0.0,
       deliveryDeadlineFactor: 0.5,
       deliveryDeviationExtra: 0.0,
       quantityFactor: 1.0,
@@ -132,8 +132,8 @@ export const modusOptions: Array<OrderModeData> = [
     },
     {
       key: "normal",
-      deliveryTimeFactor: 0.0,
-      deliveryTimeDeviation: 0.0,
+      timeOfProcess: 0.0,
+      timeOfProcessDeviation: 0.0,
       deliveryDeadlineFactor: 1.0,
       deliveryDeviationExtra: 1.0,
       quantityFactor: 1.0,

@@ -68,8 +68,8 @@ export default function ExportPage() {
   </orderlist>
  <productionlist>
   ${productionOrders
-    .filter(([, qty]) => qty > 0)
-    .map(([code, qty]) => {
+    .filter(([, qty]: [string, number]) => qty > 0)
+    .map(([code, qty]: [string, number]) => {
       const article = code.replace(/^[A-Za-z]+/, "");
       return `<production article="${article}" quantity="${qty}" />`;
     })
