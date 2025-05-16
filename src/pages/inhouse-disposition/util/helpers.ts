@@ -8,7 +8,7 @@ export function flattenTree(nodes, level = 0, parent = null) {
     result.push({...rest, level, parent});
     
     if (parts?.length) {
-      result = result.concat(flattenTree(parts, level + 1, node.id));
+      result = result.concat(flattenTree(parts, level + 1, node.partId));
     }
   }
   
@@ -66,3 +66,4 @@ function mapProductKey(product: string) {
 
 type PlannedStock = { product: string, stock: number, endStock: number, waitingList: number, inProduction: number }[]
 type ProductionPlan = { product: "p1ChildrenBike" | "p2WomenBike" | "p3MenBike", values: number[] }[]
+type Sellwish = { product: "p1ChildrenBike" | "p2WomenBike" | "p3MenBike", current: number }[]
