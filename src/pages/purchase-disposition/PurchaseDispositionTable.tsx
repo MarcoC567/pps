@@ -21,7 +21,7 @@ import { FutureStockEntry, OrderEntry, PurchaseDispositionStaticData } from ".";
 export default function PurchaseDispositionTable(props: {
   rows: PurchaseDispositionStaticData;
   futureInwardStockData: FutureStockEntry[];
-  orderList: OrderEntry[],
+  orderList: OrderEntry[];
   setOrderList: (newOrderList: OrderEntry[]) => void;
 }) {
   const rows = props.rows;
@@ -111,7 +111,11 @@ export default function PurchaseDispositionTable(props: {
                       return (
                         <>
                           {header}
-                          <Tooltip title={tooltipMap[matchingKey]} placement="top" arrow>
+                          <Tooltip
+                            title={tooltipMap[matchingKey]}
+                            placement="top"
+                            arrow
+                          >
                             <InfoOutlinedIcon
                               sx={{
                                 fontSize: 16,
@@ -141,30 +145,36 @@ export default function PurchaseDispositionTable(props: {
               );
               const eta = factors
                 ? (row.deliveryTime! * factors.deliveryDeadlineFactor +
-                  row.deviation! * factors.deliveryDeviationExtra) *
-                5
+                    row.deviation! * factors.deliveryDeviationExtra +
+                    factors.timeOfProcess +
+                    factors.timeOfProcessDeviation) *
+                  5
                 : 0;
+
               const unitCost =
-                orderQuantity >= row.discountAmount &&
-                  selectedModus === "normal"
-                  ? 0.9 * row.startPrice!
+                orderQuantity >= row.discountAmount && factors
+                  ? factors.discountFactor * row.startPrice!
                   : row.startPrice!;
+
               const materialCost = factors
                 ? factors.priceFactor * unitCost * orderQuantity
                 : 0;
+
               const orderCost =
                 orderQuantity > 0
                   ? factors
                     ? row.deliveryCost! * factors.orderCostFactor
                     : 0
                   : 0;
+
               const totalCost = materialCost + orderCost;
+
+              console.log(orderList[rowIndex].jitwarning)
 
               return (
                 <TableRow
                   key={rowIndex}
-                  hover
-                  sx={{ "&:hover": { backgroundColor: "#f9f9f9" } }}
+                  style={{backgroundColor: !orderList[rowIndex].jitwarning ? "#f9f9f9" : "#FFF9C4"}}
                 >
                   <TableCell align="center">{row.itemNr}</TableCell>
                   <TableCell align="center">{row.deliveryTime}</TableCell>
@@ -175,44 +185,44 @@ export default function PurchaseDispositionTable(props: {
                   <TableCell align="center">{row.discountAmount}</TableCell>
                   <TableCell align="center">{row.amount}</TableCell>
 
-                  {
-                    row.grossRequirements.map((grossRequirementi, index) => {
-                      return (
-                        <TableCell key={index} align="center">
-                          {grossRequirementi}
-                          {getIncomingForPeriod(row.itemNr, currentPeriod! + index + 1).length >
-                            0 && (
-                              <Tooltip
-                                title={
-                                  <div>
-                                    {getIncomingForPeriod(
-                                      row.itemNr,
-                                      currentPeriod! + index + 1
-                                    ).map((stock, i) => (
-                                      <div key={i}>
-                                        {t("incomingAmount")}: {stock.amount},{" "}
-                                        {t("day")}: {stock.inwardStockMovement.day}
-                                      </div>
-                                    ))}
+                  {row.grossRequirements.map((grossRequirementi, index) => {
+                    return (
+                      <TableCell key={index} align="center">
+                        {grossRequirementi}
+                        {getIncomingForPeriod(
+                          row.itemNr,
+                          currentPeriod! + index + 1
+                        ).length > 0 && (
+                          <Tooltip
+                            title={
+                              <div>
+                                {getIncomingForPeriod(
+                                  row.itemNr,
+                                  currentPeriod! + index + 1
+                                ).map((stock, i) => (
+                                  <div key={i}>
+                                    {t("incomingAmount")}: {stock.amount},{" "}
+                                    {t("day")}: {stock.inwardStockMovement.day}
                                   </div>
-                                }
-                                placement="top"
-                                arrow
-                              >
-                                <InfoOutlinedIcon
-                                  sx={{
-                                    fontSize: 16,
-                                    verticalAlign: "middle",
-                                    color: "gray",
-                                    ml: 0.5,
-                                  }}
-                                />
-                              </Tooltip>
-                            )}
-                        </TableCell>
-                      )
-                    })
-                  }
+                                ))}
+                              </div>
+                            }
+                            placement="top"
+                            arrow
+                          >
+                            <InfoOutlinedIcon
+                              sx={{
+                                fontSize: 16,
+                                verticalAlign: "middle",
+                                color: "gray",
+                                ml: 0.5,
+                              }}
+                            />
+                          </Tooltip>
+                        )}
+                      </TableCell>
+                    );
+                  })}
 
                   <TableCell align="center">
                     <TextField
@@ -233,7 +243,12 @@ export default function PurchaseDispositionTable(props: {
                           padding: "6px",
                           borderRadius: "8px",
                           backgroundColor: "#fdfdfd",
-                          border: `1px solid ${entry.quantity < 0 || (entry.quantity == 0 && entry.modus !== "") ? "red" : "green"}`
+                          border: `1px solid ${
+                            entry.quantity < 0 ||
+                            (entry.quantity == 0 && entry.modus !== "")
+                              ? "red"
+                              : "green"
+                          }`,
                         },
                         "& .MuiOutlinedInput-notchedOutline": {
                           border: "none",
@@ -253,7 +268,14 @@ export default function PurchaseDispositionTable(props: {
                       displayEmpty
                       sx={{
                         width: "7rem",
-                        border: `1px solid ${entry.quantity > 0 && entry.modus == "" ? "red" : "green"}`
+                        border: `1px solid ${
+                          entry.quantity > 0 && entry.modus == ""
+                            ? "red"
+                            : "green"
+                        }`,
+                        "& .MuiSelect-select": {
+                          backgroundColor: "white"
+                        }
                       }}
                     >
                       <MenuItem value="" disabled>
@@ -283,28 +305,29 @@ export default function PurchaseDispositionTable(props: {
                 ))}
               <TableCell align="center">
                 <strong>
-                  {rows?.reduce((sum, _, rowIndex) => {
-                    const { modus, quantity } = orderList[rowIndex];
-                    const factors = modusOptions.find(
-                      (option) => option.key == modus
-                    );
-                    const unitCost =
-                      quantity >= rows[rowIndex].discountAmount &&
+                  {rows
+                    ?.reduce((sum, _, rowIndex) => {
+                      const { modus, quantity } = orderList[rowIndex];
+                      const factors = modusOptions.find(
+                        (option) => option.key == modus
+                      );
+                      const unitCost =
+                        quantity >= rows[rowIndex].discountAmount &&
                         modus === "normal"
-                        ? 0.9 * rows[rowIndex].startPrice!
-                        : rows[rowIndex].startPrice!;
-                    const materialCost = factors
-                      ? factors.priceFactor * unitCost * quantity
-                      : 0;
-                    const orderCost =
-                      quantity > 0
-                        ? factors
-                          ? rows[rowIndex].deliveryCost! *
-                          factors.orderCostFactor
-                          : 0
+                          ? 0.9 * rows[rowIndex].startPrice!
+                          : rows[rowIndex].startPrice!;
+                      const materialCost = factors
+                        ? factors.priceFactor * unitCost * quantity
                         : 0;
-                    return sum + materialCost + orderCost;
-                  }, 0)
+                      const orderCost =
+                        quantity > 0
+                          ? factors
+                            ? rows[rowIndex].deliveryCost! *
+                              factors.orderCostFactor
+                            : 0
+                          : 0;
+                      return sum + materialCost + orderCost;
+                    }, 0)
                     .toFixed(2)}
                 </strong>
               </TableCell>
