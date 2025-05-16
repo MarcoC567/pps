@@ -6,7 +6,7 @@ import {
   TableContainer,
   TableFooter,
   TableHead,
-  TableRow,
+  TableRow, Tooltip,
 } from "@mui/material";
 import { DispositionValues, productBOMs } from "./util/bom.ts";
 import { PartId } from "./util/parts.type.ts";
@@ -14,16 +14,48 @@ import { flattenTree } from "./util/helpers.ts";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageContext.tsx";
 import React from "react";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 export const InhouseDisposition = ({dpR, dpI}) => {
   const dpResult: Map<string, number> = dpR as Map<string, number>;
   const dpInput = dpI as Map<string, DispositionValues>;
-  const flattenedBOMTree = flattenTree(productBOMs);
+  const flattenedBOMTree = flattenTree(productBOMs)
+  mapFlattenedBOMTree(flattenedBOMTree);
+  console.log(flattenedBOMTree);
   const {t} = useLanguage();
+  
+  function mapFlattenedBOMTree(fbt) {
+    for (const part of fbt) {
+      if (["E16", "E17", "E26"].includes(part.partId)) {
+        part.partId = part.partId + "_" + mapParent(part.parent);
+      }
+    }
+  }
+  
+  function mapParent(parent: string) {
+    if (parent === "E51") return "P1";
+    if (parent === "E56") return "P2";
+    if (parent === "E31") return "P3";
+    if (["P1", "P2", "P3"].includes(parent)) return parent;
+  }
+  
+  function mapPartId(partId: string) {
+    if (partId.startsWith("E16")) return "E16";
+    if (partId.startsWith("E17")) return "E17";
+    if (partId.startsWith("E26")) return "E26";
+    return partId;
+  }
   
   function getDispositionValues(partId: PartId): DispositionValues {
     const dpi = dpInput.get(partId);
-    if (!dpi) return {demand: 0, currentStock: 0, plannedSafetyStock: 0, workInProgress: 0, waitingQueue: 0, productionOrder: 0};
+    if (!dpi) return {
+      demand: 0,
+      currentStock: 0,
+      plannedSafetyStock: 0,
+      workInProgress: 0,
+      waitingQueue: 0,
+      productionOrder: 0
+    };
     const dpv = {
       demand: dpi.demand,
       currentStock: dpi.currentStock,
@@ -34,7 +66,7 @@ export const InhouseDisposition = ({dpR, dpI}) => {
     };
     return dpv;
   }
-
+  
   const fmt = (n: number) => Math.round(n).toLocaleString();
   const navigate = useNavigate();
   const handleNextClick = () => {
@@ -72,13 +104,19 @@ export const InhouseDisposition = ({dpR, dpI}) => {
             >
               <TableCell
                 colSpan={7}
-                sx={{ color: "white", fontSize: "1.1rem", fontWeight: "bold", alignContent: "center", textAlign: "center" }}
+                sx={{
+                  color: "white",
+                  fontSize: "1.1rem",
+                  fontWeight: "bold",
+                  alignContent: "center",
+                  textAlign: "center"
+                }}
               >
                 {t("inhouse_disposition_title")}
               </TableCell>
             </TableRow>
           </TableHead>
-
+          
           <TableBody>
             {flattenedBOMTree.map((part, index) => {
               const {
@@ -90,7 +128,7 @@ export const InhouseDisposition = ({dpR, dpI}) => {
                 plannedSafetyStock,
               } = getDispositionValues(part.partId);
               const rowKey = `${part.partId}-${index}`;
-
+              
               return (
                 <React.Fragment>
                   {part.level === 0 && (
@@ -111,8 +149,14 @@ export const InhouseDisposition = ({dpR, dpI}) => {
                     >
                       <TableCell>{t("inhouse_disposition_parts")}</TableCell>
                       <TableCell align="right">{t("inhouse_disposition_demand")}</TableCell>
-                      <TableCell align="right">{t("inhouse_disposition_current_stock")}</TableCell>
+                      <TableCell align="right">
+                        <Tooltip title={t("tooltip_carry_over")} placement="top" arrow>
+                          <InfoOutlinedIcon
+                            sx={{fontSize: 16, verticalAlign: "middle", color: "black", cursor: "pointer",}}/>
+                        </Tooltip>
+                      </TableCell>
                       <TableCell align="right">{t("inhouse_disposition_safety_stock")}</TableCell>
+                      <TableCell align="right">{t("inhouse_disposition_current_stock")}</TableCell>
                       <TableCell align="right">{t("inhouse_disposition_work_in_progress")}</TableCell>
                       <TableCell align="right">{t("inhouse_disposition_waiting_queue")}</TableCell>
                       <TableCell align="right">{t("inhouse_disposition_production_order")}</TableCell>
@@ -127,17 +171,19 @@ export const InhouseDisposition = ({dpR, dpI}) => {
                   >
                     <TableCell>
                       <Box pl={part.level * 2} fontWeight="medium">
-                        {part.partId +
-                          (["E16", "E17", "E26"].includes(part.partId)
+                        {mapPartId(part.partId) +
+                          (["E16", "E17", "E26"].includes(mapPartId(part.partId))
                             ? "*"
                             : "")}
                       </Box>
                     </TableCell>
                     <TableCell align="right">{fmt(demand)}</TableCell>
-                    <TableCell align="right">{fmt((part.isUsedInAll ? currentStock / 3 : currentStock))}</TableCell>
-                    <TableCell align="right">{fmt((part.isUsedInAll ? plannedSafetyStock / 3 : plannedSafetyStock))}</TableCell>
-                    <TableCell align="right">{fmt((part.isUsedInAll ? workInProgress / 3 : workInProgress))}</TableCell>
-                    <TableCell align="right">{fmt((part.isUsedInAll ? waitingQueue / 3 : waitingQueue))}</TableCell>
+                    <TableCell align="right">{(dpInput.get(part.parent)?.waitingQueue) || ""}</TableCell>
+                    <TableCell
+                      align="right">{fmt((plannedSafetyStock))}</TableCell>
+                    <TableCell align="right">{fmt((currentStock))}</TableCell>
+                    <TableCell align="right">{fmt((workInProgress))}</TableCell>
+                    <TableCell align="right">{fmt((waitingQueue))}</TableCell>
                     <TableCell align="right">
                       {fmt(dpResult.get(part.partId) || 0)}
                     </TableCell>
@@ -149,8 +195,8 @@ export const InhouseDisposition = ({dpR, dpI}) => {
           <TableFooter>
             <TableRow>
               <TableCell>{t("inhouse_disposition_shared_parts")}</TableCell>
-              <TableCell />
-              <TableCell />
+              <TableCell/>
+              <TableCell/>
               <TableCell align="right">
                 <button
                   onClick={handleNextClick}
@@ -159,9 +205,9 @@ export const InhouseDisposition = ({dpR, dpI}) => {
                   {t("next")}
                 </button>
               </TableCell>
-              <TableCell />
-              <TableCell />
-              <TableCell />
+              <TableCell/>
+              <TableCell/>
+              <TableCell/>
             </TableRow>
           </TableFooter>
         </Table>

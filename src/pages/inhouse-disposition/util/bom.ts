@@ -12,7 +12,7 @@ export interface DispositionValues {
   productionOrder?: number;
 }
 
-export type DispositionInput = Map<PartId, DispositionValues>;
+export type DispositionInput = Map<string, DispositionValues>;
 
 export interface PartBOM {
   partId: PartId;

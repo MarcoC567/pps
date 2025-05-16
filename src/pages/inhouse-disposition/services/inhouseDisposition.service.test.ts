@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PartBOM, productBOMs } from "../util/bom.ts";
 import { PartId } from "../util/parts.type.ts";
 import { DispositionService } from "./inhouseDisposition.service.ts";
+import { addProducts, ProductionPlan, Sellwish } from "../util/helpers.ts";
 
 interface DispositionValues {
   demand: number;
@@ -280,7 +281,7 @@ const mockInputAllProductsWithWIPandWaiting = (): Map<PartId, DispositionValues>
     [
       'P1',
       {
-        demand: 15,
+        demand: 0,
         plannedSafetyStock: 15,
         currentStock: 15,
         waitingQueue: 3,
@@ -291,7 +292,7 @@ const mockInputAllProductsWithWIPandWaiting = (): Map<PartId, DispositionValues>
     [
       'P2',
       {
-        demand: 15,
+        demand: 0,
         plannedSafetyStock: 15,
         currentStock: 15,
         waitingQueue: 3,
@@ -302,7 +303,7 @@ const mockInputAllProductsWithWIPandWaiting = (): Map<PartId, DispositionValues>
     [
       'P3',
       {
-        demand: 9,
+        demand: 0,
         plannedSafetyStock: 3,
         currentStock: 3,
         waitingQueue: 3,
@@ -415,14 +416,20 @@ describe('DispositionService', () => {
   });
   
   it('calculates production orders for all 3 products and its children, that have WIP and Waiting parts', () => {
-    const result = service.calculateDispositionValues(productBomAllProducts, mockInputAllProductsWithWIPandWaiting());
+    const mockInputAllPs = mockInputAllProductsWithWIPandWaiting();
+    const productionPlan: ProductionPlan = [{product: "p1ChildrenBike", values: [9]},{product: "p2WomenBike", values: [9]},{product: "p3MenBike", values: [3]}];
+    const sellwish: Sellwish = [{product: "p1ChildrenBike", current: 15},{product: "p2WomenBike", current: 15},{product: "p3MenBike", current: 9}];
+    addProducts(mockInputAllPs, productionPlan, sellwish);
     
+    const result = service.calculateDispositionValues(productBomAllProducts, mockInputAllPs);
+    
+    const dpvs = (id: PartId) => mockInputAllPs.get(id);
     const prodOrder = (id: PartId) => result.get(id);
     
     expect(prodOrder('P1')).toBe(9);
     expect(prodOrder('P2')).toBe(9);
     expect(prodOrder('P3')).toBe(3);
-    expect(prodOrder('E26')).toBe(24);
+    expect(prodOrder('E26')).toBe(15);
   });
   
   it('full test of the whole thing', () => {

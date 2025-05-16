@@ -19,17 +19,27 @@ export function toDispositionInput(productionPlan: PlannedStock): DispositionInp
   const emptyMap = new Map<string, DispositionValues>();
   productionPlan.forEach(p => {
     const key = extractKey(p.product);
-    const value: DispositionValues = {
-      demand: 0,
-      currentStock: p.stock,
-      plannedSafetyStock: p.endStock,
-      workInProgress: p.inProduction,
-      waitingQueue: p.waitingList,
-      productionOrder: 0,
+    if (["E16","E17","E26"].includes(key)) {
+        emptyMap.set(key+"_P1", returnDispoValues(p, true));
+        emptyMap.set(key+"_P2", returnDispoValues(p, true));
+        emptyMap.set(key+"_P3", returnDispoValues(p, true));
+    } else {
+      const value: DispositionValues = returnDispoValues(p);
+      emptyMap.set(key, value);
     }
-    emptyMap.set(key, value);
   });
   return emptyMap as DispositionInput;
+}
+
+function returnDispoValues(p: Product, split3: boolean = false) {
+  return {
+    demand: 0,
+    currentStock: split3 ? (p.stock / 3) : p.stock,
+    plannedSafetyStock: split3 ? Math.ceil(p.endStock / 3) : p.endStock,
+    workInProgress: split3 ? Math.ceil(p.inProduction / 3) : p.inProduction,
+    waitingQueue: split3 ? Math.ceil(p.waitingList / 3) : p.waitingList,
+    productionOrder: 0,
+  }
 }
 
 function extractKey(str: string): string {
@@ -67,5 +77,6 @@ function mapProductKey(product: string) {
 
 
 type PlannedStock = { product: string, stock: number, endStock: number, waitingList: number, inProduction: number }[]
-type ProductionPlan = { product: "p1ChildrenBike" | "p2WomenBike" | "p3MenBike", values: number[] }[]
-type Sellwish = { product: "p1ChildrenBike" | "p2WomenBike" | "p3MenBike", current: number }[]
+type Product = { product: string, stock: number, endStock: number, waitingList: number, inProduction: number }
+export type ProductionPlan = { product: "p1ChildrenBike" | "p2WomenBike" | "p3MenBike", values: number[] }[]
+export type Sellwish = { product: "p1ChildrenBike" | "p2WomenBike" | "p3MenBike", current: number }[]

@@ -113,6 +113,7 @@
   "tooltip_splitting": "Aufteilen",
   "tooltip_arrow_up": "Nach oben Verschieben",
   "tooltip_arrow_down": "Nach unten Verschieben",
+  "tooltip_carry_over": "Diese Spalte zeigt die Menge der Aufträge in der Warteschlange, welche für die Berechnung wichtig ist, an.",
 
   "landing_page_title": "Willkommen beim Planungstool",
   "landing_page_button": "Starte die Planung",

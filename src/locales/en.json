@@ -112,6 +112,7 @@
   "tooltip_splitting": "Splitting",
   "tooltip_arrow_up": "move Up",
   "tooltip_arrow_down": "move Down",
+  "tooltip_carry_over": "This column displays the number of orders in the queue that are relevant for the calculation.",
 
   "landing_page_title": "Welcome to the planing tool",
   "landing_page_button": "Start planning",
