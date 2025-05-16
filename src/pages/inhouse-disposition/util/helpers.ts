@@ -40,13 +40,15 @@ function extractKey(str: string): string {
   return match ? ("E" + match[1]) : "";
 }
 
-export function addProducts(dpInput: DispositionInput, productionPlan: ProductionPlan): DispositionInput {
+export function addProducts(dpInput: DispositionInput, productionPlan: ProductionPlan, salesOrder: Sellwish): DispositionInput {
   productionPlan.forEach(p => {
     const key = mapProductKey(p.product);
     if (!key) return;
     const dpV = dpInput.get(key);
-    if (dpV) { // TODO: when I have the data
-      dpV.demand = p.values[0];
+    const po = p.values[0];
+    if (dpV) {
+      dpV.demand = salesOrder.find(s => s.product === p.product)?.current || 0;
+      // dpV.plannedSafetyStock = po - ;
     }
   })
   return dpInput;

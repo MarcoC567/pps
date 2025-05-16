@@ -133,13 +133,13 @@ export const InhouseDisposition = ({dpR, dpI}) => {
                             : "")}
                       </Box>
                     </TableCell>
-                    <TableCell align="right">{fmt(getDemandSharedParts(part, part.isUsedInAll ? demand / 3 : demand) || 0)}</TableCell>
+                    <TableCell align="right">{fmt(demand)}</TableCell>
                     <TableCell align="right">{fmt((part.isUsedInAll ? currentStock / 3 : currentStock))}</TableCell>
                     <TableCell align="right">{fmt((part.isUsedInAll ? plannedSafetyStock / 3 : plannedSafetyStock))}</TableCell>
                     <TableCell align="right">{fmt((part.isUsedInAll ? workInProgress / 3 : workInProgress))}</TableCell>
                     <TableCell align="right">{fmt((part.isUsedInAll ? waitingQueue / 3 : waitingQueue))}</TableCell>
                     <TableCell align="right">
-                      {fmt(getProductionOrderSharedParts(part, productionOrder ?? 0))}
+                      {fmt(dpResult.get(part.partId) || 0)}
                     </TableCell>
                   </TableRow>
                 </React.Fragment>
