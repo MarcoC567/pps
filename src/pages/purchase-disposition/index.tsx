@@ -41,7 +41,7 @@ export type PurchaseDispositionStaticData = {
   grossRequirements: number[];
 }[] | undefined
 
-export type OrderEntry = { article: number; quantity: number; modus: string, jitwarning: boolean };
+export type OrderEntry = { article: number; quantity: number; modus: string };
 
 export default function PurchaseDispositionPage() {
   const [futureInwardStockData, setFutureInwardStockData] = useState<
@@ -230,7 +230,6 @@ export default function PurchaseDispositionPage() {
           let optimalQuantity = 0;
           let optimalMode = "";
           let initialInventory = item.amount
-          let warning = false
           const eta = item.deliveryTime! + item.deviation!
 
           for (let i = 0; i <= 3; i++) {
@@ -243,11 +242,6 @@ export default function PurchaseDispositionPage() {
               if (eta > i) {
                 optimalQuantity = item.discountAmount
                 optimalMode = "fast"
-                // Eil is still too late
-                if (item.deliveryTime! / 2 > i) {
-                  console.log("TH IS THSI ISSI IS", item.itemNr)
-                  warning = true;
-                }
               }
               else {
                 optimalQuantity = item.discountAmount
@@ -265,8 +259,7 @@ export default function PurchaseDispositionPage() {
             {
               article: item.itemNr,
               quantity: optimalQuantity,
-              modus: optimalMode,
-              jitwarning: warning
+              modus: optimalMode
             })
         }
         )
