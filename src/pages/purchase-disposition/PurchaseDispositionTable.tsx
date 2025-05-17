@@ -79,7 +79,7 @@ export default function PurchaseDispositionTable(props: {
   }, orderData: OrderEntry) => {
     const entry = orderData;
     const selectedModus = entry.modus;
-    const orderQuantity = entry.quantity;
+    let orderQuantity = entry.quantity;
     const factors = modusOptions.find((option) => option.key == selectedModus);
     const eta = factors
       ? (row.deliveryTime! * factors.deliveryDeadlineFactor +
@@ -88,24 +88,44 @@ export default function PurchaseDispositionTable(props: {
         factors.timeOfProcessDeviation)
       : 0;
     let initialInventory = row.amount
+    let firstPeriodNeedsOrder = -1
 
+    // Determine which is the first period that needs Ordering
+    for (let i = 0; i <= 3; i++) {
+            initialInventory -= row.grossRequirements[i]
+            const inwardStockinThisPeriod = getIncomingForPeriod(
+              row.itemNr, i + currentPeriod! + 1
+            )
+            if (initialInventory < 0) {
+              firstPeriodNeedsOrder = i
+              break;
+            }
+            initialInventory += inwardStockinThisPeriod.reduce((sum, current) => sum + current.amount, 0)
+          }
+    
+    if (firstPeriodNeedsOrder === -1) return false
+
+    initialInventory = row.amount
+
+    // Check if the Order is too late or not enough
     for (let i = 0; i <= 3; i++) {
       initialInventory -= row.grossRequirements[i]
       const inwardStockinThisPeriod = getIncomingForPeriod(
         row.itemNr, i + currentPeriod! + 1
       )
-      if (eta > i && initialInventory < 0) return true 
+      // Order comes
       if (eta <= i) {
         initialInventory += orderQuantity
-        if (initialInventory < 0) {
-          return true
-        }
-        else return false
+        orderQuantity = 0
+      }
+      if (i === firstPeriodNeedsOrder) {
+        if (initialInventory < 0) return true
+        return false
       }
       initialInventory += inwardStockinThisPeriod.reduce((sum, current) => sum + current.amount, 0)
     }
 
-    return false;
+    return false
   }
 
   return (
