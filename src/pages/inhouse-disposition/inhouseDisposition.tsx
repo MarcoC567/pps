@@ -21,7 +21,6 @@ export const InhouseDisposition = ({dpR, dpI}) => {
   const dpInput = dpI as Map<string, DispositionValues>;
   const flattenedBOMTree = flattenTree(productBOMs)
   mapFlattenedBOMTree(flattenedBOMTree);
-  console.log(flattenedBOMTree);
   const {t} = useLanguage();
   
   function mapFlattenedBOMTree(fbt) {
@@ -130,7 +129,7 @@ export const InhouseDisposition = ({dpR, dpI}) => {
               const rowKey = `${part.partId}-${index}`;
               
               return (
-                <React.Fragment>
+                <React.Fragment key={rowKey+"_fragment"}>
                   {part.level === 0 && (
                     <TableRow
                       key="header"

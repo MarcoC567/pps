@@ -20,10 +20,10 @@ export default function InhouseDispositionPage() {
     
     const dispositionResult = dispositionService.calculateDispositionValues(productBOMs, dispositionInput);
     // console.log(dispositionInput);
-    // console.log(dispositionResult);
+    console.log(dispositionResult);
     
     localStorage.setItem(INHOUSE_DISPOSITION_INPUT, JSON.stringify(Array.from(dispositionInput.entries())));
-    localStorage.setItem(INHOUSE_DISPOSITION_RESULT, JSON.stringify(Array.from(dispositionResult.entries())));
+    setResults(dispositionResult);
     
     setDispositionOutput(dispositionResult);
     setDispositionInput(dispositionInput);
@@ -31,6 +31,24 @@ export default function InhouseDispositionPage() {
   
   if (!dispositionInput || !dispositionOutput) {
     return null;
+  }
+  
+  function setResults(dispositionResult: Map<string, number>) {
+    const copy = new Map<string, number>(dispositionResult);
+    copy.forEach((value, key) => {
+      if ((key.startsWith("E16") || key.startsWith("E17") || key.startsWith("E26")) && key.length > 3) {
+        const newKey = key.slice(0, 3);
+        if (copy.has(newKey)) {
+          copy.set(newKey, value + (copy.get(newKey) ?? 0));
+        } else {
+          copy.set(newKey, value);
+        }
+        copy.delete(key);
+      }
+    });
+
+    localStorage.setItem(INHOUSE_DISPOSITION_RESULT, JSON.stringify(Array.from(dispositionResult.entries())));
+    console.log(copy);
   }
   
   return <div>
