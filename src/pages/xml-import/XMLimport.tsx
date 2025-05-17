@@ -4,6 +4,7 @@ import { DocumentArrowUpIcon } from "@heroicons/react/16/solid";
 import { XMLParser } from "fast-xml-parser";
 import { isXML } from "../../services/validation.service";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function XMLimport() {
   const { setIsNavigateable } = useNavigation();
@@ -16,6 +17,7 @@ export default function XMLimport() {
   const [fileError, setFileError] = useState<string | null>(null);
   const [canImport, setCanImport] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   useEffect(() => {
     setIsNavigateable(false);
@@ -70,7 +72,6 @@ export default function XMLimport() {
         // Clear local storage by import new XML Data
         localStorage.clear();
         localStorage.setItem("importData", JSON.stringify(parsedData));
-        console.log("XML erfolgreich importiert und geparst:", parsedData);
         setFileError(null);
         localStorage.setItem("visited_/xmlImport", "true");
         navigate("/forecast");
@@ -95,7 +96,7 @@ export default function XMLimport() {
       <div className="p-4">
         <h2 className="text-xl font-semibold text-gray-800">XML Input</h2>
         <p className="mt-2 text-gray-600 text-sm">
-          Bitte wähle hier deine XML Datei aus und lade sie hoch.
+          {t('pleaseSelectXML')}
         </p>
         <input
           type="file"
@@ -110,12 +111,12 @@ export default function XMLimport() {
             onClick={handleSelectButtonClick}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200 flex items-center gap-2 mx-auto my-btn "
           >
-            XML Datei auswählen
+            {t('selectXML')}
             <DocumentArrowUpIcon className="w-5 h-5" />
           </button>
           {file && (
             <div className="mt-2 text-sm text-gray-500 flex items-center justify-between border rounded px-2 py-1">
-              <span className="truncate">Ausgewählte Datei: {file.name}</span>
+              <span className="truncate">{t('choosenFile')} {file.name}</span>
               <button
                 onClick={() => {
                   setFile(null);
@@ -124,7 +125,7 @@ export default function XMLimport() {
                   setCanImport(false);
                 }}
                 className={`mt-4 mx-auto my-btn`}
-                title="Datei entfernen"
+                title={t('removeFile')}
               >
                 &times;
               </button>
@@ -138,10 +139,11 @@ export default function XMLimport() {
             disabled={!canImport || fileError !== null}
             className={`mt-4 mx-auto my-btn`}
           >
-            Weiter
+            {t('next')}
           </button>
         </div>
       </div>
     </div>
   );
 }
+
