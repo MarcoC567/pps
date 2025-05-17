@@ -1,5 +1,5 @@
 import { Disclosure } from "@headlessui/react";
-import { useLocation } from "react-router-dom";
+import { useLocation, NavLink } from "react-router-dom"; // Import NavLink
 import { useLanguage } from "../../context/LanguageContext";
 import { useEffect, useState } from "react";
 
@@ -11,9 +11,9 @@ function classNames(...classes: string[]) {
 export default function Navbar() {
   const { t } = useLanguage();
   const location = useLocation();
-  const currentPath = location.pathname;
   const { language, setLanguage } = useLanguage();
-  // Initiale Navigation (wie gehabt)
+
+  // Initiale Navigation
   const initialNavigation = [
     { name: t("XMLimport"), href: "/xmlImport" },
     { name: t("forecastonly"), href: "/forecast" },
@@ -38,11 +38,9 @@ export default function Navbar() {
     setVisited(visitedRoutes);
   }, [location.pathname]);
 
-  // Navigation mit “current”-Flag
+  // Navigation mit “enabled” Flag
   const navigation = initialNavigation.map((item) => ({
     ...item,
-    current: item.href === currentPath,
-    // klickbar, wenn bereits besucht ODER aktuelle Seite
     enabled: visited.includes(item.href) || item.href === "/xmlImport",
   }));
 
@@ -53,7 +51,6 @@ export default function Navbar() {
           {/* Links */}
           <div className="flex space-x-4 items-center">
             {navigation.map((item) => {
-              // Wenn nicht enabled, rendern wir ein <span> statt <a>
               const commonClasses = "rounded-md px-6 py-2 text-lg font-medium";
               if (!item.enabled) {
                 return (
@@ -69,21 +66,23 @@ export default function Navbar() {
                 );
               }
 
-              // Sonst normale <a>
+              // Use NavLink instead of <a>
               return (
-                <a
+                <NavLink
                   key={item.href}
-                  href={item.href}
-                  className={classNames(
-                    item.current
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                    commonClasses
-                  )}
-                  aria-current={item.current ? "page" : undefined}
+                  to={item.href} // Use `to` instead of `href`
+                  className={({ isActive }) =>
+                    classNames(
+                      isActive
+                        ? "bg-gray-900 text-white"
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                      commonClasses
+                    )
+                  }
+                  aria-current={item.enabled ? "page" : undefined}
                 >
                   {item.name}
-                </a>
+                </NavLink>
               );
             })}
             <button
@@ -102,7 +101,7 @@ export default function Navbar() {
               className={classNames(
                 language === "en"
                   ? "my-btn text-indigo-800"
-                  : " text-gray-300 hover:bg-gray-700 hover:text-gray-600",
+                  : "text-gray-300 hover:bg-gray-700 hover:text-gray-600",
                 "px-3 py-1 rounded-md text-sm font-medium"
               )}
             >
