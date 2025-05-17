@@ -24,7 +24,7 @@ export class DispositionService {
     
     const outputMap = new Map<string, number>(this.output);
     localStorage.setItem(INHOUSE_DISPOSITION_RESULT, JSON.stringify(outputMap));
-    return outputMap;
+    return new Map<string, number>(outputMap);
   }
   
   private traverseAndCalculate(partBOM: PartBOM, input: DispositionInput, parent: string, carryOver?: number): void {
@@ -52,7 +52,12 @@ export class DispositionService {
     
     const oldValue = this.output.get(partId);
     if (partBOM.isUsedInAll) {
-      this.output.set(partId, productionOrder);
+      if (["E16","E17", "E26"].includes(partBOM.partId)) {
+         const newPartId = partBOM.partId+"_"+this.mapParent(parent);
+        this.output.set(newPartId, productionOrder);
+      } else {
+        this.output.set(partId, productionOrder);
+      }
     } else {
       this.output.set(partId, productionOrder);
     }
@@ -60,7 +65,7 @@ export class DispositionService {
   }
   
   private calculateProductionOrder(partBOM: PartBOM, dpInput: DispositionInput, parent: string, carryOver?: number): number {
-    const partId = partBOM.isUsedInAll ? partBOM.partId+"_"+parent : partBOM.partId;
+    const partId = ["E16","E17", "E26"].includes(partBOM.partId) ? partBOM.partId+"_"+this.mapParent(parent) : partBOM.partId;
     const inputValues: DispositionValues | undefined = dpInput.get(partId);
     if (!inputValues) {
       return 0;
@@ -73,5 +78,12 @@ export class DispositionService {
                                   - inputValues.waitingQueue
                                   - inputValues.workInProgress;
     return Math.max(0, Math.ceil(productionOrderRaw));
+  }
+  
+  private mapParent(parent: string) {
+    if (parent === "E51") return "P1";
+    if (parent === "E56") return "P2";
+    if (parent === "E31") return "P3";
+    if (["P1", "P2", "P3"].includes(parent)) return parent;
   }
 }
