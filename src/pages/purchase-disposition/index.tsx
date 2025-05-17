@@ -248,8 +248,8 @@ export default function PurchaseDispositionPage() {
                 optimalMode = "normal"
               }
               if (initialInventory + optimalQuantity < 0) {
-                  optimalQuantity = -(initialInventory)  
-                }
+                optimalQuantity = -(initialInventory)
+              }
               break;
             }
             initialInventory += inwardStockinThisPeriod.reduce((sum, current) => sum + current.amount, 0)
@@ -267,8 +267,8 @@ export default function PurchaseDispositionPage() {
     }
 
     setTimeout(() => setLoading(false), 100);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orderList, rows, futureInwardStockData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orderList, rows, futureInwardStockData,]);
 
   // Persistenz
   useEffect(() => {

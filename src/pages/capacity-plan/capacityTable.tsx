@@ -109,13 +109,17 @@ export default function CapacityTable() {
 
   const handleShiftChange = (
     ws: string,
-    key: "shifts" | "overtime",
+    key: "shifts" | "overtime" | "overtimetag",
     value: string,
     totalMinutes: number
   ) => {
     let numValue = Math.max(0, Number(value) || 0);
     if (key === "shifts") numValue = Math.min(numValue, 3);
     if (key === "overtime") numValue = Math.min(numValue, 1200);
+    if (key === "overtimetag") {
+      numValue = Math.min(numValue, 240) * 5;
+      key = "overtime"
+    }
 
     setShiftData((prev) => {
       const updated = key === "shifts" ? {
@@ -706,7 +710,7 @@ export default function CapacityTable() {
                         type="number"
                         value={Math.round(overtimeVal / 5)}
                         onChange={(e) =>
-                          handleShiftChange(ws, "overtime", e.target.value, totalVal)
+                          handleShiftChange(ws, "overtimetag", e.target.value, totalVal)
                         }
                         variant="outlined"
                         size="small"
