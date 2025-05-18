@@ -23,9 +23,9 @@ export default function InhouseDispositionPage() {
     console.log(dispositionResult);
     
     localStorage.setItem(INHOUSE_DISPOSITION_INPUT, JSON.stringify(Array.from(dispositionInput.entries())));
-    setResults(dispositionResult);
+    const finalResults = setResults(dispositionResult);
     
-    setDispositionOutput(dispositionResult);
+    setDispositionOutput(finalResults);
     setDispositionInput(dispositionInput);
   }, []);
   
@@ -47,8 +47,8 @@ export default function InhouseDispositionPage() {
       }
     });
 
-    localStorage.setItem(INHOUSE_DISPOSITION_RESULT, JSON.stringify(Array.from(dispositionResult.entries())));
-    console.log(copy);
+    localStorage.setItem(INHOUSE_DISPOSITION_RESULT, JSON.stringify(Array.from(copy.entries())));
+    return new Map<string, number>(copy);
   }
   
   return <div>
