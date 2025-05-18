@@ -16,7 +16,7 @@ import { useLanguage } from "../../context/LanguageContext.tsx";
 import React from "react";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
-const BACKGROUND_COLOR = "darkgoldenrod";
+const BACKGROUND_COLOR = "lightblue";
 
 export const InhouseDisposition = ({dpR, dpI}) => {
   const dpResult: Map<string, number> = dpR as Map<string, number>;
@@ -93,7 +93,7 @@ export const InhouseDisposition = ({dpR, dpI}) => {
               sx={{
                 backgroundColor: BACKGROUND_COLOR,
                 "& th": {
-                  color: "white",
+                  color: "black",
                   fontWeight: "bold",
                   fontSize: "1.0625rem",
                   position: "sticky",
@@ -106,7 +106,7 @@ export const InhouseDisposition = ({dpR, dpI}) => {
               <TableCell
                 colSpan={8}
                 sx={{
-                  color: "white",
+                  color: "black",
                   fontSize: "1.1rem",
                   fontWeight: "bold",
                   alignContent: "center",
