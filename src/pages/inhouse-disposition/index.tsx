@@ -23,9 +23,10 @@ export default function InhouseDispositionPage() {
     console.log(dispositionResult);
     
     localStorage.setItem(INHOUSE_DISPOSITION_INPUT, JSON.stringify(Array.from(dispositionInput.entries())));
-    const finalResults = setResults(dispositionResult);
+    setDispositionOutput(dispositionResult);
     
-    setDispositionOutput(finalResults);
+    setResults(dispositionResult);
+    
     setDispositionInput(dispositionInput);
   }, []);
   
