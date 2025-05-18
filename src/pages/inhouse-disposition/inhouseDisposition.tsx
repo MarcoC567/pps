@@ -6,7 +6,7 @@ import {
   TableContainer,
   TableFooter,
   TableHead,
-  TableRow, Tooltip,
+  TableRow, Tooltip, Typography,
 } from "@mui/material";
 import { DispositionValues, productBOMs } from "./util/bom.ts";
 import { PartId } from "./util/parts.type.ts";
@@ -15,6 +15,8 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageContext.tsx";
 import React from "react";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+
+const BACKGROUND_COLOR = "darkgoldenrod";
 
 export const InhouseDisposition = ({dpR, dpI}) => {
   const dpResult: Map<string, number> = dpR as Map<string, number>;
@@ -89,7 +91,7 @@ export const InhouseDisposition = ({dpR, dpI}) => {
             <TableRow
               key="header"
               sx={{
-                backgroundColor: "darkgoldenrod",
+                backgroundColor: BACKGROUND_COLOR,
                 "& th": {
                   color: "white",
                   fontWeight: "bold",
@@ -97,7 +99,7 @@ export const InhouseDisposition = ({dpR, dpI}) => {
                   position: "sticky",
                   top: 0,
                   zIndex: 1,
-                  backgroundColor: "darkgoldenrod",
+                  backgroundColor: BACKGROUND_COLOR,
                 },
               }}
             >
@@ -111,7 +113,9 @@ export const InhouseDisposition = ({dpR, dpI}) => {
                   textAlign: "center"
                 }}
               >
-                {t("inhouse_disposition_title")}
+                <Typography variant="h5" align="center" sx={{fontWeight: "bold"}}>
+                  {t("inhouse_disposition_title")}
+                </Typography>
               </TableCell>
             </TableRow>
           </TableHead>
@@ -134,7 +138,7 @@ export const InhouseDisposition = ({dpR, dpI}) => {
                     <TableRow
                       key="header"
                       sx={{
-                        backgroundColor: "darkgoldenrod",
+                        backgroundColor: BACKGROUND_COLOR,
                         "& th": {
                           color: "white",
                           fontWeight: "bold",
@@ -142,7 +146,7 @@ export const InhouseDisposition = ({dpR, dpI}) => {
                           position: "sticky",
                           top: 0,
                           zIndex: 1,
-                          backgroundColor: "darkgoldenrod",
+                          backgroundColor: BACKGROUND_COLOR,
                         },
                       }}
                     >

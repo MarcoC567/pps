@@ -63,7 +63,7 @@
   "normal": "Normal",
   "export_xml_title": "Export XML Eingabedatei für Simulation",
   "xml_download": "XML herunterladen",
-  "futureInwardStockMovement": "Zukünftige Lagerzugang",
+  "futureInwardStockMovement": "Zukünftiger Lagerzugang",
   "orderPeriod": "Bestellperiode",
   "inward_stock_movement": "Lagerzugang (Mittelwert + Abweichung): Periode-Tag",
   "incomingAmount": "Eingehende Bestellmenge",

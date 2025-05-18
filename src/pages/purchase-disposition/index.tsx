@@ -292,13 +292,13 @@ export default function PurchaseDispositionPage() {
           padding: "2rem",
           borderRadius: "16px",
           width: "100%",
-          maxWidth: 1400,
+          maxWidth: "120rem",
           backgroundColor: "#fafafa",
           boxSizing: "border-box",
         }}
       >
-        <ProductionProgramTable productionData={productionPlanData} />
         <FutureInwardStockTable futureInwardStockData={futureInwardStockData} />
+        <ProductionProgramTable productionData={productionPlanData} />
         {loading ? (
           <div>
             <Box sx={{ display: "flex", marginLeft: 40 }}>

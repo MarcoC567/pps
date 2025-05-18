@@ -34,11 +34,18 @@ export default function ProductionProgramTable(props: {
   return (
     <div style={{ padding: "2rem" }}>
       <Typography
-        variant="h5"
+        variant="h4"
         align="center"
         sx={{ fontWeight: "bold", marginBottom: "1rem" }}
       >
         {t("purchasePartsDisposition")}
+      </Typography>
+      <Typography
+        variant="h5"
+        align="center"
+        sx={{ fontWeight: "bold", marginBottom: "1rem" }}
+      >
+        {t("Produktionsprogramm")}
       </Typography>
 
       <TableContainer

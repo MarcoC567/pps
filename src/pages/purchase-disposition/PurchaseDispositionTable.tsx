@@ -129,19 +129,11 @@ export default function PurchaseDispositionTable(props: {
   }
 
   return (
-    <div style={{ marginTop: "3rem", padding: "1rem" }}>
-      <Typography
-        variant="h5"
-        align="center"
-        sx={{ fontWeight: "bold", marginBottom: "1rem" }}
-      >
-        {t("purchasePartsDisposition")}
-      </Typography>
-
+    <div style={{ marginTop: "1rem", padding: "1rem" }}>
       <TableContainer
         component={Paper}
         sx={{
-          maxWidth: 1400,
+          maxWidth: "120rem",
           width: "100%",
           margin: "0 auto",
           borderRadius: 3,
@@ -330,7 +322,7 @@ export default function PurchaseDispositionTable(props: {
                       }
                       displayEmpty
                       sx={{
-                        width: "7rem",
+                        width: "10rem",
                         border: `1px solid ${entry.quantity > 0 && entry.modus == ""
                           ? "red"
                           : "green"
@@ -341,11 +333,13 @@ export default function PurchaseDispositionTable(props: {
                       }}
                     >
                       <MenuItem value="" disabled>
-                        {t("selectMode")}
+                          {t("selectMode")}
                       </MenuItem>
                       {modusOptions.map((option) => (
                         <MenuItem key={option.key} value={option.key}>
-                          {t(option.key)}
+                          <Typography fontSize={"0.875rem"}>
+                            {t(option.key)}
+                          </Typography>
                         </MenuItem>
                       ))}
                     </Select>
