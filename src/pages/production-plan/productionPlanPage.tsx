@@ -30,16 +30,18 @@ export type ExpectedEndStocks = {
 function computeExpectedEndStocks(
   productionData: ProductionPlanData,
   forecastData: ForecastData,
-  stockData: StockData
+  stockData: StockData,
+  salesData: SalesForecastData
 ): ExpectedEndStocks {
   return productionData.map((prodRow, productIndex) => {
     const forecastRow = forecastData[productIndex];
     const s = stockData[productIndex];
+    const sales = salesData[productIndex];
     const result = [0, 0, 0, 0];
 
     // Period 1 (index 0)
     const first = s.stock + s.inProduction + s.waitingList
-      - forecastRow.values[0] + prodRow.values[0];
+      - sales.current + prodRow.values[0];
     result[0] = first;
 
     // Periods 2..4 (index 1..3)
@@ -214,7 +216,9 @@ export default function ProductionPlanPage() {
         inProduction: 0,
       }));
   });
-
+  
+  console.log(directData);
+  console.log(forecastData);
   //
   // 3) If you need to store or display the single‐period auto-calculation,
   //    you can either remove it or keep it as you prefer. Below is shown
@@ -309,7 +313,8 @@ export default function ProductionPlanPage() {
   const expectedEndStocks = computeExpectedEndStocks(
     productionData,
     forecastData,
-    stockData
+    stockData,
+    salesData
   );
 
   return (
