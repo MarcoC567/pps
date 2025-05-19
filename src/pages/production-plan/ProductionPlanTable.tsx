@@ -44,7 +44,7 @@ export default function ProductionPlanTable({
         ? {
           ...row,
           values: row.values.map((v, ci) =>
-            ci === colIndex ? Number(newValue) || 0 : v
+            ci === colIndex ? Math.max(0, Number(newValue) || 0) : v
           ),
         }
         : row
