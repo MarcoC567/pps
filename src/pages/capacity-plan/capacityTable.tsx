@@ -52,7 +52,9 @@ export default function CapacityTable() {
   const [setupTimeNewPerWS, setSetupTimeNewPerWS] = useState<
     Record<string, number>
   >({});
-  const [prevSetupTime, setPrevSetupTime] = useState<Record<string, number>>({});
+  const [prevSetupTime, setPrevSetupTime] = useState<Record<string, number>>(
+    {}
+  );
   const isSetupTimeNewInitialized = useRef(false); // Track setupTimeNewPerWS initialization
   const isPrevSetupTimeInitialized = useRef(false); // Track prevSetupTime initialization
 
@@ -92,9 +94,14 @@ export default function CapacityTable() {
       const oldSetup = prevSetupTime[wsKey] || 0;
       const total = newCap + newSetup + oldCap + oldSetup;
       const shifts = shiftData[wsKey]?.shifts ?? calculateShifts(total);
-      const rawOvertime =
-        shiftData[wsKey]?.overtime ?? calculateOvertime(total, shifts);
-      const overtime = Math.round(rawOvertime / 5);
+
+      const overtime =
+        shifts === 3
+          ? 0
+          : Math.round(
+              (shiftData[wsKey]?.overtime ?? calculateOvertime(total, shifts)) /
+                5
+            );
       return {
         station: wsKey.replace("workstation", ""),
         shift: shifts,
@@ -118,38 +125,72 @@ export default function CapacityTable() {
     if (key === "overtime") numValue = Math.min(numValue, 1200);
     if (key === "overtimetag") {
       numValue = Math.min(numValue, 240) * 5;
-      key = "overtime"
+      key = "overtime";
     }
 
     setShiftData((prev) => {
-      const updated = key === "shifts" ? {
-        ...prev,
-        [ws]: {
-          ...prev[ws],
-          ["shifts"]: numValue,
-          ["overtime"]: calculateOvertime(totalMinutes, numValue)
-        },
-      } : {
-        ...prev,
-        [ws]: {
-          ...prev[ws],
-          [key]: numValue,
-        },
-      };
+      const prevEntry = prev[ws] || {};
+      let updated: typeof prev;
 
+      // Wenn Schichten geändert werden
+      if (key === "shifts") {
+        // Wenn auf 3 gesetzt, Überstunden auf 0
+        if (numValue === 3) {
+          updated = {
+            ...prev,
+            [ws]: {
+              ...prevEntry,
+              shifts: numValue,
+              overtime: 0,
+            },
+          };
+        } else {
+          // Bei Wechsel von 3 zurück auf 1 oder 2: Überstunden bleiben 0 (User kann neu eintragen)
+          updated = {
+            ...prev,
+            [ws]: {
+              ...prevEntry,
+              shifts: numValue,
+              overtime: 0,
+            },
+          };
+        }
+      } else {
+        // Bei Überstunden ändern: nur wenn Schichten < 3
+        if ((prev[ws]?.shifts ?? 1) === 3) {
+          updated = {
+            ...prev,
+            [ws]: {
+              ...prevEntry,
+              overtime: 0,
+            },
+          };
+        } else {
+          updated = {
+            ...prev,
+            [ws]: {
+              ...prevEntry,
+              [key]: numValue,
+            },
+          };
+        }
+      }
+
+      // --- Local Storage Update ---
       const list = workstationKeys.map((wsKey) => {
         const entry = updated[wsKey] || {
           shifts: calculateShifts(0),
           overtime: 0,
         };
+        // Wenn Schicht 3, Überstunden IMMER 0!
         return {
           station: wsKey.replace("workstation", ""),
           shift: entry.shifts,
-          overtime: entry.overtime,
+          overtime: entry.shifts === 3 ? 0 : entry.overtime,
         };
       });
-
       localStorage.setItem("workingtimelist", JSON.stringify(list));
+      // ---
       return updated;
     });
   };
@@ -190,7 +231,8 @@ export default function CapacityTable() {
           const entry = station?.[part];
           if (!entry) return;
           const productionQty = productionMap.get(part) || 0;
-          const occurrences = productionQty > 0 ? entryCountMap.get(part) || 0 : 0;
+          const occurrences =
+            productionQty > 0 ? entryCountMap.get(part) || 0 : 0;
           const setupPerPart = Array.isArray(station.setup_time)
             ? station.setup_time[0]
             : station.setup_time;
@@ -201,13 +243,16 @@ export default function CapacityTable() {
       setSetupTimeNewPerWS(initial);
     }
     isSetupTimeNewInitialized.current = true;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workstations, productionMap, workstationKeys, allParts]);
 
   // Save setupTimeNewPerWS to localStorage only when it changes
   useEffect(() => {
     if (Object.keys(setupTimeNewPerWS).length > 0) {
-      localStorage.setItem("setupTimeNewPerWS", JSON.stringify(setupTimeNewPerWS));
+      localStorage.setItem(
+        "setupTimeNewPerWS",
+        JSON.stringify(setupTimeNewPerWS)
+      );
     }
   }, [setupTimeNewPerWS]);
 
@@ -434,7 +479,9 @@ export default function CapacityTable() {
                     <TextField
                       type="number"
                       value={setupTimeNewPerWS[ws] ?? 0}
-                      onChange={(e) => handleSetupTimeChange(ws, e.target.value)}
+                      onChange={(e) =>
+                        handleSetupTimeChange(ws, e.target.value)
+                      }
                       variant="outlined"
                       size="small"
                       inputProps={{ min: 0 }}
@@ -506,7 +553,9 @@ export default function CapacityTable() {
                     <TextField
                       type="number"
                       value={prevSetupTime[ws] ?? 0}
-                      onChange={(e) => handlePrevSetupTimeChange(ws, e.target.value)}
+                      onChange={(e) =>
+                        handlePrevSetupTimeChange(ws, e.target.value)
+                      }
                       variant="outlined"
                       size="small"
                       inputProps={{ min: 0 }}
@@ -592,7 +641,12 @@ export default function CapacityTable() {
                         type="number"
                         value={shiftsVal}
                         onChange={(e) =>
-                          handleShiftChange(ws, "shifts", e.target.value, totalVal)
+                          handleShiftChange(
+                            ws,
+                            "shifts",
+                            e.target.value,
+                            totalVal
+                          )
                         }
                         variant="outlined"
                         size="small"
@@ -644,14 +698,23 @@ export default function CapacityTable() {
                   const shiftsVal =
                     shiftData[ws]?.shifts ?? calculateShifts(totalVal);
                   const overtimeVal =
-                    shiftData[ws]?.overtime ?? calculateOvertime(totalVal, shiftsVal);
+                    shiftData[ws]?.overtime ??
+                    calculateOvertime(totalVal, shiftsVal);
+
+                  const isThreeShifts = shiftsVal === 3;
                   return (
                     <TableCell key={ws} align="center">
                       <TextField
                         type="number"
-                        value={Math.round(overtimeVal)}
+                        value={isThreeShifts ? 0 : Math.round(overtimeVal)}
+                        disabled={isThreeShifts}
                         onChange={(e) =>
-                          handleShiftChange(ws, "overtime", e.target.value, totalVal)
+                          handleShiftChange(
+                            ws,
+                            "overtime",
+                            e.target.value,
+                            totalVal
+                          )
                         }
                         variant="outlined"
                         size="small"
@@ -703,14 +766,24 @@ export default function CapacityTable() {
                   const shiftsVal =
                     shiftData[ws]?.shifts ?? calculateShifts(totalVal);
                   const overtimeVal =
-                    shiftData[ws]?.overtime ?? calculateOvertime(totalVal, shiftsVal);
+                    shiftData[ws]?.overtime ??
+                    calculateOvertime(totalVal, shiftsVal);
+
+                  const isThreeShifts = shiftsVal === 3;
+
                   return (
                     <TableCell key={ws} align="center">
                       <TextField
                         type="number"
-                        value={Math.round(overtimeVal / 5)}
+                        value={isThreeShifts ? 0 : Math.round(overtimeVal / 5)}
+                        disabled={isThreeShifts}
                         onChange={(e) =>
-                          handleShiftChange(ws, "overtimetag", e.target.value, totalVal)
+                          handleShiftChange(
+                            ws,
+                            "overtimetag",
+                            e.target.value,
+                            totalVal
+                          )
                         }
                         variant="outlined"
                         size="small"
