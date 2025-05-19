@@ -156,10 +156,6 @@ export default function ProductionPlanTable({
               </TableRow>
             )}
             
-            {/* 
-              5) Show the expectedEndStocks row (one row per product). 
-              You can style or label it as you see fit.
-            */}
             <TableRow>
               <TableCell>
                 <strong>{t("production_plan_table_forecast")+" "}</strong>
@@ -185,7 +181,7 @@ export default function ProductionPlanTable({
               <TableRow key={idx} sx={{backgroundColor: "#fafafa"}}>
                 <TableCell>{t(expected.product)}</TableCell>
                 {expected.values.map((val, i) => (
-                  <TableCell key={i} align="center">
+                  <TableCell key={i} align="center" sx={{color: val>=0?"black":"red" }}>
                     {val}
                   </TableCell>
                 ))}
