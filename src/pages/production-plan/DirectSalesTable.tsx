@@ -19,13 +19,6 @@ export type DirectSalesData = {
   penalty: number;
 }[];
 
-// // eslint-disable-next-line @typescript-eslint/no-unused-vars
-// const productToArticleId: Record<string, number> = {
-//   p1ChildrenBike: 1,
-//   p2WomenBike: 2,
-//   p3MenBike: 3,
-// };
-
 export default function DirectSalesTable(props: {
   directSalesData: DirectSalesData;
 }) {

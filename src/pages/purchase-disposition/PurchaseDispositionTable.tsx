@@ -64,69 +64,77 @@ export default function PurchaseDispositionTable(props: {
     );
   };
 
-  const checkIfTooLate = (row: {
-    itemNr: number;
-    amount: number;
-    discountAmount: number;
-    deliveryTime: number | null | undefined;
-    deviation: number | null | undefined;
-    usageRatioP1: number;
-    usageRatioP2: number;
-    usageRatioP3: number;
-    deliveryCost: number | null | undefined;
-    startPrice: number | undefined;
-    grossRequirements: number[];
-  }, orderData: OrderEntry) => {
+  const checkIfTooLate = (
+    row: {
+      itemNr: number;
+      amount: number;
+      discountAmount: number;
+      deliveryTime: number | null | undefined;
+      deviation: number | null | undefined;
+      usageRatioP1: number;
+      usageRatioP2: number;
+      usageRatioP3: number;
+      deliveryCost: number | null | undefined;
+      startPrice: number | undefined;
+      grossRequirements: number[];
+    },
+    orderData: OrderEntry
+  ) => {
     const entry = orderData;
     const selectedModus = entry.modus;
     let orderQuantity = entry.quantity;
     const factors = modusOptions.find((option) => option.key == selectedModus);
     const eta = factors
-      ? (row.deliveryTime! * factors.deliveryDeadlineFactor +
+      ? row.deliveryTime! * factors.deliveryDeadlineFactor +
         row.deviation! * factors.deliveryDeviationExtra +
         factors.timeOfProcess +
-        factors.timeOfProcessDeviation)
+        factors.timeOfProcessDeviation
       : 0;
-    let initialInventory = row.amount
-    let firstPeriodNeedsOrder = -1
+    let initialInventory = row.amount;
+    let firstPeriodNeedsOrder = -1;
 
-    // Determine which is the first period that needs Ordering
     for (let i = 0; i <= 3; i++) {
-            initialInventory -= row.grossRequirements[i]
-            const inwardStockinThisPeriod = getIncomingForPeriod(
-              row.itemNr, i + currentPeriod! + 1
-            )
-            if (initialInventory < 0) {
-              firstPeriodNeedsOrder = i
-              break;
-            }
-            initialInventory += inwardStockinThisPeriod.reduce((sum, current) => sum + current.amount, 0)
-          }
-    
-    if (firstPeriodNeedsOrder === -1) return false
-
-    initialInventory = row.amount
-
-    // Check if the Order is too late or not enough
-    for (let i = 0; i <= 3; i++) {
-      initialInventory -= row.grossRequirements[i]
+      initialInventory -= row.grossRequirements[i];
       const inwardStockinThisPeriod = getIncomingForPeriod(
-        row.itemNr, i + currentPeriod! + 1
-      )
-      // Order comes
-      if (eta <= i) {
-        initialInventory += orderQuantity
-        orderQuantity = 0
+        row.itemNr,
+        i + currentPeriod! + 1
+      );
+      if (initialInventory < 0) {
+        firstPeriodNeedsOrder = i;
+        break;
       }
-      if (i === firstPeriodNeedsOrder) {
-        if (initialInventory < 0) return true
-        return false
-      }
-      initialInventory += inwardStockinThisPeriod.reduce((sum, current) => sum + current.amount, 0)
+      initialInventory += inwardStockinThisPeriod.reduce(
+        (sum, current) => sum + current.amount,
+        0
+      );
     }
 
-    return false
-  }
+    if (firstPeriodNeedsOrder === -1) return false;
+
+    initialInventory = row.amount;
+
+    for (let i = 0; i <= 3; i++) {
+      initialInventory -= row.grossRequirements[i];
+      const inwardStockinThisPeriod = getIncomingForPeriod(
+        row.itemNr,
+        i + currentPeriod! + 1
+      );
+      if (eta <= i) {
+        initialInventory += orderQuantity;
+        orderQuantity = 0;
+      }
+      if (i === firstPeriodNeedsOrder) {
+        if (initialInventory < 0) return true;
+        return false;
+      }
+      initialInventory += inwardStockinThisPeriod.reduce(
+        (sum, current) => sum + current.amount,
+        0
+      );
+    }
+
+    return false;
+  };
 
   return (
     <div style={{ marginTop: "1rem", padding: "1rem" }}>
@@ -201,10 +209,10 @@ export default function PurchaseDispositionTable(props: {
               );
               const eta = factors
                 ? (row.deliveryTime! * factors.deliveryDeadlineFactor +
-                  row.deviation! * factors.deliveryDeviationExtra +
-                  factors.timeOfProcess +
-                  factors.timeOfProcessDeviation) *
-                5
+                    row.deviation! * factors.deliveryDeviationExtra +
+                    factors.timeOfProcess +
+                    factors.timeOfProcessDeviation) *
+                  5
                 : 0;
 
               const unitCost =
@@ -225,7 +233,7 @@ export default function PurchaseDispositionTable(props: {
 
               const totalCost = materialCost + orderCost;
 
-              const warning: boolean = checkIfTooLate(row, orderList[rowIndex])
+              const warning: boolean = checkIfTooLate(row, orderList[rowIndex]);
 
               return (
                 <TableRow
@@ -249,33 +257,33 @@ export default function PurchaseDispositionTable(props: {
                           row.itemNr,
                           currentPeriod! + index + 1
                         ).length > 0 && (
-                            <Tooltip
-                              title={
-                                <div>
-                                  {getIncomingForPeriod(
-                                    row.itemNr,
-                                    currentPeriod! + index + 1
-                                  ).map((stock, i) => (
-                                    <div key={i}>
-                                      {t("incomingAmount")}: {stock.amount},{" "}
-                                      {t("day")}: {stock.inwardStockMovement.day}
-                                    </div>
-                                  ))}
-                                </div>
-                              }
-                              placement="top"
-                              arrow
-                            >
-                              <InfoOutlinedIcon
-                                sx={{
-                                  fontSize: 16,
-                                  verticalAlign: "middle",
-                                  color: "gray",
-                                  ml: 0.5,
-                                }}
-                              />
-                            </Tooltip>
-                          )}
+                          <Tooltip
+                            title={
+                              <div>
+                                {getIncomingForPeriod(
+                                  row.itemNr,
+                                  currentPeriod! + index + 1
+                                ).map((stock, i) => (
+                                  <div key={i}>
+                                    {t("incomingAmount")}: {stock.amount},{" "}
+                                    {t("day")}: {stock.inwardStockMovement.day}
+                                  </div>
+                                ))}
+                              </div>
+                            }
+                            placement="top"
+                            arrow
+                          >
+                            <InfoOutlinedIcon
+                              sx={{
+                                fontSize: 16,
+                                verticalAlign: "middle",
+                                color: "gray",
+                                ml: 0.5,
+                              }}
+                            />
+                          </Tooltip>
+                        )}
                       </TableCell>
                     );
                   })}
@@ -299,11 +307,12 @@ export default function PurchaseDispositionTable(props: {
                           padding: "6px",
                           borderRadius: "8px",
                           backgroundColor: "#fdfdfd",
-                          border: `1px solid ${entry.quantity < 0 ||
+                          border: `1px solid ${
+                            entry.quantity < 0 ||
                             (entry.quantity == 0 && entry.modus !== "")
-                            ? "red"
-                            : "green"
-                            }`,
+                              ? "red"
+                              : "green"
+                          }`,
                         },
                         "& .MuiOutlinedInput-notchedOutline": {
                           border: "none",
@@ -323,17 +332,18 @@ export default function PurchaseDispositionTable(props: {
                       displayEmpty
                       sx={{
                         width: "10rem",
-                        border: `1px solid ${entry.quantity > 0 && entry.modus == ""
-                          ? "red"
-                          : "green"
-                          }`,
+                        border: `1px solid ${
+                          entry.quantity > 0 && entry.modus == ""
+                            ? "red"
+                            : "green"
+                        }`,
                         "& .MuiSelect-select": {
-                          backgroundColor: "white"
-                        }
+                          backgroundColor: "white",
+                        },
                       }}
                     >
                       <MenuItem value="" disabled>
-                          {t("selectMode")}
+                        {t("selectMode")}
                       </MenuItem>
                       {modusOptions.map((option) => (
                         <MenuItem key={option.key} value={option.key}>
@@ -369,7 +379,7 @@ export default function PurchaseDispositionTable(props: {
                       );
                       const unitCost =
                         quantity >= rows[rowIndex].discountAmount &&
-                          modus === "normal"
+                        modus === "normal"
                           ? 0.9 * rows[rowIndex].startPrice!
                           : rows[rowIndex].startPrice!;
                       const materialCost = factors
@@ -379,7 +389,7 @@ export default function PurchaseDispositionTable(props: {
                         quantity > 0
                           ? factors
                             ? rows[rowIndex].deliveryCost! *
-                            factors.orderCostFactor
+                              factors.orderCostFactor
                             : 0
                           : 0;
                       return sum + materialCost + orderCost;

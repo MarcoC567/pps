@@ -21,7 +21,6 @@ function App() {
           <NavigationProvider>
             <Navbar />
             <main style={{ paddingTop: "5rem" }}>
-              {/* sorgt dafür, dass der Inhalt nicht hinter der Navbar liegt */}
               <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/xmlImport" element={<XmlImport />} />

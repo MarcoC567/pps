@@ -3,7 +3,6 @@ import { useLocation, NavLink } from "react-router-dom"; // Import NavLink
 import { useLanguage } from "../../context/LanguageContext";
 import { useEffect, useState } from "react";
 
-// Hilfsfunktion für Klassen
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
@@ -13,7 +12,6 @@ export default function Navbar() {
   const location = useLocation();
   const { language, setLanguage } = useLanguage();
 
-  // Initiale Navigation
   const initialNavigation = [
     { name: t("XMLimport"), href: "/xmlImport" },
     { name: t("forecastonly"), href: "/forecast" },
@@ -24,10 +22,8 @@ export default function Navbar() {
     { name: t("XML Export"), href: "/xmlExport" },
   ];
 
-  // State für die freigeschalteten Routen
   const [visited, setVisited] = useState<string[]>([]);
 
-  // Beim Mount aus localStorage lesen
   useEffect(() => {
     const keys = Object.keys(localStorage).filter((k) =>
       k.startsWith("visited_")
@@ -38,7 +34,6 @@ export default function Navbar() {
     setVisited(visitedRoutes);
   }, [location.pathname]);
 
-  // Navigation mit “enabled” Flag
   const navigation = initialNavigation.map((item) => ({
     ...item,
     enabled: visited.includes(item.href) || item.href === "/xmlImport",
@@ -66,11 +61,10 @@ export default function Navbar() {
                 );
               }
 
-              // Use NavLink instead of <a>
               return (
                 <NavLink
                   key={item.href}
-                  to={item.href} // Use `to` instead of `href`
+                  to={item.href}
                   className={({ isActive }) =>
                     classNames(
                       isActive

@@ -7,7 +7,7 @@ import { OrderEntry } from "../purchase-disposition";
 
 export default function ExportPage() {
   const { t } = useLanguage();
-  // Load and parse saved data from localStorage
+
   const sellWish: SalesForecastData = JSON.parse(
     localStorage.getItem("sellwish") || "[]"
   );

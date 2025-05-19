@@ -21,12 +21,6 @@ export type ExpectedEndStocks = {
   values: number[];
 }[];
 
-//
-// 2) Helper to compute expected endStock for each product & period
-//    First period: currentStock + inProduction + waitingList
-//                  - forecast(0) + production(0)
-//    Following periods: endStock(i-1) - forecast(i) + production(i)
-//
 function computeExpectedEndStocks(
   productionData: ProductionPlanData,
   forecastData: ForecastData,
@@ -39,12 +33,14 @@ function computeExpectedEndStocks(
     const sales = salesData[productIndex];
     const result = [0, 0, 0, 0];
 
-    // Period 1 (index 0)
-    const first = s.stock + s.inProduction + s.waitingList
-      - sales.current + prodRow.values[0];
+    const first =
+      s.stock +
+      s.inProduction +
+      s.waitingList -
+      sales.current +
+      prodRow.values[0];
     result[0] = first;
 
-    // Periods 2..4 (index 1..3)
     for (let i = 1; i < 4; i++) {
       result[i] = result[i - 1] - forecastRow.values[i] + prodRow.values[i];
     }
@@ -60,7 +56,6 @@ export default function ProductionPlanPage() {
   const { t } = useLanguage();
   const navigate = useNavigate();
 
-  // These imports are truncated for brevity
   const importData = JSON.parse(localStorage.getItem("importData") || "{}") as {
     results: {
       forecast: {
@@ -73,12 +68,22 @@ export default function ProductionPlanPage() {
 
   const [forecastData, setForecastData] = useState<ForecastData>(() => {
     const saved = localStorage.getItem("forecastdata");
-    return saved ? JSON.parse(saved) :
-      [
-        { product: "p1ChildrenBike", values: [Number(importData.results.forecast.p1), 0, 0, 0] },
-        { product: "p2WomenBike", values: [Number(importData.results.forecast.p2), 0, 0, 0] },
-        { product: "p3MenBike", values: [Number(importData.results.forecast.p3), 0, 0, 0] },
-      ];
+    return saved
+      ? JSON.parse(saved)
+      : [
+          {
+            product: "p1ChildrenBike",
+            values: [Number(importData.results.forecast.p1), 0, 0, 0],
+          },
+          {
+            product: "p2WomenBike",
+            values: [Number(importData.results.forecast.p2), 0, 0, 0],
+          },
+          {
+            product: "p3MenBike",
+            values: [Number(importData.results.forecast.p3), 0, 0, 0],
+          },
+        ];
   });
 
   const [productionData, setProductionData] = useState<ProductionPlanData>(
@@ -87,10 +92,10 @@ export default function ProductionPlanPage() {
       return saved
         ? JSON.parse(saved)
         : [
-          { product: "p1ChildrenBike", values: [0, 0, 0, 0] },
-          { product: "p2WomenBike", values: [0, 0, 0, 0] },
-          { product: "p3MenBike", values: [0, 0, 0, 0] },
-        ];
+            { product: "p1ChildrenBike", values: [0, 0, 0, 0] },
+            { product: "p2WomenBike", values: [0, 0, 0, 0] },
+            { product: "p3MenBike", values: [0, 0, 0, 0] },
+          ];
     }
   );
 
@@ -99,10 +104,19 @@ export default function ProductionPlanPage() {
     return saved
       ? JSON.parse(saved)
       : [
-        { product: "p1ChildrenBike", current: Number(importData.results.forecast.p1), },
-        { product: "p2WomenBike", current: Number(importData.results.forecast.p2), },
-        { product: "p3MenBike", current: Number(importData.results.forecast.p3), },
-      ];
+          {
+            product: "p1ChildrenBike",
+            current: Number(importData.results.forecast.p1),
+          },
+          {
+            product: "p2WomenBike",
+            current: Number(importData.results.forecast.p2),
+          },
+          {
+            product: "p3MenBike",
+            current: Number(importData.results.forecast.p3),
+          },
+        ];
   });
 
   const [directData] = useState<DirectSalesData>(() => {
@@ -110,14 +124,13 @@ export default function ProductionPlanPage() {
     return saved
       ? JSON.parse(saved)
       : [
-        { product: "p1ChildrenBike", quantity: 0, price: 0, penalty: 0 },
-        { product: "p2WomenBike", quantity: 0, price: 0, penalty: 0 },
-        { product: "p3MenBike", quantity: 0, price: 0, penalty: 0 },
-      ];
+          { product: "p1ChildrenBike", quantity: 0, price: 0, penalty: 0 },
+          { product: "p2WomenBike", quantity: 0, price: 0, penalty: 0 },
+          { product: "p3MenBike", quantity: 0, price: 0, penalty: 0 },
+        ];
   });
 
   const [stockData, setStockData] = useState<StockData>(() => {
-    // 1) LocalStorage, wenn nicht leer
     const saved = localStorage.getItem("plannedStockAtTheEndOfThePeriod");
     if (saved) {
       try {
@@ -130,7 +143,6 @@ export default function ProductionPlanPage() {
       }
     }
 
-    // 2) direkt aus importData parsen
     const raw = localStorage.getItem("importData");
     console.log(raw);
     if (raw) {
@@ -138,11 +150,9 @@ export default function ProductionPlanPage() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const parsed: any = JSON.parse(raw);
 
-        // a) Lagerbestand
         const art = parsed.results?.warehousestock?.article;
         const list = Array.isArray(art) ? art : art ? [art] : [];
 
-        // b) Warteschlangen
         const wl = parsed.results?.waitinglistworkstations?.workplace;
         const wlArr = Array.isArray(wl) ? wl : wl ? [wl] : [];
         const waitingMap: Record<number, number> = {};
@@ -151,8 +161,8 @@ export default function ProductionPlanPage() {
           const items = Array.isArray(wp.waitinglist)
             ? wp.waitinglist
             : wp.waitinglist
-              ? [wp.waitinglist]
-              : [];
+            ? [wp.waitinglist]
+            : [];
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           items.forEach((e: any) => {
             if (e?.item && e?.amount) {
@@ -162,7 +172,6 @@ export default function ProductionPlanPage() {
           });
         });
 
-        // c) inProduction
         const ow = parsed.results?.ordersinwork?.workplace;
         const owArr = Array.isArray(ow) ? ow : ow ? [ow] : [];
         const inWorkMap: Record<number, number> = {};
@@ -174,7 +183,6 @@ export default function ProductionPlanPage() {
           }
         });
 
-        // d) rows bauen
         const rows: StockData = list
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .filter((a: any) => {
@@ -205,7 +213,6 @@ export default function ProductionPlanPage() {
       }
     }
 
-    // 3) Fallback aus parts.json
     return parts.artikel
       .filter((p) => p.produktart === "E" || p.produktart === "P")
       .map((p) => ({
@@ -216,15 +223,10 @@ export default function ProductionPlanPage() {
         inProduction: 0,
       }));
   });
-  
+
   console.log(directData);
   console.log(forecastData);
-  //
-  // 3) If you need to store or display the single‐period auto-calculation,
-  //    you can either remove it or keep it as you prefer. Below is shown
-  //    as-is, but relies on the older approach. You can remove these if
-  //    you just want to rely on computeExpectedEndStocks instead.
-  //
+
   useEffect(() => {
     const updatedStockData = [...stockData];
     updatedStockData[0] = {
@@ -267,7 +269,6 @@ export default function ProductionPlanPage() {
     setStockData(updatedStockData);
   }, [productionData[2].values[0], salesData[2].current]);
 
-  // Persist updated data
   useEffect(() => {
     localStorage.setItem("forecastdata", JSON.stringify(forecastData));
   }, [forecastData]);
@@ -307,9 +308,6 @@ export default function ProductionPlanPage() {
     navigate("/inhouse-disposition");
   };
 
-  //
-  // 4) Compute expectedEndStocks and pass them down to ProductionPlanTable
-  //
   const expectedEndStocks = computeExpectedEndStocks(
     productionData,
     forecastData,
