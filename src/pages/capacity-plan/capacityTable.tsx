@@ -55,8 +55,8 @@ export default function CapacityTable() {
   const [prevSetupTime, setPrevSetupTime] = useState<Record<string, number>>(
     {}
   );
-  const isSetupTimeNewInitialized = useRef(false); // Track setupTimeNewPerWS initialization
-  const isPrevSetupTimeInitialized = useRef(false); // Track prevSetupTime initialization
+  const isSetupTimeNewInitialized = useRef(false);
+  const isPrevSetupTimeInitialized = useRef(false);
 
   const raw = localStorage.getItem("importData");
   const importData = raw
@@ -132,9 +132,7 @@ export default function CapacityTable() {
       const prevEntry = prev[ws] || {};
       let updated: typeof prev;
 
-      // Wenn Schichten geändert werden
       if (key === "shifts") {
-        // Wenn auf 3 gesetzt, Überstunden auf 0
         if (numValue === 3) {
           updated = {
             ...prev,
@@ -145,7 +143,6 @@ export default function CapacityTable() {
             },
           };
         } else {
-          // Bei Wechsel von 3 zurück auf 1 oder 2: Überstunden bleiben 0 (User kann neu eintragen)
           updated = {
             ...prev,
             [ws]: {
@@ -156,7 +153,6 @@ export default function CapacityTable() {
           };
         }
       } else {
-        // Bei Überstunden ändern: nur wenn Schichten < 3
         if ((prev[ws]?.shifts ?? 1) === 3) {
           updated = {
             ...prev,
@@ -176,13 +172,12 @@ export default function CapacityTable() {
         }
       }
 
-      // --- Local Storage Update ---
       const list = workstationKeys.map((wsKey) => {
         const entry = updated[wsKey] || {
           shifts: calculateShifts(0),
           overtime: 0,
         };
-        // Wenn Schicht 3, Überstunden IMMER 0!
+
         return {
           station: wsKey.replace("workstation", ""),
           shift: entry.shifts,
@@ -190,7 +185,7 @@ export default function CapacityTable() {
         };
       });
       localStorage.setItem("workingtimelist", JSON.stringify(list));
-      // ---
+
       return updated;
     });
   };
@@ -209,7 +204,6 @@ export default function CapacityTable() {
     (ws) => ws !== "workstation5"
   );
 
-  // Initialize setupTimeNewPerWS only once when dependencies are ready
   useEffect(() => {
     if (
       isSetupTimeNewInitialized.current ||
@@ -246,7 +240,6 @@ export default function CapacityTable() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workstations, productionMap, workstationKeys, allParts]);
 
-  // Save setupTimeNewPerWS to localStorage only when it changes
   useEffect(() => {
     if (Object.keys(setupTimeNewPerWS).length > 0) {
       localStorage.setItem(
@@ -256,7 +249,6 @@ export default function CapacityTable() {
     }
   }, [setupTimeNewPerWS]);
 
-  // Initialize prevSetupTime only once when dependencies are ready
   useEffect(() => {
     if (
       isPrevSetupTimeInitialized.current ||
@@ -297,14 +289,12 @@ export default function CapacityTable() {
     isPrevSetupTimeInitialized.current = true;
   }, [workstations, importData, workstationKeys]);
 
-  // Save prevSetupTime to localStorage only when it changes
   useEffect(() => {
     if (Object.keys(prevSetupTime).length > 0) {
       localStorage.setItem("prevSetupTime", JSON.stringify(prevSetupTime));
     }
   }, [prevSetupTime]);
 
-  // Handler for setup time changes (new)
   const handleSetupTimeChange = (ws: string, value: string) => {
     const numValue = Math.max(0, Number(value) || 0);
     setSetupTimeNewPerWS((prev) => ({
@@ -313,7 +303,6 @@ export default function CapacityTable() {
     }));
   };
 
-  // Handler for previous setup time changes
   const handlePrevSetupTimeChange = (ws: string, value: string) => {
     const numValue = Math.max(0, Number(value) || 0);
     setPrevSetupTime((prev) => ({

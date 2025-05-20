@@ -44,7 +44,7 @@ export default function XMLimport() {
   };
 
   const handleSelectButtonClick = () => {
-    fileInputRef.current?.click(); // Triggert den Dateiauswahldialog
+    fileInputRef.current?.click();
   };
 
   const handleImportButtonClick = () => {
@@ -69,7 +69,6 @@ export default function XMLimport() {
       try {
         const parsedData = parser.parse(event.target?.result as string);
         setJsonData(parsedData);
-        // Clear local storage by import new XML Data
         localStorage.clear();
         localStorage.setItem("importData", JSON.stringify(parsedData));
         setFileError(null);
@@ -95,9 +94,7 @@ export default function XMLimport() {
     <div className="max-w-sm mx-auto bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
       <div className="p-4">
         <h2 className="text-xl font-semibold text-gray-800">XML Input</h2>
-        <p className="mt-2 text-gray-600 text-sm">
-          {t('pleaseSelectXML')}
-        </p>
+        <p className="mt-2 text-gray-600 text-sm">{t("pleaseSelectXML")}</p>
         <input
           type="file"
           accept=".xml"
@@ -111,12 +108,14 @@ export default function XMLimport() {
             onClick={handleSelectButtonClick}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200 flex items-center gap-2 mx-auto my-btn "
           >
-            {t('selectXML')}
+            {t("selectXML")}
             <DocumentArrowUpIcon className="w-5 h-5" />
           </button>
           {file && (
             <div className="mt-2 text-sm text-gray-500 flex items-center justify-between border rounded px-2 py-1">
-              <span className="truncate">{t('choosenFile')} {file.name}</span>
+              <span className="truncate">
+                {t("choosenFile")} {file.name}
+              </span>
               <button
                 onClick={() => {
                   setFile(null);
@@ -125,7 +124,7 @@ export default function XMLimport() {
                   setCanImport(false);
                 }}
                 className={`mt-4 mx-auto my-btn`}
-                title={t('removeFile')}
+                title={t("removeFile")}
               >
                 &times;
               </button>
@@ -139,11 +138,10 @@ export default function XMLimport() {
             disabled={!canImport || fileError !== null}
             className={`mt-4 mx-auto my-btn`}
           >
-            {t('next')}
+            {t("next")}
           </button>
         </div>
       </div>
     </div>
   );
 }
-

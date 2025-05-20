@@ -13,24 +13,20 @@ import {
 import { useLanguage } from "../../context/LanguageContext.tsx";
 import { useCurrentPeriod } from "../../context/CurrentPeriodContext.tsx";
 
-// 1. Exportiere den Datentyp
 export type ForecastData = {
   product: string;
   values: number[];
 }[];
 
-// 2. Definiere das Props-Interface
 export interface ForecastTableProps {
   data: ForecastData;
   onChange: (newData: ForecastData) => void;
 }
 
-// 3. Die Komponente selbst nimmt jetzt nur noch props entgegen
 export default function ForecastTable({ data, onChange }: ForecastTableProps) {
   const { t } = useLanguage();
   const { currentPeriod } = useCurrentPeriod();
 
-  // Ändern einer Zelle: erst newData-Array bauen, dann callback aufrufen
   const handleChange = (
     rowIndex: number,
     colIndex: number,

@@ -33,7 +33,6 @@ export default function ProductionOrderListPage() {
     [index: number]: boolean;
   }>({});
 
-  // Hilfsfunktion, um in LS zu speichern
   const saveToLS = (list: ProductionOrder[]) => {
     const serialized: [string, number][] = list.map(({ product, quantity }) => [
       product,
@@ -54,7 +53,6 @@ export default function ProductionOrderListPage() {
     //   return;
     // }
 
-    // 2) Sonst: aus inhouseDispositionResult laden, wenn vorhanden
     const stored = localStorage.getItem("inhouseDispositionResult");
     if (stored) {
       const parsedInit: [string, number][] = JSON.parse(stored);
@@ -67,7 +65,6 @@ export default function ProductionOrderListPage() {
       return;
     }
 
-    // 3) Fallback: hartcodierte Default-Orders
     const fallback: ProductionOrder[] = [
       { product: "P1", quantity: 100 },
       { product: "P2", quantity: 80 },
@@ -77,7 +74,6 @@ export default function ProductionOrderListPage() {
     saveToLS(fallback);
   }, []);
 
-  // Auch nach jeder Interaktion speichern
   const save = (list: ProductionOrder[]) => {
     setOrders(list);
     saveToLS(list);
@@ -121,7 +117,6 @@ export default function ProductionOrderListPage() {
   };
 
   const handleNextClick = () => {
-    // speichere nochmal den Stand ab
     save(orders);
     localStorage.setItem("visited_/production-order", "true");
     navigate("/capacity-plan");

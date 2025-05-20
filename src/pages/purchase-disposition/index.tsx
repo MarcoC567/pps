@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import { basicData, items, modusOptions } from "./const";
 import ProductionProgramTable from "./ProductionProgramTable";
-import PurchaseDispositionTable from './PurchaseDispositionTable';
+import PurchaseDispositionTable from "./PurchaseDispositionTable";
 import { useState, useEffect, useMemo } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Paper } from "@mui/material";
@@ -27,19 +27,21 @@ export type FutureStockEntry = {
   };
 };
 
-export type PurchaseDispositionStaticData = {
-  itemNr: number;
-  amount: number;
-  discountAmount: number;
-  deliveryTime: number | null | undefined;
-  deviation: number | null | undefined;
-  usageRatioP1: number;
-  usageRatioP2: number;
-  usageRatioP3: number;
-  deliveryCost: number | null | undefined;
-  startPrice: number | undefined;
-  grossRequirements: number[];
-}[] | undefined
+export type PurchaseDispositionStaticData =
+  | {
+      itemNr: number;
+      amount: number;
+      discountAmount: number;
+      deliveryTime: number | null | undefined;
+      deviation: number | null | undefined;
+      usageRatioP1: number;
+      usageRatioP2: number;
+      usageRatioP3: number;
+      deliveryCost: number | null | undefined;
+      startPrice: number | undefined;
+      grossRequirements: number[];
+    }[]
+  | undefined;
 
 export type OrderEntry = { article: number; quantity: number; modus: string };
 
@@ -94,12 +96,12 @@ export default function PurchaseDispositionPage() {
           let eta =
             factors && articleBasicData && currentPeriod
               ? Math.floor(
-                (articleBasicData.deliveryTime! *
-                  factors.deliveryDeadlineFactor +
-                  articleBasicData.deliveryTimeDeviation! *
-                  factors.deliveryDeviationExtra) *
-                5
-              )
+                  (articleBasicData.deliveryTime! *
+                    factors.deliveryDeadlineFactor +
+                    articleBasicData.deliveryTimeDeviation! *
+                      factors.deliveryDeviationExtra) *
+                    5
+                )
               : 0;
           eta = eta - (currentPeriod! + 1 - Number(order.orderperiod)) * 5 + 1;
           const period = currentPeriod! + 1 + Math.floor(eta / 5);
@@ -120,7 +122,6 @@ export default function PurchaseDispositionPage() {
     }
   }, [currentPeriod]);
 
-  // set warehouse stock data
   useEffect(() => {
     const importData = JSON.parse(
       localStorage.getItem("importData") || "{}"
@@ -156,7 +157,6 @@ export default function PurchaseDispositionPage() {
   const [productionPlanData, setProductionPlanData] =
     useState<ProductionPlanData>(defaultProductionPlan);
 
-  // Forecast beim ersten Laden aus localStorage holen
   useEffect(() => {
     const savedProductionPlan = localStorage.getItem("productionPlanData");
     if (savedProductionPlan) {
@@ -195,10 +195,30 @@ export default function PurchaseDispositionPage() {
         deliveryCost: data.deliveryCost,
         startPrice: data.startPrice,
         grossRequirements: [
-          calculateGrossRequirement(data.usageRatioP1, data.usageRatioP2, data.usageRatioP3, 0),
-          calculateGrossRequirement(data.usageRatioP1, data.usageRatioP2, data.usageRatioP3, 1),
-          calculateGrossRequirement(data.usageRatioP1, data.usageRatioP2, data.usageRatioP3, 2),
-          calculateGrossRequirement(data.usageRatioP1, data.usageRatioP2, data.usageRatioP3, 3),
+          calculateGrossRequirement(
+            data.usageRatioP1,
+            data.usageRatioP2,
+            data.usageRatioP3,
+            0
+          ),
+          calculateGrossRequirement(
+            data.usageRatioP1,
+            data.usageRatioP2,
+            data.usageRatioP3,
+            1
+          ),
+          calculateGrossRequirement(
+            data.usageRatioP1,
+            data.usageRatioP2,
+            data.usageRatioP3,
+            2
+          ),
+          calculateGrossRequirement(
+            data.usageRatioP1,
+            data.usageRatioP2,
+            data.usageRatioP3,
+            3
+          ),
         ],
       };
     });
@@ -229,53 +249,51 @@ export default function PurchaseDispositionPage() {
         rows.map((item) => {
           let optimalQuantity = 0;
           let optimalMode = "";
-          let initialInventory = item.amount
-          const eta = item.deliveryTime! + item.deviation!
+          let initialInventory = item.amount;
+          const eta = item.deliveryTime! + item.deviation!;
 
           for (let i = 0; i <= 3; i++) {
-            initialInventory -= item.grossRequirements[i]
+            initialInventory -= item.grossRequirements[i];
             const inwardStockinThisPeriod = getIncomingForPeriod(
-              item.itemNr, i + currentPeriod! + 1
-            )
-            // Incoming stock
+              item.itemNr,
+              i + currentPeriod! + 1
+            );
             if (initialInventory < 0) {
               if (eta > i) {
-                optimalQuantity = item.discountAmount
-                optimalMode = "fast"
-              }
-              else {
-                optimalQuantity = item.discountAmount
-                optimalMode = "normal"
+                optimalQuantity = item.discountAmount;
+                optimalMode = "fast";
+              } else {
+                optimalQuantity = item.discountAmount;
+                optimalMode = "normal";
               }
               if (initialInventory + optimalQuantity < 0) {
-                optimalQuantity = -(initialInventory)
+                optimalQuantity = -initialInventory;
               }
               break;
             }
-            initialInventory += inwardStockinThisPeriod.reduce((sum, current) => sum + current.amount, 0)
+            initialInventory += inwardStockinThisPeriod.reduce(
+              (sum, current) => sum + current.amount,
+              0
+            );
           }
 
-          return (
-            {
-              article: item.itemNr,
-              quantity: optimalQuantity,
-              modus: optimalMode
-            })
-        }
-        )
+          return {
+            article: item.itemNr,
+            quantity: optimalQuantity,
+            modus: optimalMode,
+          };
+        })
       );
     }
 
     setTimeout(() => setLoading(false), 100);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orderList, rows, futureInwardStockData,]);
+  }, [orderList, rows, futureInwardStockData]);
 
-  // Persistenz
   useEffect(() => {
     localStorage.setItem("orderList", JSON.stringify(orderList));
   }, [orderList]);
 
-  // Validierung
   const allValid = (): boolean =>
     Array.isArray(orderList) &&
     orderList.every(
@@ -306,7 +324,8 @@ export default function PurchaseDispositionPage() {
             </Box>
           </div>
         ) : (
-          orderList && rows && (
+          orderList &&
+          rows && (
             <PurchaseDispositionTable
               rows={rows}
               futureInwardStockData={futureInwardStockData}
@@ -316,7 +335,11 @@ export default function PurchaseDispositionPage() {
           )
         )}
 
-        <button onClick={handleNextClick} disabled={!allValid()} className={`mt-4 mx-auto my-btn`}>
+        <button
+          onClick={handleNextClick}
+          disabled={!allValid()}
+          className={`mt-4 mx-auto my-btn`}
+        >
           {t("next")}
         </button>
       </Paper>

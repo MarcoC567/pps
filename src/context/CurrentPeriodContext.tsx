@@ -24,14 +24,13 @@ export const CurrentPeriodProvider = ({
   children: ReactNode;
 }) => {
   const [currentPeriod, setCurrentPeriod] = useState<number>(() => {
-    // synchron vom ersten Render
     const importData = JSON.parse(
       localStorage.getItem("importData") || "{}"
     ) as {
       results?: { period: string };
     };
     const parsed = Number(importData.results?.period);
-    return !isNaN(parsed) ? parsed : 0; // oder `undefined`, je nach gewünschtem Fallback
+    return !isNaN(parsed) ? parsed : 0;
   });
 
   return (
