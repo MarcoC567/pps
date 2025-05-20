@@ -71,6 +71,29 @@ export default function CapacityTable() {
     : null;
 
   useEffect(() => {
+    const stored = localStorage.getItem("workingtimelist");
+    if (!stored) return;
+
+    try {
+      type Entry = { station: string; shift: number; overtime: number }; // overtime = Überstunden pro Tag
+      const list: Entry[] = JSON.parse(stored);
+
+      const restored: Record<string, { shifts: number; overtime: number }> = {};
+      list.forEach(({ station, shift, overtime: perDay }) => {
+        const wsKey = `workstation${station}`;
+        restored[wsKey] = {
+          shifts: shift,
+          overtime: perDay * 5, // rekonstruiere die gesamt Überstunden
+        };
+      });
+
+      setShiftData(restored);
+    } catch {
+      // ignore parse errors
+    }
+  }, []);
+
+  useEffect(() => {
     if (mockData) {
       setWorkstations(mockData as Workstations);
     }
@@ -117,11 +140,11 @@ export default function CapacityTable() {
   const handleShiftChange = (
     ws: string,
     key: "shifts" | "overtime" | "overtimetag",
-    value: string,
-    totalMinutes: number
+    value: string
+    // totalMinutes: number
   ) => {
-    let numValue = Math.max(0, Number(value) || 0);
-    if (key === "shifts") numValue = Math.min(numValue, 3);
+    let numValue = Number(value) || 0;
+    if (key === "shifts") numValue = Math.max(1, Math.min(numValue, 3));
     if (key === "overtime") numValue = Math.min(numValue, 1200);
     if (key === "overtimetag") {
       numValue = Math.min(numValue, 240) * 5;
@@ -181,7 +204,7 @@ export default function CapacityTable() {
         return {
           station: wsKey.replace("workstation", ""),
           shift: entry.shifts,
-          overtime: entry.shifts === 3 ? 0 : entry.overtime,
+          overtime: entry.shifts === 3 ? 0 : Math.round(entry.overtime / 5),
         };
       });
       localStorage.setItem("workingtimelist", JSON.stringify(list));
@@ -639,6 +662,7 @@ export default function CapacityTable() {
                         }
                         variant="outlined"
                         size="small"
+                        inputProps={{ min: 1, max: 3 }}
                         sx={{
                           width: "4rem",
                           input: {
