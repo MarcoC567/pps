@@ -33,7 +33,7 @@ function computeExpectedEndStocks(
   stockData: StockData,
   salesData: SalesForecastData
 ): ExpectedEndStocks {
-  return productionData.map((prodRow, productIndex) => {
+  const result = productionData.map((prodRow, productIndex) => {
     const forecastRow = forecastData[productIndex];
     const s = stockData[productIndex];
     const sales = salesData[productIndex];
@@ -54,6 +54,12 @@ function computeExpectedEndStocks(
       values: result,
     };
   });
+  for (let i = 0; i < 3; i++) {
+    if (stockData[i]) {
+      stockData[i].endStock = result[i]?.values?.[0] ?? 0;
+    }
+  }
+  return result;
 }
 
 export default function ProductionPlanPage() {
