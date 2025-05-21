@@ -1,16 +1,15 @@
 import { Disclosure } from "@headlessui/react";
-import { useLocation, NavLink } from "react-router-dom"; // Import NavLink
+import { useLocation, NavLink } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageContext";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Navbar() {
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const location = useLocation();
-  const { language, setLanguage } = useLanguage();
 
   const initialNavigation = [
     { name: t("XMLimport"), href: "/xmlImport" },
@@ -22,21 +21,14 @@ export default function Navbar() {
     { name: t("XML Export"), href: "/xmlExport" },
   ];
 
-  const [visited, setVisited] = useState<string[]>([]);
+  const currentIndex = Math.max(
+    0,
+    initialNavigation.findIndex((item) => item.href === location.pathname)
+  );
 
-  useEffect(() => {
-    const keys = Object.keys(localStorage).filter((k) =>
-      k.startsWith("visited_")
-    );
-    console.log("⤷ localStorage keys:", keys);
-    const visitedRoutes = keys.map((k) => k.replace(/^visited_/, ""));
-    console.log("⤷ visitedRoutes:", visitedRoutes);
-    setVisited(visitedRoutes);
-  }, [location.pathname]);
-
-  const navigation = initialNavigation.map((item) => ({
+  const navigation = initialNavigation.map((item, idx) => ({
     ...item,
-    enabled: visited.includes(item.href) || item.href === "/xmlImport",
+    enabled: idx <= currentIndex,
   }));
 
   return (
@@ -60,7 +52,6 @@ export default function Navbar() {
                   </span>
                 );
               }
-
               return (
                 <NavLink
                   key={item.href}
@@ -73,7 +64,6 @@ export default function Navbar() {
                       commonClasses
                     )
                   }
-                  aria-current={item.enabled ? "page" : undefined}
                 >
                   {item.name}
                 </NavLink>
